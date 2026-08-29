@@ -536,7 +536,9 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                 cursor = conn.cursor()
                 cursor.execute('''
                     UPDATE users 
-                    SET credits_balance = 10, 
+                    SET name = 'María Ignacia Sánchez',
+                        email = 'sanchezhenriquezmariaignacia99@gmail.com',
+                        credits_balance = 10, 
                         plan_tier = 'Prueba Gratuita (10 créditos / 7 días)'
                     WHERE id = 1
                 ''')

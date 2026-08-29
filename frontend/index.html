@@ -130,6 +130,9 @@
                 </div>
               </div>
               <div class="py-1">
+                <a href="#" onclick="app.switchView('profile'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                  <i data-lucide="user" class="w-4 h-4 mr-2 text-slate-400"></i> Mi Perfil & Ajustes
+                </a>
                 <a href="#" onclick="app.switchView('bookings'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
                   <i data-lucide="calendar" class="w-4 h-4 mr-2 text-slate-400"></i> Mis Reservas
                 </a>
@@ -178,7 +181,7 @@
       </div>
       <span>Próximas</span>
     </button>
-    <button onclick="app.switchView('favorites')" id="mobile-nav-favorites" class="flex flex-col items-center text-[10px] font-bold text-slate-500 hover:text-slate-900 group">
+    <button onclick="app.switchView('profile')" id="mobile-nav-profile" class="flex flex-col items-center text-[10px] font-bold text-slate-500 hover:text-slate-900 group">
       <div class="p-1 rounded-xl group-hover:bg-slate-100 transition">
         <i data-lucide="user" class="w-5 h-5 text-slate-500 group-hover:text-slate-900"></i>
       </div>
@@ -854,7 +857,135 @@
           </div>
         </div>
 
+    <!-- ==================== VIEW 6: PERFIL DE USUARIO ==================== -->
+    <section id="view-profile" class="space-y-6 max-w-md mx-auto hidden animate-fade-in pb-8">
+      
+      <!-- User Avatar & Header -->
+      <div class="text-center space-y-3 pt-2">
+        <div class="relative w-24 h-24 mx-auto">
+          <div class="w-24 h-24 rounded-full bg-slate-100 border-4 border-white shadow-md flex items-center justify-center text-slate-500 overflow-hidden">
+            <img id="profilePageAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" alt="Avatar" class="w-full h-full object-cover">
+          </div>
+          <button onclick="app.showToast('Función para actualizar foto activada')" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-md border-2 border-white hover:bg-indigo-700 transition">
+            <i data-lucide="camera" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-slate-900" id="profilePageUserName">María Ignacia Sánchez</h2>
+          <p class="text-xs font-semibold text-slate-500" id="profilePageUserEmail">sanchezhenriquezmariaignacia99@gmail.com</p>
+        </div>
+
+        <!-- Credits & Cycle Info Bar -->
+        <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm grid grid-cols-2 divide-x divide-slate-100 text-center">
+          <div>
+            <div class="text-xl font-black text-slate-900" id="profileCreditsRestantes">10 créditos</div>
+            <span class="text-[11px] text-slate-400 font-semibold">Restantes</span>
+          </div>
+          <div>
+            <div class="text-xl font-black text-indigo-600" id="profileVigenciaText">7 días</div>
+            <span class="text-[11px] text-slate-400 font-semibold">Vigencia de prueba</span>
+          </div>
+        </div>
       </div>
+
+      <!-- Menu List -->
+      <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm divide-y divide-slate-100 overflow-hidden text-sm">
+        
+        <!-- 1. Cuenta & Membresía -->
+        <div onclick="app.switchView('plans')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div class="flex items-center space-x-3 text-slate-800 font-bold">
+            <i data-lucide="credit-card" class="w-5 h-5 text-slate-500"></i>
+            <span>Cuenta & Membresía</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </div>
+
+        <!-- 2. Reservas -->
+        <div onclick="app.switchView('bookings')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div class="flex items-center space-x-3 text-slate-800 font-bold">
+            <i data-lucide="calendar" class="w-5 h-5 text-slate-500"></i>
+            <span>Reservas</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold text-slate-400" id="profileBookingsCount">0</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+        </div>
+
+        <!-- 3. Sitios guardados -->
+        <div onclick="app.switchView('favorites')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div class="flex items-center space-x-3 text-slate-800 font-bold">
+            <i data-lucide="heart" class="w-5 h-5 text-slate-500"></i>
+            <span>Sitios guardados</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold text-slate-400" id="profileFavoritesCount">2</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+        </div>
+
+        <!-- 4. Referral Button (Tráete a tu gente) -->
+        <div onclick="app.openReferralModal()" class="p-4 flex items-center justify-between cursor-pointer bg-gradient-to-r from-indigo-50/80 to-emerald-50/80 hover:from-indigo-100 hover:to-emerald-100 transition">
+          <div class="flex items-center space-x-3 text-slate-900 font-black">
+            <i data-lucide="gift" class="w-5 h-5 text-emerald-600"></i>
+            <span>Tráete a tu gente y llévate 50 créditos 🎁</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </div>
+
+        <!-- 5. Mensajes -->
+        <div onclick="app.showToast('No tienes mensajes nuevos')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div class="flex items-center space-x-3 text-slate-800 font-bold">
+            <i data-lucide="message-square" class="w-5 h-5 text-slate-500"></i>
+            <span>Mensajes</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </div>
+
+        <!-- 6. Amigos -->
+        <div onclick="app.openReferralModal()" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div class="flex items-center space-x-3 text-slate-800 font-bold">
+            <i data-lucide="users" class="w-5 h-5 text-slate-500"></i>
+            <span>Amigos</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold text-slate-400">0</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+        </div>
+
+        <!-- 7. Tus logros -->
+        <div onclick="app.showToast('🏆 Has completado tus entrenamientos semanales')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div class="flex items-center space-x-3 text-slate-800 font-bold">
+            <i data-lucide="award" class="w-5 h-5 text-slate-500"></i>
+            <span>Tus logros</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold text-indigo-600">5</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+        </div>
+
+        <!-- 8. Modo Estudio Partner -->
+        <div onclick="app.switchView('admin')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div class="flex items-center space-x-3 text-slate-800 font-bold">
+            <i data-lucide="store" class="w-5 h-5 text-slate-500"></i>
+            <span>Modo Estudio / Partner</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </div>
+
+        <!-- 9. Ajustes -->
+        <div onclick="app.showToast('Configuración guardada')" class="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+          <div class="flex items-center space-x-3 text-slate-800 font-bold">
+            <i data-lucide="settings" class="w-5 h-5 text-slate-500"></i>
+            <span>Ajustes</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </div>
+
+      </div>
+
     </section>
 
   </main>
@@ -1203,6 +1334,54 @@
       <button onclick="app.closeWelcomeModal()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-extrabold text-sm shadow-xl shadow-emerald-500/20 hover:scale-[1.02] transition">
         ¡Empezar a Entrenar Gratis! 🚀
       </button>
+    </div>
+  </div>
+
+  <!-- ==================== REFERRAL MODAL (INVITA AMIGOS) ==================== -->
+  <div id="referralModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/80 backdrop-blur-md hidden">
+    <div class="bg-white rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 text-center space-y-5 animate-fade-in relative max-h-[90vh] overflow-y-auto">
+      
+      <!-- Close Button -->
+      <button onclick="app.closeReferralModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Images Collage Header -->
+      <div class="grid grid-cols-3 gap-2 rounded-2xl overflow-hidden shadow-sm h-32 relative">
+        <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=300&auto=format&fit=crop&q=80" alt="Amigos" class="w-full h-full object-cover">
+        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=300&auto=format&fit=crop&q=80" alt="Pilates" class="w-full h-full object-cover">
+        <img src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=300&auto=format&fit=crop&q=80" alt="Padel" class="w-full h-full object-cover">
+        
+        <div class="absolute inset-0 bg-slate-950/20 flex items-center justify-center">
+          <div class="w-14 h-14 rounded-full bg-white text-indigo-600 flex items-center justify-center shadow-lg border-2 border-white">
+            <i data-lucide="user-plus" class="w-7 h-7"></i>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-2xl font-black text-slate-900">¡Recomienda a 3 amigos y llévate hasta 50 créditos!</h3>
+        <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+          Llévate <strong>10 créditos de regalo</strong> para tu cuenta por cada amigo que se una a MoveClub. Si consigues que se unan 3 amigos, <strong>¡te damos un bono especial de 50 créditos extra! 🤑</strong>
+        </p>
+      </div>
+
+      <div class="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-left text-xs text-emerald-900 space-y-1.5">
+        <div class="flex items-center font-bold">
+          <i data-lucide="sparkles" class="w-4 h-4 text-emerald-600 mr-1.5"></i>
+          <span>Tu código exclusivo de invitación:</span>
+        </div>
+        <div class="p-2 bg-white rounded-xl border border-emerald-200 font-mono font-extrabold text-indigo-700 text-center text-sm tracking-wider">
+          MOVECLUB-IGNACIA-2026
+        </div>
+        <p class="text-[10px] text-emerald-700 text-center">Válido para toda la red de Osorno y Temuco.</p>
+      </div>
+
+      <button onclick="app.shareReferralLink()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-slate-900 text-white font-extrabold text-sm shadow-xl shadow-indigo-500/20 hover:scale-[1.02] transition flex items-center justify-center space-x-2">
+        <i data-lucide="share-2" class="w-4 h-4"></i>
+        <span>Invitar a un amigo a MoveClub</span>
+      </button>
+
     </div>
   </div>
 

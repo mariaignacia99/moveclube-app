@@ -131,8 +131,8 @@ def seed_data(conn):
         INSERT INTO users (name, email, credits_balance, plan_tier, avatar_url)
         VALUES (?, ?, ?, ?, ?)
     ''', (
-        "Ignacio Sánchez",
-        "ignacio@ejemplo.com",
+        "María Ignacia Sánchez",
+        "sanchezhenriquezmariaignacia99@gmail.com",
         10,
         "Prueba Gratuita (10 créditos / 7 días)",
         "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"

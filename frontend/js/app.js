@@ -141,7 +141,7 @@ const app = {
     this.state.activeView = viewName;
 
     // Hide all view sections
-    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin'];
+    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile'];
     sections.forEach(s => {
       const el = document.getElementById(`view-${s}`);
       const navEl = document.getElementById(`nav-${s}`);
@@ -174,12 +174,56 @@ const app = {
       this.renderPlansView();
     } else if (viewName === 'admin') {
       this.renderAdminView();
+    } else if (viewName === 'profile') {
+      this.renderProfileView();
     } else if (viewName === 'explore' && this.state.viewMode === 'map') {
       setTimeout(() => this.initOrUpdateMap(), 100);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
     lucide.createIcons();
+  },
+
+  renderProfileView() {
+    const u = this.state.user;
+    if (!u) return;
+    document.getElementById('profilePageUserName').innerText = u.name;
+    document.getElementById('profilePageUserEmail').innerText = u.email;
+    document.getElementById('profileCreditsRestantes').innerText = `${u.credits_balance} créditos`;
+    if (u.avatar_url) {
+      document.getElementById('profilePageAvatarImg').src = u.avatar_url;
+    }
+    document.getElementById('profileBookingsCount').innerText = this.state.bookings.length;
+    const favCount = this.state.studios.filter(s => s.is_favorite).length;
+    document.getElementById('profileFavoritesCount').innerText = favCount;
+  },
+
+  openReferralModal() {
+    const modal = document.getElementById('referralModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+  },
+
+  closeReferralModal() {
+    const modal = document.getElementById('referralModal');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  shareReferralLink() {
+    const shareData = {
+      title: 'MoveClub',
+      text: '¡Entrena gratis en MoveClub! Únete con mi código MOVECLUB-IGNACIA-2026 y llévate 10 créditos gratis para 2 clases en Osorno y Temuco.',
+      url: 'https://moveclube-app.onrender.com'
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch(() => {});
+    } else {
+      navigator.clipboard.writeText('https://moveclube-app.onrender.com (Código: MOVECLUB-IGNACIA-2026)');
+      this.showToast('📋 ¡Enlace copiado al portapapeles! Compártelo con tus amigos');
+    }
   },
 
   focusSearch() {
