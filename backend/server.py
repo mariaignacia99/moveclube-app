@@ -578,6 +578,37 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "card_brand": card_brand
                 })
 
+            # POST /api/user/reset_fresh (Empezar de cero sin usuario ni tarjeta)
+            elif path == "/api/user/reset_fresh":
+                conn = get_connection()
+                cursor = conn.cursor()
+                cursor.execute('''
+                    UPDATE users 
+                    SET name = 'Nuevo Usuario',
+                        email = 'nuevo@moveclub.cl',
+                        phone = '',
+                        city = 'Osorno',
+                        credits_balance = 0, 
+                        plan_tier = 'Sin Plan Activo',
+                        card_last4 = NULL,
+                        card_brand = NULL,
+                        card_holder = NULL,
+                        card_expiry = NULL,
+                        trial_ends_at = NULL
+                    WHERE id = 1
+                ''')
+                cursor.execute('DELETE FROM bookings WHERE user_id = 1')
+                cursor.execute('DELETE FROM credit_transactions WHERE user_id = 1')
+                cursor.execute('DELETE FROM favorites WHERE user_id = 1')
+                conn.commit()
+                conn.close()
+                return self._send_json({
+                    "success": True, 
+                    "message": "🔄 Usuario restablecido de cero. ¡Listo para probar el registro!",
+                    "new_balance": 0,
+                    "plan_tier": "Sin Plan Activo"
+                })
+
             # POST /api/user/reset_trial
             elif path == "/api/user/reset_trial":
                 conn = get_connection()

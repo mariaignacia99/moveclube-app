@@ -49,11 +49,28 @@ const app = {
   checkWelcomeModal() {
     const modal = document.getElementById('welcomeTrialModal');
     if (!modal) return;
-    if (!localStorage.getItem('moveclub_welcomed_v2')) {
+    const u = this.state.user;
+    if (!u || !u.card_last4 || u.credits_balance === 0 || !localStorage.getItem('moveclub_welcomed_v2')) {
       setTimeout(() => {
         modal.classList.remove('hidden');
         lucide.createIcons();
-      }, 600);
+      }, 500);
+    }
+  },
+
+  async resetToFreshUser() {
+    localStorage.removeItem('moveclub_welcomed_v2');
+    try {
+      const res = await fetch('/api/user/reset_fresh', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        await this.fetchUser();
+        this.switchView('explore');
+        this.checkWelcomeModal();
+        this.showToast('🔄 ¡Usuario restablecido de cero! Bienvenido.');
+      }
+    } catch(e) {
+      console.error(e);
     }
   },
 
