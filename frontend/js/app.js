@@ -145,15 +145,25 @@ const app = {
     sections.forEach(s => {
       const el = document.getElementById(`view-${s}`);
       const navEl = document.getElementById(`nav-${s}`);
+      const mobNav = document.getElementById(`mobile-nav-${s}`);
       if (el) el.classList.add('hidden');
       if (navEl) navEl.classList.remove('active');
+      if (mobNav) {
+        mobNav.classList.remove('text-slate-900', 'font-black');
+        mobNav.classList.add('text-slate-500', 'font-semibold');
+      }
     });
 
     // Show target section
     const targetSection = document.getElementById(`view-${viewName}`);
     const targetNav = document.getElementById(`nav-${viewName}`);
+    const targetMobNav = document.getElementById(`mobile-nav-${viewName}`);
     if (targetSection) targetSection.classList.remove('hidden');
     if (targetNav) targetNav.classList.add('active');
+    if (targetMobNav) {
+      targetMobNav.classList.add('text-slate-900', 'font-black');
+      targetMobNav.classList.remove('text-slate-500');
+    }
 
     // Trigger specific view loaders
     if (viewName === 'bookings') {
@@ -170,6 +180,15 @@ const app = {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
     lucide.createIcons();
+  },
+
+  focusSearch() {
+    this.switchView('explore');
+    const input = document.getElementById('searchInput');
+    if (input) {
+      input.focus();
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   },
 
   // Switch explore mode between Grid and Leaflet Map
@@ -336,7 +355,6 @@ const app = {
     this.fetchClasses();
   },
 
-  // API: Fetch Studios
   async fetchStudios() {
     try {
       const cityParam = this.state.filters.city ? `?city=${encodeURIComponent(this.state.filters.city)}` : '';
@@ -344,12 +362,60 @@ const app = {
       const data = await res.json();
       if (data.success) {
         this.state.studios = data.studios;
+        this.renderSavedPlaces();
         if (this.state.viewMode === 'map') {
           this.initOrUpdateMap();
         }
       }
     } catch (err) {
       console.error("Error fetching studios:", err);
+    }
+  },
+
+  renderSavedPlaces() {
+    const container = document.getElementById('savedPlacesRow');
+    if (!container) return;
+
+    const favStudios = this.state.studios.filter(s => s.is_favorite);
+    const displayStudios = favStudios.length > 0 ? favStudios : this.state.studios.slice(0, 4);
+
+    let html = '';
+    displayStudios.forEach(s => {
+      html += `
+        <div onclick="app.filterByStudio(${s.id})" class="flex flex-col items-center space-y-1 cursor-pointer shrink-0 w-20 group text-center">
+          <div class="relative">
+            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-200 group-hover:border-indigo-600 transition shadow-sm p-0.5 bg-white">
+              <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover rounded-full">
+            </div>
+            ${s.is_favorite ? '<div class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-rose-500 rounded-full flex items-center justify-center text-white text-[9px] shadow-sm"><i data-lucide="heart" class="w-2.5 h-2.5 fill-white"></i></div>' : ''}
+          </div>
+          <span class="text-[11px] font-bold text-slate-800 truncate w-full group-hover:text-indigo-600 transition">${s.name}</span>
+          <span class="text-[9px] text-slate-400 truncate w-full">${s.neighborhood || s.city}</span>
+        </div>
+      `;
+    });
+
+    for (let i = 0; i < 3; i++) {
+      html += `
+        <div onclick="app.switchView('favorites')" class="flex flex-col items-center space-y-1 cursor-pointer shrink-0 w-16 group text-center">
+          <div class="w-14 h-14 rounded-full border-2 border-dashed border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-400 hover:text-slate-600 transition bg-slate-50/50">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+          </div>
+          <span class="text-[10px] font-semibold text-slate-400">Guardar</span>
+        </div>
+      `;
+    }
+
+    container.innerHTML = html;
+    lucide.createIcons();
+  },
+
+  filterByStudio(studioId) {
+    const studio = this.state.studios.find(s => s.id === studioId);
+    if (studio) {
+      document.getElementById('searchInput').value = studio.name;
+      this.handleSearch(studio.name);
+      window.scrollTo({ top: 350, behavior: 'smooth' });
     }
   },
 

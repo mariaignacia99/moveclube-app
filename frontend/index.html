@@ -153,26 +153,41 @@
       </div>
     </div>
 
-    <!-- Mobile Navigation Bar -->
-    <div class="lg:hidden flex justify-around border-t border-slate-200 bg-white py-2 px-1">
-      <button onclick="app.switchView('explore')" class="mobile-nav flex flex-col items-center text-xs font-semibold text-indigo-600">
-        <i data-lucide="compass" class="w-5 h-5"></i>
-        <span>Explorar</span>
-      </button>
-      <button onclick="app.switchView('bookings')" class="mobile-nav flex flex-col items-center text-xs font-semibold text-slate-500">
-        <i data-lucide="calendar" class="w-5 h-5"></i>
-        <span>Reservas</span>
-      </button>
-      <button onclick="app.switchView('plans')" class="mobile-nav flex flex-col items-center text-xs font-semibold text-slate-500">
-        <i data-lucide="coins" class="w-5 h-5 text-teal-600"></i>
-        <span>Créditos</span>
-      </button>
-      <button onclick="app.switchView('favorites')" class="mobile-nav flex flex-col items-center text-xs font-semibold text-slate-500">
-        <i data-lucide="heart" class="w-5 h-5"></i>
-        <span>Favoritos</span>
-      </button>
-    </div>
   </header>
+
+  <!-- FIXED FLOATING MOBILE BOTTOM NAVIGATION (Estilo Moderno) -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 py-2 px-2 flex justify-around items-center shadow-2xl safe-area-bottom">
+    <button onclick="app.switchView('explore')" id="mobile-nav-explore" class="flex flex-col items-center text-[10px] font-extrabold text-slate-900 group">
+      <div class="p-1 rounded-xl group-hover:bg-slate-100 transition">
+        <i data-lucide="home" class="w-5 h-5 text-slate-900"></i>
+      </div>
+      <span>Inicio</span>
+    </button>
+    <button onclick="app.focusSearch()" id="mobile-nav-search" class="flex flex-col items-center text-[10px] font-bold text-slate-500 hover:text-slate-900 group">
+      <div class="p-1 rounded-xl group-hover:bg-slate-100 transition">
+        <i data-lucide="search" class="w-5 h-5 text-slate-500 group-hover:text-slate-900"></i>
+      </div>
+      <span>Buscar</span>
+    </button>
+    <button onclick="app.switchView('plans')" id="mobile-nav-plans" class="flex flex-col items-center text-[10px] font-extrabold text-teal-700 hover:text-teal-900 group">
+      <div class="p-1 rounded-xl bg-teal-50 text-teal-700 group-hover:bg-teal-100 transition">
+        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+      </div>
+      <span>Añadir créditos</span>
+    </button>
+    <button onclick="app.switchView('bookings')" id="mobile-nav-bookings" class="flex flex-col items-center text-[10px] font-bold text-slate-500 hover:text-slate-900 group">
+      <div class="p-1 rounded-xl group-hover:bg-slate-100 transition">
+        <i data-lucide="calendar" class="w-5 h-5 text-slate-500 group-hover:text-slate-900"></i>
+      </div>
+      <span>Próximas</span>
+    </button>
+    <button onclick="app.switchView('favorites')" id="mobile-nav-favorites" class="flex flex-col items-center text-[10px] font-bold text-slate-500 hover:text-slate-900 group">
+      <div class="p-1 rounded-xl group-hover:bg-slate-100 transition">
+        <i data-lucide="user" class="w-5 h-5 text-slate-500 group-hover:text-slate-900"></i>
+      </div>
+      <span>Perfil</span>
+    </button>
+  </nav>
 
   <!-- MAIN CONTAINER -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -180,36 +195,133 @@
     <!-- ==================== VIEW 1: EXPLORAR / DISCOVERY ==================== -->
     <section id="view-explore" class="space-y-6">
       
-      <!-- Hero Banner -->
-      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl">
-        <div class="relative z-10 max-w-2xl space-y-3">
-          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold backdrop-blur-md">
-            <i data-lucide="gift" class="w-3.5 h-3.5 text-emerald-400"></i>
-            <span>🎁 Prueba Gratuita: 25 Créditos de Regalo de Bienvenida</span>
-          </div>
-          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-            Descubre y reserva en los mejores <span class="bg-gradient-to-r from-indigo-400 to-rose-400 bg-clip-text text-transparent">estudios de fitness</span>
-          </h1>
-          <p class="text-slate-300 text-sm sm:text-base font-normal">
-            Pádel, Pilates Reformer, CrossFit, Yoga, Boxeo y Spas con tus créditos. Igual que ClassPass, sin ataduras ni contratos.
-          </p>
-
-          <!-- Search Bar -->
-          <div class="pt-2 flex flex-col sm:flex-row gap-2 max-w-xl">
-            <div class="relative flex-1">
-              <i data-lucide="search" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-              <input type="text" id="searchInput" oninput="app.handleSearch(this.value)" placeholder="Buscar por clase, estudio, instructor o barrio..." class="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm backdrop-blur-md">
-            </div>
-            <button onclick="app.resetFilters()" class="px-4 py-3 rounded-2xl bg-white text-slate-900 font-bold text-xs hover:bg-slate-100 transition shrink-0 flex items-center justify-center space-x-1.5 shadow-md">
-              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-              <span>Limpiar filtros</span>
-            </button>
+      <!-- Top Title & Search -->
+      <div class="space-y-3 pt-1">
+        <div class="flex items-center justify-between">
+          <h1 class="text-3xl font-black text-slate-900 tracking-tight">Buscar</h1>
+          <!-- City Switcher Pill -->
+          <div class="flex items-center space-x-1.5 bg-slate-100/90 rounded-full px-3 py-1.5 text-xs font-bold text-slate-700 border border-slate-200/80 shadow-sm">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <select id="citySelect" onchange="app.handleCityChange(this.value)" class="bg-transparent text-xs font-bold text-indigo-600 focus:outline-none cursor-pointer">
+              <option value="Osorno" selected>Osorno</option>
+              <option value="Temuco">Temuco</option>
+              <option value="Santiago">Santiago</option>
+              <option value="Puerto Varas">Puerto Varas</option>
+            </select>
           </div>
         </div>
 
-        <!-- Decorative background glow -->
-        <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-indigo-600/30 blur-3xl pointer-events-none"></div>
-        <div class="absolute right-40 -bottom-20 w-60 h-60 rounded-full bg-rose-500/20 blur-3xl pointer-events-none"></div>
+        <!-- Search Bar -->
+        <div class="relative">
+          <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="searchInput" oninput="app.handleSearch(this.value)" placeholder="Yoga, pilates, pádel, crossfit, masajes..." class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white border border-slate-200/90 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm shadow-sm transition">
+        </div>
+      </div>
+
+      <!-- 1. Lugares guardados (Saved Places / Favorites Row) -->
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-extrabold text-slate-900">Lugares guardados</h3>
+          <button onclick="app.switchView('favorites')" class="text-xs font-bold text-slate-700 hover:text-slate-900 flex items-center space-x-0.5">
+            <span>Ver todo</span>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+        <div id="savedPlacesRow" class="flex space-x-4 overflow-x-auto pb-2 scrollbar-none">
+          <!-- Dynamic Saved studios avatars & '+' buttons -->
+        </div>
+      </div>
+
+      <!-- 2. Explorar cerca de ti (Interactive Map Preview Card) -->
+      <div class="space-y-2.5">
+        <h3 class="text-base font-extrabold text-slate-900">Explorar cerca de ti</h3>
+        <div onclick="app.setExploreViewMode('map')" class="relative rounded-3xl overflow-hidden border border-slate-200/80 shadow-md cursor-pointer hover:shadow-lg transition group">
+          <div class="h-32 sm:h-40 w-full bg-slate-100 relative">
+            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=900&auto=format&fit=crop&q=80" alt="Mapa" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-80">
+            <!-- Simulated interactive pin overlays -->
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/20 to-transparent flex items-end p-4">
+              <div class="flex items-center justify-between w-full text-white">
+                <div>
+                  <span class="text-xs font-bold uppercase tracking-wider text-teal-300 flex items-center space-x-1">
+                    <i data-lucide="map" class="w-3.5 h-3.5"></i>
+                    <span>Ver mapa interactivo</span>
+                  </span>
+                  <p class="text-sm font-black mt-0.5">32 estudios y clubes cerca de ti</p>
+                </div>
+                <span class="px-3 py-1.5 rounded-xl bg-white text-slate-900 text-xs font-extrabold shadow-md flex items-center space-x-1 group-hover:bg-slate-100">
+                  <span>Abrir Mapa</span>
+                  <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                </span>
+              </div>
+            </div>
+            <!-- Pin Badge Bubbles -->
+            <div class="absolute top-4 left-1/4 w-8 h-8 rounded-full bg-indigo-600 text-white font-extrabold text-xs flex items-center justify-center shadow-lg border-2 border-white animate-bounce">
+              12
+            </div>
+            <div class="absolute top-6 right-1/3 w-8 h-8 rounded-full bg-teal-600 text-white font-extrabold text-xs flex items-center justify-center shadow-lg border-2 border-white">
+              8
+            </div>
+            <div class="absolute bottom-12 right-1/4 w-7 h-7 rounded-full bg-rose-500 text-white font-extrabold text-xs flex items-center justify-center shadow-lg border-2 border-white">
+              5
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Ver todo (4 Big Visual Pillar Cards Grid) -->
+      <div class="space-y-2.5">
+        <h3 class="text-base font-extrabold text-slate-900">Ver todo</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Card 1: Fitness -->
+          <div onclick="app.handleCategoryFilter('CrossFit')" class="relative h-28 sm:h-36 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&fit=crop&q=80" alt="Fitness" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-3 left-3 text-white">
+              <span class="text-sm sm:text-base font-black">Fitness</span>
+              <p class="text-[10px] sm:text-xs text-slate-300 font-medium">Gym, CrossFit, Box</p>
+            </div>
+          </div>
+
+          <!-- Card 2: Bienestar -->
+          <div onclick="app.handleCategoryFilter('Pilates')" class="relative h-28 sm:h-36 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=500&auto=format&fit=crop&q=80" alt="Bienestar" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-3 left-3 text-white">
+              <span class="text-sm sm:text-base font-black">Bienestar</span>
+              <p class="text-[10px] sm:text-xs text-slate-300 font-medium">Pilates & Yoga</p>
+            </div>
+          </div>
+
+          <!-- Card 3: Pádel & Deportes -->
+          <div onclick="app.handleCategoryFilter('Pádel')" class="relative h-28 sm:h-36 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=500&auto=format&fit=crop&q=80" alt="Deportes" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-3 left-3 text-white">
+              <span class="text-sm sm:text-base font-black">Pádel & Raqueta</span>
+              <p class="text-[10px] sm:text-xs text-slate-300 font-medium">Pádel, Tenis, Escalada</p>
+            </div>
+          </div>
+
+          <!-- Card 4: Spas & Recuperación -->
+          <div onclick="app.handleCategoryFilter('Spas & Bienestar')" class="relative h-28 sm:h-36 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer group">
+            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500&auto=format&fit=crop&q=80" alt="Spas" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute bottom-3 left-3 text-white">
+              <span class="text-sm sm:text-base font-black">Spas & Recuperación</span>
+              <p class="text-[10px] sm:text-xs text-slate-300 font-medium">Saunas, Masajes, Relax</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Categorías Principales & Date Carousel -->
+      <div class="space-y-3 pt-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-extrabold text-slate-900">Categorías principales</h3>
+        </div>
+        <div id="categoryPills" class="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
+          <!-- Category buttons rendered dynamically -->
+        </div>
       </div>
 
       <!-- Date Carousel Selector -->
@@ -223,19 +335,6 @@
         </div>
         <div id="dateCarousel" class="flex space-x-2 overflow-x-auto pb-2 scrollbar-none">
           <!-- Dynamic Date Pills -->
-        </div>
-      </div>
-
-      <!-- Category Filter Pills -->
-      <div class="space-y-2">
-        <div class="flex items-center justify-between">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-1.5">
-            <i data-lucide="layout-grid" class="w-4 h-4 text-indigo-600"></i>
-            <span>Disciplinas</span>
-          </h3>
-        </div>
-        <div id="categoryPills" class="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
-          <!-- Category buttons rendered dynamically -->
         </div>
       </div>
 
@@ -398,7 +497,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
           
-          <!-- Plan Prueba Gratuita (ClassPass Style) -->
+          <!-- Plan Prueba Gratuita MoveClub -->
           <div class="bg-gradient-to-b from-emerald-50 to-white rounded-3xl p-6 border-2 border-emerald-500 shadow-md relative flex flex-col justify-between">
             <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-emerald-600 text-white text-[11px] font-extrabold uppercase tracking-wider shadow-sm">
               🎁 Prueba Gratis
@@ -1050,7 +1149,7 @@
     </div>
   </div>
 
-  <!-- ==================== CLASSPASS STYLE WELCOME MODAL ==================== -->
+  <!-- ==================== MOVECLUB WELCOME MODAL ==================== -->
   <div id="welcomeTrialModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md hidden">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 text-center space-y-5 animate-fade-in relative">
       <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-600 to-indigo-600 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/25">
@@ -1060,7 +1159,7 @@
         <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase tracking-wider mb-2">🎁 Bienvenido a MoveClub</span>
         <h3 class="text-2xl font-black text-slate-900">¡Te regalamos 25 Créditos Gratis!</h3>
         <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-          Igual que en ClassPass, tu membresía incluye una <strong>Prueba Gratuita de 25 créditos</strong> para que reserves tus primeras clases en los mejores estudios de <strong>Pádel, Pilates, CrossFit, Yoga y Gym</strong> en Osorno y Temuco.
+          Tu membresía incluye una <strong>Prueba Gratuita de 25 créditos</strong> para que reserves tus primeras clases en los mejores estudios de <strong>Pádel, Pilates, CrossFit, Yoga y Gym</strong> en Osorno y Temuco.
         </p>
       </div>
 

@@ -126,7 +126,7 @@ def seed_data(conn):
     cursor = conn.cursor()
     print("Sembrando red integral de MoveClub: Osorno, Temuco, Santiago y Puerto Varas...")
 
-    # 1. Default User (Prueba Gratuita estilo ClassPass)
+    # 1. Default User (Prueba Gratuita MoveClub)
     cursor.execute('''
         INSERT INTO users (name, email, credits_balance, plan_tier, avatar_url)
         VALUES (?, ?, ?, ?, ?)
@@ -142,7 +142,7 @@ def seed_data(conn):
     cursor.execute('''
         INSERT INTO credit_transactions (user_id, amount, type, description)
         VALUES (?, ?, ?, ?)
-    ''', (user_id, 25, "topup", "🎁 Bono de Bienvenida ClassPass: 25 Créditos Gratis de Prueba"))
+    ''', (user_id, 25, "topup", "🎁 Bono de Bienvenida MoveClub: 25 Créditos Gratis de Prueba"))
 
     # 2. Comprehensive Studios List
     studios = [

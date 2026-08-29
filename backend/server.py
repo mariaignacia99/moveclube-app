@@ -530,7 +530,7 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "plan_tier": user["plan_tier"]
                 })
 
-            # 5. POST /api/user/reset_trial (Activar 25 Créditos de Prueba ClassPass)
+            # 5. POST /api/user/reset_trial (Activar 25 Créditos de Prueba MoveClub)
             elif path == "/api/user/reset_trial":
                 conn = get_connection()
                 cursor = conn.cursor()
@@ -542,7 +542,7 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                 ''')
                 cursor.execute('''
                     INSERT INTO credit_transactions (user_id, amount, type, description)
-                    VALUES (1, 25, 'topup', '🎁 Bono de Bienvenida ClassPass: 25 Créditos Gratis de Prueba')
+                    VALUES (1, 25, 'topup', '🎁 Bono de Bienvenida MoveClub: 25 Créditos Gratis de Prueba')
                 ''')
                 conn.commit()
                 conn.close()
