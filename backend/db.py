@@ -27,9 +27,16 @@ def init_db(force_reseed=False):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
-        credits_balance INTEGER DEFAULT 45,
-        plan_tier TEXT DEFAULT 'Pro (50 créditos/mes)',
+        phone TEXT,
+        city TEXT DEFAULT 'Osorno',
+        credits_balance INTEGER DEFAULT 10,
+        plan_tier TEXT DEFAULT 'Prueba Gratuita (10 créditos / 7 días)',
         avatar_url TEXT,
+        card_last4 TEXT,
+        card_brand TEXT,
+        card_holder TEXT,
+        card_expiry TEXT,
+        trial_ends_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -114,6 +121,22 @@ def init_db(force_reseed=False):
     ''')
 
     conn.commit()
+
+    # Dynamic migrations
+    for col in [
+        ("phone", "TEXT"),
+        ("city", "TEXT DEFAULT 'Osorno'"),
+        ("card_last4", "TEXT"),
+        ("card_brand", "TEXT"),
+        ("card_holder", "TEXT"),
+        ("card_expiry", "TEXT"),
+        ("trial_ends_at", "TIMESTAMP")
+    ]:
+        try:
+            cursor.execute(f"ALTER TABLE users ADD COLUMN {col[0]} {col[1]}")
+            conn.commit()
+        except Exception:
+            pass
 
     # Check if seed data exists
     cursor.execute("SELECT COUNT(*) FROM studios")

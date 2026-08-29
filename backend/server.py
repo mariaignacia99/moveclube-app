@@ -530,7 +530,55 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "plan_tier": user["plan_tier"]
                 })
 
-            # 5. POST /api/user/reset_trial (Activar 10 Créditos de Prueba MoveClub - 7 Días)
+            # 5. POST /api/user/register_trial (Registro de Cliente + Enlace de Tarjeta para Prueba Gratuita 7 Días)
+            elif path == "/api/user/register_trial":
+                name = body.get("name", "María Ignacia Sánchez")
+                email = body.get("email", "sanchezhenriquezmariaignacia99@gmail.com")
+                phone = body.get("phone", "+56 9 8765 4321")
+                city = body.get("city", "Osorno")
+                card_number = body.get("card_number", "4532 8912 3456 7890")
+                card_holder = body.get("card_holder", name)
+                card_expiry = body.get("card_expiry", "12/28")
+
+                digits_only = "".join(filter(str.isdigit, str(card_number)))
+                card_last4 = digits_only[-4:] if len(digits_only) >= 4 else "4242"
+                card_brand = "Visa" if str(card_number).startswith("4") else "Mastercard"
+
+                conn = get_connection()
+                cursor = conn.cursor()
+                cursor.execute('''
+                    UPDATE users 
+                    SET name = ?,
+                        email = ?,
+                        phone = ?,
+                        city = ?,
+                        credits_balance = 10,
+                        plan_tier = 'Prueba Gratuita (10 créditos / 7 días)',
+                        card_last4 = ?,
+                        card_brand = ?,
+                        card_holder = ?,
+                        card_expiry = ?,
+                        trial_ends_at = datetime('now', '+7 days')
+                    WHERE id = 1
+                ''', (name, email, phone, city, card_last4, card_brand, card_holder, card_expiry))
+
+                cursor.execute('''
+                    INSERT INTO credit_transactions (user_id, amount, type, description)
+                    VALUES (1, 10, 'topup', ?)
+                ''', (f"💳 Activación Prueba 7 Días: Tarjeta {card_brand} •••• {card_last4} enlazada (10 créditos)",))
+
+                conn.commit()
+                conn.close()
+                return self._send_json({
+                    "success": True, 
+                    "message": f"💳 ¡Tarjeta {card_brand} •••• {card_last4} enlazada con éxito! Tus 10 créditos gratis están listos.",
+                    "new_balance": 10,
+                    "plan_tier": "Prueba Gratuita (10 créditos / 7 días)",
+                    "card_last4": card_last4,
+                    "card_brand": card_brand
+                })
+
+            # POST /api/user/reset_trial
             elif path == "/api/user/reset_trial":
                 conn = get_connection()
                 cursor = conn.cursor()

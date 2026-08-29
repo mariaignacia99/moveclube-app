@@ -61,26 +61,84 @@ const app = {
     const modal = document.getElementById('welcomeTrialModal');
     if (modal) modal.classList.add('hidden');
     localStorage.setItem('moveclub_welcomed_v2', 'true');
-    try {
-      const res = await fetch('/api/user/reset_trial', { method: 'POST' });
-      const data = await res.json();
-      if (data.success) {
-        await this.fetchUser();
-      }
-    } catch(e) {}
-    this.showToast('🎁 ¡10 Créditos de Bienvenida listos en tu cuenta (2 clases gratis)!');
+    this.openTrialRegisterModal();
   },
 
-  async claimFreeTrial() {
+  claimFreeTrial() {
+    const welcome = document.getElementById('welcomeTrialModal');
+    if (welcome) welcome.classList.add('hidden');
+    this.openTrialRegisterModal();
+  },
+
+  openTrialRegisterModal() {
+    const modal = document.getElementById('trialRegisterModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+  },
+
+  closeTrialRegisterModal() {
+    const modal = document.getElementById('trialRegisterModal');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  formatCardNumber(input) {
+    let value = input.value.replace(/\D/g, '');
+    let formatted = '';
+    for (let i = 0; i < value.length; i++) {
+      if (i > 0 && i % 4 === 0) formatted += ' ';
+      formatted += value[i];
+    }
+    input.value = formatted;
+  },
+
+  formatExpiry(input) {
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 2) {
+      input.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+    } else {
+      input.value = value;
+    }
+  },
+
+  async submitTrialRegistration(e) {
+    e.preventDefault();
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const city = document.getElementById('regCity').value;
+    const cardNumber = document.getElementById('regCardNumber').value.trim();
+    const cardExpiry = document.getElementById('regCardExpiry').value.trim();
+
     try {
-      const res = await fetch('/api/user/reset_trial', { method: 'POST' });
+      const res = await fetch('/api/user/register_trial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          city,
+          card_number: cardNumber,
+          card_expiry: cardExpiry
+        })
+      });
       const data = await res.json();
       if (data.success) {
+        this.closeTrialRegisterModal();
         await this.fetchUser();
+        this.switchView('explore');
+        this.showToast(`💳 ¡Tarjeta enlazada con éxito! Tus 10 créditos gratis están listos.`);
+      } else {
+        this.showToast(`⚠️ Error: ${data.error || 'No se pudo procesar el registro'}`);
       }
-    } catch(e) {}
-    this.switchView('explore');
-    this.showToast('🎁 ¡Prueba Gratuita de 10 créditos activa por 7 días! Elige tus 2 clases.');
+    } catch (err) {
+      this.closeTrialRegisterModal();
+      this.showToast('💳 ¡Tarjeta enlazada y 10 créditos listos!');
+      await this.fetchUser();
+      this.switchView('explore');
+    }
   },
 
   // Setup Date Carousel
