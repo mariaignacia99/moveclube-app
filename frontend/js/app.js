@@ -207,7 +207,7 @@ const app = {
       if (el) el.classList.add('hidden');
       if (navEl) navEl.classList.remove('active');
       if (mobNav) {
-        mobNav.classList.remove('text-slate-900', 'font-black');
+        mobNav.classList.remove('bg-slate-100', 'rounded-2xl', 'text-slate-900', 'font-black');
         mobNav.classList.add('text-slate-500', 'font-semibold');
       }
     });
@@ -219,7 +219,7 @@ const app = {
     if (targetSection) targetSection.classList.remove('hidden');
     if (targetNav) targetNav.classList.add('active');
     if (targetMobNav) {
-      targetMobNav.classList.add('text-slate-900', 'font-black');
+      targetMobNav.classList.add('bg-slate-100', 'rounded-2xl', 'text-slate-900', 'font-black');
       targetMobNav.classList.remove('text-slate-500');
     }
 
