@@ -245,15 +245,20 @@ const app = {
   renderProfileView() {
     const u = this.state.user;
     if (!u) return;
-    document.getElementById('profilePageUserName').innerText = u.name;
-    document.getElementById('profilePageUserEmail').innerText = u.email;
-    document.getElementById('profileCreditsRestantes').innerText = `${u.credits_balance} créditos`;
-    if (u.avatar_url) {
-      document.getElementById('profilePageAvatarImg').src = u.avatar_url;
-    }
-    document.getElementById('profileBookingsCount').innerText = this.state.bookings.length;
-    const favCount = this.state.studios.filter(s => s.is_favorite).length;
-    document.getElementById('profileFavoritesCount').innerText = favCount;
+    const nameEl = document.getElementById('profilePageUserName');
+    if (nameEl) nameEl.innerText = u.name;
+    const emailEl = document.getElementById('profilePageUserEmail');
+    if (emailEl) emailEl.innerText = u.email;
+    const credEl = document.getElementById('profileCreditsRestantes');
+    if (credEl) credEl.innerText = `${u.credits_balance} créditos`;
+    const vigEl = document.getElementById('profileVigenciaText');
+    if (vigEl) vigEl.innerText = '7 días';
+    const bookEl = document.getElementById('profileBookingsCount');
+    if (bookEl) bookEl.innerText = this.state.bookings ? this.state.bookings.length : 0;
+    const favCount = this.state.studios ? this.state.studios.filter(s => s.is_favorite).length : 0;
+    const favEl = document.getElementById('profileFavoritesCount');
+    if (favEl) favEl.innerText = favCount;
+    lucide.createIcons();
   },
 
   openReferralModal() {
