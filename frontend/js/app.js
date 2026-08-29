@@ -304,6 +304,10 @@ const app = {
 
   handleCityChange(city) {
     this.state.filters.city = city;
+    const navSel = document.getElementById('citySelectNavbar');
+    const searchSel = document.getElementById('citySelect');
+    if (navSel) navSel.value = city;
+    if (searchSel) searchSel.value = city;
     this.fetchStudios();
     this.fetchClasses();
     if (this.state.viewMode === 'map') {

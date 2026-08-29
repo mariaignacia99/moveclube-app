@@ -72,11 +72,8 @@
           <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-slate-100/90 text-xs font-bold text-slate-700 border border-slate-200 shadow-sm">
             <i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-600"></i>
             <select id="citySelectNavbar" onchange="app.handleCityChange(this.value)" class="bg-transparent font-extrabold text-indigo-950 focus:outline-none cursor-pointer">
-              <option value="Osorno">📍 Osorno</option>
+              <option value="Osorno" selected>📍 Osorno</option>
               <option value="Temuco">📍 Temuco</option>
-              <option value="Santiago">📍 Santiago</option>
-              <option value="Puerto Varas">📍 Puerto Varas</option>
-              <option value="all">📍 Todas las Ciudades</option>
             </select>
           </div>
         </div>
@@ -205,8 +202,6 @@
             <select id="citySelect" onchange="app.handleCityChange(this.value)" class="bg-transparent text-xs font-bold text-indigo-600 focus:outline-none cursor-pointer">
               <option value="Osorno" selected>Osorno</option>
               <option value="Temuco">Temuco</option>
-              <option value="Santiago">Santiago</option>
-              <option value="Puerto Varas">Puerto Varas</option>
             </select>
           </div>
         </div>
