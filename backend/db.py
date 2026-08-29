@@ -138,6 +138,14 @@ def init_db(force_reseed=False):
         except Exception:
             pass
 
+    # Ensure any stale 70 credits demo state is cleaned to 0 credits (fresh state)
+    try:
+        cursor.execute("UPDATE users SET credits_balance = 0, plan_tier = 'Sin Plan Activo', card_last4 = NULL WHERE credits_balance = 70")
+        cursor.execute("DELETE FROM bookings WHERE user_id = 1 AND EXISTS (SELECT 1 FROM users WHERE id = 1 AND credits_balance = 0)")
+        conn.commit()
+    except Exception:
+        pass
+
     # Check if seed data exists
     cursor.execute("SELECT COUNT(*) FROM studios")
     if cursor.fetchone()[0] == 0:
