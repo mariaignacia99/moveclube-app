@@ -1,0 +1,12 @@
+{
+  "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/ios/MoveClub/AppDelegate.swift" : {
+    "abi-baseline-json" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub.abi.json",
+    "const-values" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary.swiftconstvalues",
+    "dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary.d",
+    "diagnostics" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary.dia",
+    "objc-header" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-Swift.h",
+    "swiftdoc" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub.swiftdoc",
+    "swiftmodule" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub.swiftmodule",
+    "swiftsourceinfo" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub.swiftsourceinfo"
+  }
+}

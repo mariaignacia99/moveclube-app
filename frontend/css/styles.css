@@ -26,13 +26,28 @@
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+html {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  -webkit-text-size-adjust: 100%;
+  touch-action: pan-y;
+}
+
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Custom Scrollbars */

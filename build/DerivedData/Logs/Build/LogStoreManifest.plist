@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>logFormatVersion</key>
+	<integer>12</integer>
+	<key>logs</key>
+	<dict>
+		<key>8F145DC6-2137-4142-9666-B21073313FA9</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>8F145DC6-2137-4142-9666-B21073313FA9.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>1</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>MoveClub project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>MoveClub</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Archiving project MoveClub with scheme MoveClub</string>
+			<key>timeStartedRecording</key>
+			<real>809666139.53361499</real>
+			<key>timeStoppedRecording</key>
+			<real>809666141.23850906</real>
+			<key>title</key>
+			<string>Archiving project MoveClub with scheme MoveClub</string>
+			<key>uniqueIdentifier</key>
+			<string>8F145DC6-2137-4142-9666-B21073313FA9</string>
+		</dict>
+		<key>A0D51B17-B64A-4952-87C0-B0A6585E29DF</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>A0D51B17-B64A-4952-87C0-B0A6585E29DF.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>1</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>MoveClub project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>MoveClub</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Archiving project MoveClub with scheme MoveClub</string>
+			<key>timeStartedRecording</key>
+			<real>809666503.98208499</real>
+			<key>timeStoppedRecording</key>
+			<real>809666569.72779</real>
+			<key>title</key>
+			<string>Archiving project MoveClub with scheme MoveClub</string>
+			<key>uniqueIdentifier</key>
+			<string>A0D51B17-B64A-4952-87C0-B0A6585E29DF</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

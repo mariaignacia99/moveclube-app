@@ -32,9 +32,10 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate {
         webView.translatesAutoresizingMaskIntoConstraints = false
         webView.navigationDelegate = self
         webView.uiDelegate = self
-        webView.allowsBackForwardNavigationGestures = true
         webView.backgroundColor = UIColor(red: 15/255, green: 23/255, blue: 42/255, alpha: 1.0)
         webView.isOpaque = false
+        webView.scrollView.alwaysBounceHorizontal = false
+        webView.scrollView.showsHorizontalScrollIndicator = false
         webView.scrollView.contentInsetAdjustmentBehavior = .never
 
         view.addSubview(webView)

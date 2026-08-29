@@ -1,0 +1,71 @@
+{
+  "buildCommand" : {
+    "command" : "build",
+    "skipDependencies" : false,
+    "style" : "buildOnly"
+  },
+  "configuredTargets" : [
+    {
+      "guid" : "d4219bc66e445c266dadb57be77f9a80c76b7e96015827c2c1c8da3c17d3e0d4"
+    }
+  ],
+  "containerPath" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/ios/MoveClub.xcodeproj",
+  "continueBuildingAfterErrors" : false,
+  "dependencyScope" : "workspace",
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "activeArchitecture" : "undefined_arch",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : true,
+      "hostTargetedPlatform" : null,
+      "platform" : "iphoneos",
+      "sdk" : "iphoneos26.5",
+      "sdkVariant" : "iphoneos",
+      "supportedArchitectures" : [
+        "armv4t",
+        "armv5",
+        "armv6",
+        "armv7",
+        "armv7f",
+        "armv7s",
+        "armv7k",
+        "arm64",
+        "arm64e"
+      ],
+      "targetArchitecture" : "undefined_arch"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Products",
+      "derivedDataPath" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Index.noindex/PrecompiledHeaders",
+      "pchPath" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "commandLine" : {
+        "table" : {
+          "CODE_SIGNING_ALLOWED" : "NO"
+        }
+      },
+      "synthesized" : {
+        "table" : {
+          "ACTION" : "build",
+          "ENABLE_PREVIEWS" : "NO",
+          "ENABLE_XOJIT_PREVIEWS" : "YES",
+          "ONLY_ACTIVE_ARCH" : "YES"
+        }
+      }
+    }
+  },
+  "schemeCommand" : "launch",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

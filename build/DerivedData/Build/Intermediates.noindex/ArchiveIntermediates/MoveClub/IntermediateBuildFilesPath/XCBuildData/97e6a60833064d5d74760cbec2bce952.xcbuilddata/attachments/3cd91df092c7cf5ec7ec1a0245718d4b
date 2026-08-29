@@ -1,0 +1,31 @@
+{
+  "" : {
+    "const-values" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary.swiftconstvalues",
+    "dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary.d",
+    "diagnostics" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary.dia",
+    "emit-module-dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary-emit-module.dia",
+    "pch" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary.swiftdeps"
+  },
+  "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  },
+  "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/ios/MoveClub/AppDelegate.swift" : {
+    "index-unit-output-path" : "/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate.o"
+  },
+  "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/ios/MoveClub/SceneDelegate.swift" : {
+    "index-unit-output-path" : "/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate.o",
+    "llvm-bc" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate.bc",
+    "object" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate.o"
+  },
+  "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/ios/MoveClub/ViewController.swift" : {
+    "index-unit-output-path" : "/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController.o",
+    "llvm-bc" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController.bc",
+    "object" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/MoveClub/IntermediateBuildFilesPath/MoveClub.build/Release-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController.o"
+  }
+}

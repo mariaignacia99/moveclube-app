@@ -1,0 +1,49 @@
+{
+  "" : {
+    "diagnostics" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary.dia",
+    "emit-module-dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary-emit-module.dia",
+    "pch" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/MoveClub-primary.swiftdeps"
+  },
+  "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/ios/MoveClub/AppDelegate.swift" : {
+    "const-values" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate.swiftconstvalues",
+    "dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate.d",
+    "diagnostics" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate.dia",
+    "index-unit-output-path" : "/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate.o",
+    "swift-dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate.swiftdeps",
+    "swiftmodule" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/AppDelegate~partial.swiftmodule"
+  },
+  "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/ios/MoveClub/SceneDelegate.swift" : {
+    "const-values" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate.swiftconstvalues",
+    "dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate.d",
+    "diagnostics" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate.dia",
+    "index-unit-output-path" : "/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate.o",
+    "llvm-bc" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate.bc",
+    "object" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate.o",
+    "swift-dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate.swiftdeps",
+    "swiftmodule" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/SceneDelegate~partial.swiftmodule"
+  },
+  "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/ios/MoveClub/ViewController.swift" : {
+    "const-values" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController.swiftconstvalues",
+    "dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController.d",
+    "diagnostics" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController.dia",
+    "index-unit-output-path" : "/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController.o",
+    "llvm-bc" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController.bc",
+    "object" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController.o",
+    "swift-dependencies" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController.swiftdeps",
+    "swiftmodule" : "/Users/nachasanchezhenriquez/.gemini/antigravity/scratch/fitpass-app/build/DerivedData/Build/Intermediates.noindex/MoveClub.build/Debug-iphoneos/MoveClub.build/Objects-normal/arm64/ViewController~partial.swiftmodule"
+  }
+}
