@@ -42,7 +42,9 @@
 
   <!-- PWA & Mobile Web App Meta -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#4f46e5">
+  <link rel="icon" type="image/png" href="/images/app_icon.png">
+  <link rel="apple-touch-icon" href="/images/app_icon.png">
+  <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="MoveClub">
@@ -59,12 +61,13 @@
         
         <!-- Brand & Location -->
         <div class="flex items-center space-x-6">
-          <div class="flex items-center space-x-2.5 cursor-pointer" onclick="app.switchView('explore')">
-            <div id="navbarLogoIcon" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center text-white shadow-md shadow-blue-200">
-              <i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i>
+          <div class="flex items-center space-x-2.5 cursor-pointer group" onclick="app.switchView('explore')">
+            <div id="navbarLogoIcon" class="w-10 h-10 rounded-xl overflow-hidden shadow-md shadow-cyan-500/20 border border-slate-800 bg-black flex items-center justify-center p-0.5 group-hover:scale-105 transition">
+              <img src="/images/app_icon.png" alt="MoveClub Logo" class="w-full h-full object-cover rounded-lg">
             </div>
-            <div>
-              <span id="navbarBrandText" class="text-2xl font-black tracking-tight text-slate-900">Move<span class="text-blue-600">Club</span></span>
+            <div class="flex flex-col">
+              <span id="navbarBrandText" class="text-2xl font-black tracking-tight text-slate-900 leading-none">MOVE<span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">CLUB</span></span>
+              <span class="text-[7.5px] font-extrabold tracking-widest text-slate-500 uppercase mt-0.5">ENTRENA • CONECTA • SUPÉRATE</span>
             </div>
           </div>
 
@@ -1403,8 +1406,8 @@
   <!-- ==================== MOVECLUB WELCOME MODAL ==================== -->
   <div id="welcomeTrialModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md hidden">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 text-center space-y-5 animate-fade-in relative">
-      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-600 to-indigo-600 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/25">
-        <i data-lucide="gift" class="w-8 h-8 text-white"></i>
+      <div class="w-20 h-20 rounded-3xl overflow-hidden bg-black mx-auto shadow-xl shadow-cyan-500/20 border-2 border-slate-800 p-1">
+        <img src="/images/app_icon.png" alt="MoveClub Logo" class="w-full h-full object-cover rounded-2xl">
       </div>
       <div>
         <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase tracking-wider mb-2">🎁 Bienvenido a MoveClub</span>
