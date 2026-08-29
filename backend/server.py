@@ -530,7 +530,30 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "plan_tier": user["plan_tier"]
                 })
 
-            # 5. POST /api/favorites/toggle
+            # 5. POST /api/user/reset_trial (Activar 25 Créditos de Prueba ClassPass)
+            elif path == "/api/user/reset_trial":
+                conn = get_connection()
+                cursor = conn.cursor()
+                cursor.execute('''
+                    UPDATE users 
+                    SET credits_balance = 25, 
+                        plan_tier = 'Prueba Gratuita (25 créditos de regalo)'
+                    WHERE id = 1
+                ''')
+                cursor.execute('''
+                    INSERT INTO credit_transactions (user_id, amount, type, description)
+                    VALUES (1, 25, 'topup', '🎁 Bono de Bienvenida ClassPass: 25 Créditos Gratis de Prueba')
+                ''')
+                conn.commit()
+                conn.close()
+                return self._send_json({
+                    "success": True, 
+                    "message": "🎁 ¡25 Créditos Gratis de Prueba activados con éxito!",
+                    "new_balance": 25,
+                    "plan_tier": "Prueba Gratuita (25 créditos de regalo)"
+                })
+
+            # 6. POST /api/favorites/toggle
             elif path == "/api/favorites/toggle":
                 studio_id = body.get("studio_id")
                 if not studio_id:

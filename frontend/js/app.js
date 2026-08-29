@@ -57,14 +57,28 @@ const app = {
     }
   },
 
-  closeWelcomeModal() {
+  async closeWelcomeModal() {
     const modal = document.getElementById('welcomeTrialModal');
     if (modal) modal.classList.add('hidden');
     localStorage.setItem('moveclub_welcomed_v2', 'true');
+    try {
+      const res = await fetch('/api/user/reset_trial', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        await this.fetchUser();
+      }
+    } catch(e) {}
     this.showToast('🎁 ¡25 Créditos de Bienvenida listos en tu cuenta!');
   },
 
-  claimFreeTrial() {
+  async claimFreeTrial() {
+    try {
+      const res = await fetch('/api/user/reset_trial', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        await this.fetchUser();
+      }
+    } catch(e) {}
     this.switchView('explore');
     this.showToast('🎁 ¡Tu Prueba Gratuita de 25 créditos está activa! Elige tu primera clase.');
   },
