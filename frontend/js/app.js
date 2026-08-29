@@ -291,6 +291,38 @@ const app = {
     if (modal) modal.classList.add('hidden');
   },
 
+  openBrandLogosModal() {
+    const modal = document.getElementById('brandLogosModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+  },
+
+  closeBrandLogosModal() {
+    const modal = document.getElementById('brandLogosModal');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  setBrandTheme(themeName) {
+    const logoIcon = document.getElementById('navbarLogoIcon');
+    const brandText = document.getElementById('navbarBrandText');
+    if (themeName === 'cobalt') {
+      if (logoIcon) logoIcon.className = "w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center text-white shadow-md shadow-blue-200";
+      if (brandText) brandText.innerHTML = `Move<span class="text-blue-600">Club</span>`;
+      this.showToast('🎨 Logo aplicado: Opción 1 (Azul Cobalto & Cian)');
+    } else if (themeName === 'lime') {
+      if (logoIcon) logoIcon.className = "w-10 h-10 rounded-xl bg-slate-900 border border-lime-400/40 flex items-center justify-center text-lime-400 shadow-md shadow-lime-500/20";
+      if (brandText) brandText.innerHTML = `Move<span class="text-lime-500">Club</span>`;
+      this.showToast('🎨 Logo aplicado: Opción 2 (Negro Carbón & Lima Flúor)');
+    } else if (themeName === 'sunset') {
+      if (logoIcon) logoIcon.className = "w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-orange-200";
+      if (brandText) brandText.innerHTML = `Move<span class="text-orange-500">Club</span>`;
+      this.showToast('🎨 Logo aplicado: Opción 3 (Coral Sunset & Púrpura)');
+    }
+    this.closeBrandLogosModal();
+  },
+
   shareReferralLink() {
     const shareData = {
       title: 'MoveClub',

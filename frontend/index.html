@@ -1052,7 +1052,19 @@
           </div>
         </div>
 
-        <!-- 8. Modo Estudio Partner -->
+        <!-- 8. Ver Propuestas de Logotipo -->
+        <div onclick="app.openBrandLogosModal()" class="px-5 py-4 flex items-center justify-between cursor-pointer bg-gradient-to-r from-blue-50/90 to-indigo-50/90 hover:from-blue-100 hover:to-indigo-100 transition">
+          <div class="flex items-center space-x-3.5 text-blue-900 font-black">
+            <i data-lucide="palette" class="w-5 h-5 text-blue-600"></i>
+            <span>🎨 Ver las 3 Propuestas de Logotipo</span>
+          </div>
+          <div class="flex items-center space-x-1 text-xs font-black text-blue-600">
+            <span>Ver</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-blue-500"></i>
+          </div>
+        </div>
+
+        <!-- 9. Modo Estudio Partner -->
         <div onclick="app.switchView('admin')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
             <i data-lucide="store" class="w-5 h-5 text-slate-900"></i>
@@ -1061,7 +1073,7 @@
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
         </div>
 
-        <!-- 9. Ajustes -->
+        <!-- 10. Ajustes -->
         <div onclick="app.showToast('Configuración de cuenta guardada')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
             <i data-lucide="settings" class="w-5 h-5 text-slate-900"></i>
@@ -1571,6 +1583,88 @@
             <span>Enlazar Tarjeta y Activar 10 Créditos</span>
           </button>
         </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 8. BRAND LOGOS SHOWCASE MODAL ==================== -->
+  <div id="brandLogosModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity" onclick="app.closeBrandLogosModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-6 sm:p-8 space-y-5 animate-fade-in">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-wider text-blue-600">Identidad MoveClub</span>
+            <h3 class="text-lg font-black text-slate-900">3 Propuestas de Logotipo</h3>
+          </div>
+          <button onclick="app.closeBrandLogosModal()" class="text-slate-400 hover:text-slate-600 p-1">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- 3 Logo Cards -->
+        <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+          
+          <!-- Card Option 1: Cobalt & Cyan -->
+          <div class="border-2 border-blue-600/30 rounded-2xl p-3.5 bg-blue-50/30 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-black">OPCIÓN 1 (RECOMENDADA)</span>
+              <span class="text-[11px] font-bold text-blue-700">98% Conversión</span>
+            </div>
+            <div class="w-full aspect-square rounded-xl overflow-hidden shadow-sm border border-blue-100 bg-white">
+              <img src="/images/logo_option1.jpg" alt="Logo Opción 1 - Azul Cobalto y Cian" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <h4 class="font-black text-xs text-slate-900">Azul Cobalto Eléctrico & Cian Neón</h4>
+              <p class="text-[11px] text-slate-600 mt-0.5">Máxima confianza bancaria y solidez al ingresar tarjeta de crédito.</p>
+            </div>
+            <button onclick="app.setBrandTheme('cobalt')" class="w-full py-2.5 rounded-xl bg-blue-600 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 hover:bg-blue-700 transition">
+              ✓ Aplicar Opción 1
+            </button>
+          </div>
+
+          <!-- Card Option 2: Dark Lime -->
+          <div class="border border-slate-700 rounded-2xl p-3.5 bg-slate-900 text-white space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded-full bg-lime-400 text-slate-950 text-[10px] font-black">OPCIÓN 2</span>
+              <span class="text-[11px] font-bold text-lime-400">Estilo Nike / Strava</span>
+            </div>
+            <div class="w-full aspect-square rounded-xl overflow-hidden shadow-sm border border-slate-700 bg-black">
+              <img src="/images/logo_option2.jpg" alt="Logo Opción 2 - Negro y Lima Flúor" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <h4 class="font-black text-xs text-white">Negro Carbón Mate & Lima Flúor</h4>
+              <p class="text-[11px] text-slate-300 mt-0.5">Alto rendimiento atlético y máxima visibilidad en iPhone.</p>
+            </div>
+            <button onclick="app.setBrandTheme('lime')" class="w-full py-2.5 rounded-xl bg-lime-400 text-slate-950 font-black text-xs hover:bg-lime-300 transition">
+              ✓ Aplicar Opción 2
+            </button>
+          </div>
+
+          <!-- Card Option 3: Sunset Coral -->
+          <div class="border border-orange-200 rounded-2xl p-3.5 bg-orange-50/30 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded-full bg-orange-500 text-white text-[10px] font-black">OPCIÓN 3</span>
+              <span class="text-[11px] font-bold text-orange-600">Lifestyle & Comunidad</span>
+            </div>
+            <div class="w-full aspect-square rounded-xl overflow-hidden shadow-sm border border-orange-100 bg-white">
+              <img src="/images/logo_option3.jpg" alt="Logo Opción 3 - Coral Sunset y Púrpura" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <h4 class="font-black text-xs text-slate-900">Naranja Coral Sunset & Púrpura</h4>
+              <p class="text-[11px] text-slate-600 mt-0.5">Energía, entusiasmo y equilibrio perfecto con Pilates, Yoga y Spas.</p>
+            </div>
+            <button onclick="app.setBrandTheme('sunset')" class="w-full py-2.5 rounded-xl bg-orange-500 text-white font-extrabold text-xs shadow-md shadow-orange-500/20 hover:bg-orange-600 transition">
+              ✓ Aplicar Opción 3
+            </button>
+          </div>
+
+        </div>
 
       </div>
     </div>
