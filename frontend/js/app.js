@@ -42,6 +42,31 @@ const app = {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration:', err));
     }
+
+    this.checkWelcomeModal();
+  },
+
+  checkWelcomeModal() {
+    const modal = document.getElementById('welcomeTrialModal');
+    if (!modal) return;
+    if (!localStorage.getItem('moveclub_welcomed_v2')) {
+      setTimeout(() => {
+        modal.classList.remove('hidden');
+        lucide.createIcons();
+      }, 600);
+    }
+  },
+
+  closeWelcomeModal() {
+    const modal = document.getElementById('welcomeTrialModal');
+    if (modal) modal.classList.add('hidden');
+    localStorage.setItem('moveclub_welcomed_v2', 'true');
+    this.showToast('🎁 ¡25 Créditos de Bienvenida listos en tu cuenta!');
+  },
+
+  claimFreeTrial() {
+    this.switchView('explore');
+    this.showToast('🎁 ¡Tu Prueba Gratuita de 25 créditos está activa! Elige tu primera clase.');
   },
 
   // Setup Date Carousel
