@@ -74,6 +74,11 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", content_type)
                 self.send_header("Content-Length", str(len(content)))
+                if file_path.endswith("index.html"):
+                    self.send_header("Cache-Control", "no-cache, must-revalidate")
+                else:
+                    self.send_header("Cache-Control", "public, max-age=86400, stale-while-revalidate=604800")
+                self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
                 self.wfile.write(content)
                 return

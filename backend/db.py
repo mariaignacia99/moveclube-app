@@ -7,8 +7,12 @@ from datetime import datetime, timedelta
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fitpass.db")
 
 def get_connection():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode = WAL;")
+    conn.execute("PRAGMA synchronous = NORMAL;")
+    conn.execute("PRAGMA cache_size = -64000;")
+    conn.execute("PRAGMA temp_store = MEMORY;")
     return conn
 
 def init_db(force_reseed=False):
@@ -21,8 +25,10 @@ def init_db(force_reseed=False):
     conn = get_connection()
     cursor = conn.cursor()
 
-    # Create tables
+    # Create tables & High Performance Indexes
     cursor.executescript('''
+    PRAGMA journal_mode = WAL;
+    PRAGMA synchronous = NORMAL;
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -118,6 +124,12 @@ def init_db(force_reseed=False):
         FOREIGN KEY (user_id) REFERENCES users (id),
         FOREIGN KEY (studio_id) REFERENCES studios (id)
     );
+
+    CREATE INDEX IF NOT EXISTS idx_classes_studio ON classes(studio_id);
+    CREATE INDEX IF NOT EXISTS idx_classes_time ON classes(start_time);
+    CREATE INDEX IF NOT EXISTS idx_classes_category ON classes(category);
+    CREATE INDEX IF NOT EXISTS idx_studios_city ON studios(city);
+    CREATE INDEX IF NOT EXISTS idx_bookings_user ON bookings(user_id);
     ''')
 
     conn.commit()

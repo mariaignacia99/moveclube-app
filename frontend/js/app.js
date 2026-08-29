@@ -31,10 +31,16 @@ const app = {
   // Initialization
   async init() {
     this.initDateCarousel();
-    await this.fetchUser();
-    await this.fetchCategories();
-    await this.fetchStudios();
-    await this.fetchClasses();
+    this.loadFromCache();
+
+    // High-speed parallel data fetching
+    await Promise.all([
+      this.fetchUser(),
+      this.fetchCategories(),
+      this.fetchStudios(),
+      this.fetchClasses()
+    ]);
+
     this.setupEventListeners();
     lucide.createIcons();
 
@@ -44,6 +50,22 @@ const app = {
     }
 
     this.checkWelcomeModal();
+  },
+
+  loadFromCache() {
+    try {
+      const cachedStudios = sessionStorage.getItem('mc_cached_studios');
+      const cachedCats = sessionStorage.getItem('mc_cached_cats');
+      if (cachedStudios) {
+        this.state.studios = JSON.parse(cachedStudios);
+        this.renderSavedPlaces();
+        this.renderHomeDiscoveryCarousels();
+      }
+      if (cachedCats) {
+        this.state.categories = JSON.parse(cachedCats);
+        this.renderCategories();
+      }
+    } catch(e) {}
   },
 
   checkWelcomeModal() {
@@ -417,6 +439,7 @@ const app = {
       const data = await res.json();
       if (data.success) {
         this.state.categories = data.categories;
+        try { sessionStorage.setItem('mc_cached_cats', JSON.stringify(data.categories)); } catch(e) {}
         this.renderCategoryPills();
       }
     } catch (err) {
@@ -522,6 +545,7 @@ const app = {
       const data = await res.json();
       if (data.success) {
         this.state.studios = data.studios;
+        try { sessionStorage.setItem('mc_cached_studios', JSON.stringify(data.studios)); } catch(e) {}
         this.renderSavedPlaces();
         this.renderHomeDiscoveryCarousels();
         if (this.state.viewMode === 'map') {
