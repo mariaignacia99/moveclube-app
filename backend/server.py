@@ -50,6 +50,33 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         # Static assets routing
         if not path.startswith("/api/"):
+            rel_path = path.lstrip("/")
+            if not rel_path:
+                rel_path = "index.html"
+            file_path = os.path.join(FRONTEND_DIR, rel_path)
+            if os.path.isfile(file_path):
+                content_type = "text/html; charset=utf-8"
+                if file_path.endswith(".js"):
+                    content_type = "application/javascript; charset=utf-8"
+                elif file_path.endswith(".css"):
+                    content_type = "text/css; charset=utf-8"
+                elif file_path.endswith(".png"):
+                    content_type = "image/png"
+                elif file_path.endswith(".jpg") or file_path.endswith(".jpeg"):
+                    content_type = "image/jpeg"
+                elif file_path.endswith(".svg"):
+                    content_type = "image/svg+xml"
+                elif file_path.endswith(".json") or file_path.endswith(".webmanifest"):
+                    content_type = "application/json"
+
+                with open(file_path, "rb") as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", content_type)
+                self.send_header("Content-Length", str(len(content)))
+                self.end_headers()
+                self.wfile.write(content)
+                return
             return super().do_GET()
 
         try:
