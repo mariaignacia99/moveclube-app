@@ -300,8 +300,8 @@
             </div>
           </div>
 
-          <!-- Card 4: Spas & Recuperación -->
-          <div onclick="app.handleCategoryFilter('Spas & Bienestar')" class="relative h-28 sm:h-36 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer group">
+            <!-- Card 4: Spas & Recuperación -->
+          <div onclick="app.handleCategoryFilter('Spa & Bienestar')" class="relative h-28 sm:h-36 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer group">
             <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500&auto=format&fit=crop&q=80" alt="Spas" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             <div class="absolute bottom-3 left-3 text-white">
@@ -312,10 +312,92 @@
         </div>
       </div>
 
-      <!-- 4. Categorías Principales & Date Carousel -->
-      <div class="space-y-3 pt-2">
+      <!-- ==================== NUEVAS SECCIONES PLANTILLA INICIO ==================== -->
+
+      <!-- 4. Descubre los mejor valorados (Horizontal Studio Carousel) -->
+      <div class="space-y-2.5 pt-1">
         <div class="flex items-center justify-between">
-          <h3 class="text-base font-extrabold text-slate-900">Categorías principales</h3>
+          <div>
+            <h3 class="text-lg font-black text-slate-900 tracking-tight">Descubre los mejor valorados</h3>
+            <p class="text-xs text-slate-500 font-medium">Entrenamientos que no te puedes perder</p>
+          </div>
+          <button onclick="app.switchView('explore')" class="text-slate-400 hover:text-slate-600">
+            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div id="topRatedStudiosRow" class="flex space-x-3.5 overflow-x-auto pb-2 scrollbar-none">
+          <!-- Dynamic Top Rated Studios Cards -->
+        </div>
+      </div>
+
+      <!-- 5. Buscar por créditos (3 Blue Quick Filter Boxes) -->
+      <div class="space-y-2.5 pt-1">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-black text-slate-900 tracking-tight">Buscar por créditos</h3>
+          <button class="text-slate-400 hover:text-slate-600">
+            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div onclick="app.handleCreditsQuickFilter(4)" class="flex flex-col items-center cursor-pointer group">
+            <div class="w-full h-16 rounded-2xl bg-blue-600 text-white font-black text-2xl flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:bg-blue-700 active:scale-95 transition">
+              &lt; 4
+            </div>
+            <span class="text-xs font-bold text-slate-800 mt-1.5 group-hover:text-blue-600 transition">&lt; 4 créditos</span>
+          </div>
+
+          <div onclick="app.handleCreditsQuickFilter(6)" class="flex flex-col items-center cursor-pointer group">
+            <div class="w-full h-16 rounded-2xl bg-blue-600 text-white font-black text-2xl flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:bg-blue-700 active:scale-95 transition">
+              &lt; 6
+            </div>
+            <span class="text-xs font-bold text-slate-800 mt-1.5 group-hover:text-blue-600 transition">&lt; 6 créditos</span>
+          </div>
+
+          <div onclick="app.handleCreditsQuickFilter(10)" class="flex flex-col items-center cursor-pointer group">
+            <div class="w-full h-16 rounded-2xl bg-blue-600 text-white font-black text-2xl flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:bg-blue-700 active:scale-95 transition">
+              &lt; 10
+            </div>
+            <span class="text-xs font-bold text-slate-800 mt-1.5 group-hover:text-blue-600 transition">&lt; 10 créditos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Estudios de fitness cercanos (Horizontal Carousel) -->
+      <div class="space-y-2.5 pt-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-black text-slate-900 tracking-tight">Estudios de fitness cercanos</h3>
+            <p class="text-xs text-slate-500 font-medium">Descubre tesoros locales</p>
+          </div>
+          <button class="text-slate-400 hover:text-slate-600">
+            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div id="nearbyFitnessStudiosRow" class="flex space-x-3.5 overflow-x-auto pb-2 scrollbar-none">
+          <!-- Dynamic Fitness Studios Cards -->
+        </div>
+      </div>
+
+      <!-- 7. Ahorra en spas y bienestar (Horizontal Carousel) -->
+      <div class="space-y-2.5 pt-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-black text-slate-900 tracking-tight">Ahorra en spas y salones de belleza</h3>
+            <p class="text-xs text-slate-500 font-medium">Reserva con MoveClub y consigue ofertas increíbles</p>
+          </div>
+          <button class="text-slate-400 hover:text-slate-600">
+            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div id="spasStudiosRow" class="flex space-x-3.5 overflow-x-auto pb-2 scrollbar-none">
+          <!-- Dynamic Spas Studios Cards -->
+        </div>
+      </div>
+
+      <!-- 8. Categorías Principales & Horarios -->
+      <div class="space-y-3 pt-4 border-t border-slate-100">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-black text-slate-900">Horarios y Clases Disponibles</h3>
         </div>
         <div id="categoryPills" class="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
           <!-- Category buttons rendered dynamically -->

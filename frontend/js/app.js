@@ -474,12 +474,94 @@ const app = {
       if (data.success) {
         this.state.studios = data.studios;
         this.renderSavedPlaces();
+        this.renderHomeDiscoveryCarousels();
         if (this.state.viewMode === 'map') {
           this.initOrUpdateMap();
         }
       }
     } catch (err) {
       console.error("Error fetching studios:", err);
+    }
+  },
+
+  renderHomeDiscoveryCarousels() {
+    const topRatedContainer = document.getElementById('topRatedStudiosRow');
+    const fitnessContainer = document.getElementById('nearbyFitnessStudiosRow');
+    const spasContainer = document.getElementById('spasStudiosRow');
+
+    if (!this.state.studios || this.state.studios.length === 0) return;
+
+    // 1. Top Rated Studios Carousel
+    if (topRatedContainer) {
+      const topRated = [...this.state.studios].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      topRatedContainer.innerHTML = topRated.map((s, idx) => `
+        <div onclick="app.filterByStudio(${s.id})" class="flex flex-col shrink-0 w-44 group cursor-pointer text-left">
+          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition relative bg-slate-100">
+            <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            ${s.is_favorite ? '<div class="absolute top-2 right-2 w-6 h-6 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-rose-500 shadow-sm"><i data-lucide="heart" class="w-3.5 h-3.5 fill-rose-500"></i></div>' : ''}
+          </div>
+          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-blue-600 transition">${s.name}</span>
+          <span class="text-[11px] text-slate-400 font-medium">${(0.4 + idx * 0.3).toFixed(1)} km</span>
+          <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-800">
+            <span>⭐ ${s.rating || 4.9}</span>
+            <span class="text-slate-400 font-normal">(${s.review_count || 100}+)</span>
+            <span class="text-blue-600 font-bold ml-1">Genial</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 2. Nearby Fitness & Padel Studios Carousel
+    if (fitnessContainer) {
+      const fitness = this.state.studios.filter(s => s.category !== 'Spa & Bienestar');
+      fitnessContainer.innerHTML = (fitness.length > 0 ? fitness : this.state.studios).map((s, idx) => `
+        <div onclick="app.filterByStudio(${s.id})" class="flex flex-col shrink-0 w-44 group cursor-pointer text-left">
+          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition relative bg-slate-100">
+            <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          </div>
+          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-blue-600 transition">${s.name}</span>
+          <span class="text-[11px] text-slate-400 font-medium">${(0.2 + idx * 0.4).toFixed(1)} km</span>
+          <span class="text-[10px] text-slate-500 truncate">${s.category} • ${s.neighborhood || s.city}</span>
+          <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-800">
+            <span>⭐ ${s.rating || 4.9}</span>
+            <span class="text-slate-400 font-normal">(${s.review_count || 120}+)</span>
+            <span class="text-emerald-600 font-bold ml-1">Excelente</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 3. Spas & Salones de Belleza Carousel
+    if (spasContainer) {
+      const spas = this.state.studios.filter(s => s.category.includes('Spa') || s.category.includes('Yoga') || s.category.includes('Pilates'));
+      spasContainer.innerHTML = (spas.length > 0 ? spas : this.state.studios.slice(0, 4)).map((s, idx) => `
+        <div onclick="app.filterByStudio(${s.id})" class="flex flex-col shrink-0 w-44 group cursor-pointer text-left">
+          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition relative bg-slate-100">
+            <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          </div>
+          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-blue-600 transition">${s.name}</span>
+          <span class="text-[11px] text-slate-400 font-medium">${(0.5 + idx * 0.3).toFixed(1)} km</span>
+          <span class="text-[10px] text-slate-500 truncate">Saunas, Masajes & Spas</span>
+          <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-800">
+            <span>⭐ 5.0</span>
+            <span class="text-slate-400 font-normal">(90+)</span>
+            <span class="text-teal-600 font-bold ml-1">Oferta</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    lucide.createIcons();
+  },
+
+  handleCreditsQuickFilter(maxCredits) {
+    const filterEl = document.getElementById('creditsFilter');
+    if (filterEl) filterEl.value = String(maxCredits);
+    this.handleCreditsFilter(String(maxCredits));
+    this.showToast(`🔍 Filtrando clases de hasta ${maxCredits} créditos`);
+    const target = document.getElementById('classesGridContainer');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   },
 
