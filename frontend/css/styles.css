@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #eef2ff;
+  --accent: #f43f5e;
+  --accent-light: #ffe4e6;
+  --dark: #0f172a;
+  --dark-surface: #1e293b;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --border: #e2e8f0;
+  --credit-color: #0d9488;
+  --credit-bg: #ccfbf1;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Header & Navigation */
+.header-glass {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.credits-badge {
+  background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.credits-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35);
+}
+
+/* Category Pills */
+.category-pill {
+  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+}
+.category-pill.active {
+  background: var(--dark);
+  color: white;
+  border-color: var(--dark);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+.category-pill:not(.active):hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* Date Pill Carousel */
+.date-pill {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.date-pill.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+.date-pill:not(.active):hover {
+  background: #f1f5f9;
+}
+
+/* Card Hover Effects */
+.fitpass-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+}
+.fitpass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.1), 0 4px 8px -4px rgba(15, 23, 42, 0.04);
+}
+
+/* Pulse animation for spots left */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.spot-pulse {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Map Styling */
+#mapContainer {
+  height: 580px;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  z-index: 10;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 1rem;
+  padding: 4px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+.leaflet-popup-content {
+  margin: 8px 12px;
+  line-height: 1.4;
+}
+
+/* Custom Modal Transitions */
+.modal-overlay {
+  transition: opacity 0.25s ease-in-out;
+}
+.modal-content {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* QR Pass Styling */
+.digital-pass {
+  background: linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+.digital-pass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #4f46e5, #06b6d4, #10b981);
+}
+
+/* Shimmer Loading placeholder */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Toast Notification */
+#toast {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(100px);
+  opacity: 0;
+}
+#toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Tab Active underline indicator */
+.nav-tab.active {
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+  font-weight: 700;
+}

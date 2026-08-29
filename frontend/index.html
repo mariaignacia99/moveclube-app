@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoveClub | Tu membresía para entrenar en los mejores estudios</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            },
+            teal: {
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Leaflet Map CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MoveClub">
+
+  <!-- QRCode.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">
+
+  <!-- TOP HEADER / NAVBAR -->
+  <header class="sticky top-0 z-40 header-glass">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Brand & Location -->
+        <div class="flex items-center space-x-6">
+          <div class="flex items-center space-x-2.5 cursor-pointer" onclick="app.switchView('explore')">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-rose-500 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+              <i data-lucide="zap" class="w-6 h-6 stroke-[2.5]"></i>
+            </div>
+            <div>
+              <span class="text-2xl font-black tracking-tight bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 bg-clip-text text-transparent">Move<span class="text-indigo-600">Club</span></span>
+            </div>
+          </div>
+
+          <!-- City Selector Dropdown -->
+          <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-slate-100/90 text-xs font-bold text-slate-700 border border-slate-200 shadow-sm">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <select id="citySelectNavbar" onchange="app.handleCityChange(this.value)" class="bg-transparent font-extrabold text-indigo-950 focus:outline-none cursor-pointer">
+              <option value="Osorno">📍 Osorno</option>
+              <option value="Temuco">📍 Temuco</option>
+              <option value="Santiago">📍 Santiago</option>
+              <option value="Puerto Varas">📍 Puerto Varas</option>
+              <option value="all">📍 Todas las Ciudades</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="hidden lg:flex items-center space-x-1">
+          <button onclick="app.switchView('explore')" id="nav-explore" class="nav-tab active px-4 py-5 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition flex items-center space-x-1.5">
+            <i data-lucide="compass" class="w-4 h-4"></i>
+            <span>Explorar</span>
+          </button>
+          <button onclick="app.switchView('bookings')" id="nav-bookings" class="nav-tab px-4 py-5 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition flex items-center space-x-1.5 relative">
+            <i data-lucide="calendar-check" class="w-4 h-4"></i>
+            <span>Mis Reservas</span>
+            <span id="activeBookingsBadge" class="hidden ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-indigo-600 text-white">0</span>
+          </button>
+          <button onclick="app.switchView('plans')" id="nav-plans" class="nav-tab px-4 py-5 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition flex items-center space-x-1.5">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+            <span>Planes y Créditos</span>
+          </button>
+          <button onclick="app.switchView('favorites')" id="nav-favorites" class="nav-tab px-4 py-5 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition flex items-center space-x-1.5">
+            <i data-lucide="heart" class="w-4 h-4"></i>
+            <span>Favoritos</span>
+          </button>
+          <button onclick="app.switchView('admin')" id="nav-admin" class="nav-tab px-4 py-5 text-sm font-semibold text-slate-500 hover:text-indigo-600 transition flex items-center space-x-1.5 text-xs bg-slate-100/70 rounded-lg px-2.5 py-1.5 my-auto ml-2 border border-slate-200">
+            <i data-lucide="building" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span>Modo Estudio</span>
+          </button>
+        </nav>
+
+        <!-- Right Side: Credits & User Avatar -->
+        <div class="flex items-center space-x-3">
+          <!-- Live Credits Balance Pill -->
+          <button onclick="app.switchView('plans')" class="credits-badge flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-white font-medium text-sm">
+            <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
+              <i data-lucide="coins" class="w-3.5 h-3.5 text-teal-100"></i>
+            </div>
+            <span class="font-bold text-sm tracking-wide" id="userCreditsDisplay">-- créditos</span>
+            <span class="bg-white/20 text-teal-50 text-[10px] font-bold px-1.5 py-0.5 rounded-full">+ Recargar</span>
+          </button>
+
+          <!-- User Menu Dropdown Button -->
+          <div class="relative">
+            <button id="userMenuBtn" onclick="app.toggleUserDropdown()" class="flex items-center space-x-2 p-1 rounded-full hover:bg-slate-100 transition border border-transparent hover:border-slate-200">
+              <img id="userAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Usuario" class="w-8 h-8 rounded-full object-cover border border-slate-300 shadow-sm">
+            </button>
+            
+            <!-- User Dropdown Menu -->
+            <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50 animate-fadeIn">
+              <div class="px-4 py-3 border-b border-slate-100">
+                <p class="text-sm font-bold text-slate-800" id="dropdownUserName">Ignacio Sánchez</p>
+                <p class="text-xs text-slate-500" id="dropdownUserEmail">ignacio@ejemplo.com</p>
+                <div class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-50 text-indigo-700" id="dropdownUserPlan">
+                  Plan Pro
+                </div>
+              </div>
+              <div class="py-1">
+                <a href="#" onclick="app.switchView('bookings'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                  <i data-lucide="calendar" class="w-4 h-4 mr-2 text-slate-400"></i> Mis Reservas
+                </a>
+                <a href="#" onclick="app.switchView('favorites'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                  <i data-lucide="heart" class="w-4 h-4 mr-2 text-slate-400"></i> Estudios Favoritos
+                </a>
+                <a href="#" onclick="app.switchView('plans'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                  <i data-lucide="credit-card" class="w-4 h-4 mr-2 text-slate-400"></i> Administrar Membresía
+                </a>
+                <a href="#" onclick="app.switchView('admin'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                  <i data-lucide="store" class="w-4 h-4 mr-2 text-slate-400"></i> Portal de Estudios (Partner)
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Bar -->
+    <div class="lg:hidden flex justify-around border-t border-slate-200 bg-white py-2 px-1">
+      <button onclick="app.switchView('explore')" class="mobile-nav flex flex-col items-center text-xs font-semibold text-indigo-600">
+        <i data-lucide="compass" class="w-5 h-5"></i>
+        <span>Explorar</span>
+      </button>
+      <button onclick="app.switchView('bookings')" class="mobile-nav flex flex-col items-center text-xs font-semibold text-slate-500">
+        <i data-lucide="calendar" class="w-5 h-5"></i>
+        <span>Reservas</span>
+      </button>
+      <button onclick="app.switchView('plans')" class="mobile-nav flex flex-col items-center text-xs font-semibold text-slate-500">
+        <i data-lucide="coins" class="w-5 h-5 text-teal-600"></i>
+        <span>Créditos</span>
+      </button>
+      <button onclick="app.switchView('favorites')" class="mobile-nav flex flex-col items-center text-xs font-semibold text-slate-500">
+        <i data-lucide="heart" class="w-5 h-5"></i>
+        <span>Favoritos</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ==================== VIEW 1: EXPLORAR / DISCOVERY ==================== -->
+    <section id="view-explore" class="space-y-6">
+      
+      <!-- Hero Banner -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl">
+        <div class="relative z-10 max-w-2xl space-y-3">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold backdrop-blur-md">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+            <span>Membresía flexible todo-en-uno</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+            Descubre y reserva en los mejores <span class="bg-gradient-to-r from-indigo-400 to-rose-400 bg-clip-text text-transparent">estudios de fitness</span>
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-base font-normal">
+            Yoga, Spinning, CrossFit, Pilates, Boxeo y Spas con tus créditos mensuales. Sin ataduras ni contratos anuales.
+          </p>
+
+          <!-- Search Bar -->
+          <div class="pt-2 flex flex-col sm:flex-row gap-2 max-w-xl">
+            <div class="relative flex-1">
+              <i data-lucide="search" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="text" id="searchInput" oninput="app.handleSearch(this.value)" placeholder="Buscar por clase, estudio, instructor o barrio..." class="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm backdrop-blur-md">
+            </div>
+            <button onclick="app.resetFilters()" class="px-4 py-3 rounded-2xl bg-white text-slate-900 font-bold text-xs hover:bg-slate-100 transition shrink-0 flex items-center justify-center space-x-1.5 shadow-md">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              <span>Limpiar filtros</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Decorative background glow -->
+        <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-indigo-600/30 blur-3xl pointer-events-none"></div>
+        <div class="absolute right-40 -bottom-20 w-60 h-60 rounded-full bg-rose-500/20 blur-3xl pointer-events-none"></div>
+      </div>
+
+      <!-- Date Carousel Selector -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-1.5">
+            <i data-lucide="calendar" class="w-4 h-4 text-indigo-600"></i>
+            <span>Selecciona un día</span>
+          </h3>
+          <span id="selectedDateLabel" class="text-xs font-bold text-indigo-600">Hoy</span>
+        </div>
+        <div id="dateCarousel" class="flex space-x-2 overflow-x-auto pb-2 scrollbar-none">
+          <!-- Dynamic Date Pills -->
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-1.5">
+            <i data-lucide="layout-grid" class="w-4 h-4 text-indigo-600"></i>
+            <span>Disciplinas</span>
+          </h3>
+        </div>
+        <div id="categoryPills" class="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
+          <!-- Category buttons rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Filter Controls & View Switcher Bar -->
+      <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          
+          <!-- Horario Filter -->
+          <div class="flex items-center space-x-1.5 bg-slate-100 rounded-xl px-3 py-1.5 text-slate-700">
+            <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span class="font-semibold">Horario:</span>
+            <select id="timeFilter" onchange="app.handleTimeFilter(this.value)" class="bg-transparent font-bold text-indigo-600 focus:outline-none cursor-pointer">
+              <option value="all">Todo el día</option>
+              <option value="morning">Mañana (antes de 12:00)</option>
+              <option value="afternoon">Tarde (12:00 - 18:00)</option>
+              <option value="evening">Noche (después de 18:00)</option>
+            </select>
+          </div>
+
+          <!-- Créditos Max Filter -->
+          <div class="flex items-center space-x-1.5 bg-slate-100 rounded-xl px-3 py-1.5 text-slate-700">
+            <i data-lucide="coins" class="w-3.5 h-3.5 text-teal-600"></i>
+            <span class="font-semibold">Créditos:</span>
+            <select id="creditsFilter" onchange="app.handleCreditsFilter(this.value)" class="bg-transparent font-bold text-teal-700 focus:outline-none cursor-pointer">
+              <option value="">Cualquier valor</option>
+              <option value="4">Hasta 4 créditos</option>
+              <option value="6">Hasta 6 créditos</option>
+              <option value="8">Hasta 8 créditos</option>
+            </select>
+          </div>
+
+          <!-- Total Results Count -->
+          <span id="resultsCount" class="text-xs font-semibold text-slate-500 px-2 py-1">
+            Cargando clases...
+          </span>
+        </div>
+
+        <!-- View Switcher Toggle (Grid vs Map) -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <button id="viewGridBtn" onclick="app.setExploreViewMode('grid')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 bg-white text-slate-900 shadow-sm">
+            <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+            <span>Tarjetas</span>
+          </button>
+          <button id="viewMapBtn" onclick="app.setExploreViewMode('map')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 text-slate-600 hover:text-slate-900">
+            <i data-lucide="map" class="w-3.5 h-3.5"></i>
+            <span>Mapa de Estudios</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Classes & Studios Grid Container -->
+      <div id="classesGridContainer">
+        <div id="classesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Class cards rendered dynamically -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="noResultsState" class="hidden text-center py-16 px-4 bg-white rounded-3xl border border-slate-200/80 shadow-sm">
+          <div class="w-16 h-16 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="calendar-x" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-800">No encontramos clases con estos filtros</h3>
+          <p class="text-sm text-slate-500 max-w-md mx-auto mt-1 mb-4">Prueba cambiando la fecha, seleccionando otra categoría o limpiando los filtros de búsqueda.</p>
+          <button onclick="app.resetFilters()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition">
+            Mostrar todas las clases
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Map Container (Hidden by default) -->
+      <div id="mapViewContainer" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Mapa interactivo de Estudios Asociados</h3>
+              <p class="text-xs text-slate-500">Haz clic en cualquier marcador para ver sus clases y detalles del estudio.</p>
+            </div>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ● En vivo en Osorno, Temuco y Sur
+            </span>
+          </div>
+          <div id="mapContainer" class="w-full"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== VIEW 2: MIS RESERVAS ==================== -->
+    <section id="view-bookings" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div>
+          <h2 class="text-2xl font-black text-slate-900">Mis Reservas y Clases</h2>
+          <p class="text-sm text-slate-500">Gestiona tus pases digitales QR, cancelaciones y calificaciones.</p>
+        </div>
+        
+        <!-- Filter Tabs for Bookings -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <button onclick="app.setBookingsTab('active')" id="btnTabActiveBookings" class="px-4 py-2 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-sm transition">
+            Próximas Clases
+          </button>
+          <button onclick="app.setBookingsTab('past')" id="btnTabPastBookings" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+            Historial / Pasadas
+          </button>
+        </div>
+      </div>
+
+      <!-- Bookings List Container -->
+      <div id="bookingsList" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Bookings rendered dynamically -->
+      </div>
+
+      <!-- Empty Bookings State -->
+      <div id="noBookingsState" class="hidden text-center py-16 px-4 bg-white rounded-3xl border border-slate-200/80 shadow-sm">
+        <div class="w-16 h-16 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="ticket" class="w-8 h-8"></i>
+        </div>
+        <h3 class="text-lg font-bold text-slate-800">Aún no tienes reservas activas</h3>
+        <p class="text-sm text-slate-500 max-w-md mx-auto mt-1 mb-4">Explora los estudios disponibles y usa tus créditos para reservar tu próxima clase de fitness.</p>
+        <button onclick="app.switchView('explore')" class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition shadow-md shadow-indigo-200">
+          Explorar clases disponibles
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: PLANES Y CRÉDITOS ==================== -->
+    <section id="view-plans" class="hidden space-y-8">
+      
+      <!-- Current Balance Dashboard Banner -->
+      <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="space-y-2 text-center md:text-left">
+          <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 text-xs font-semibold border border-teal-500/30">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+            <span id="userPlanBadgeText">Plan Pro Activo</span>
+          </div>
+          <h2 class="text-3xl font-extrabold">Tu balance de créditos</h2>
+          <p class="text-slate-300 text-sm max-w-md">Los créditos se renuevan cada mes. Puedes acumular hasta 10 créditos no usados para el siguiente período.</p>
+        </div>
+
+        <div class="flex items-center space-x-6 bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/20">
+          <div class="text-center">
+            <span class="text-xs uppercase font-bold text-slate-400">Saldo Disponible</span>
+            <div class="text-4xl font-black text-teal-300 tracking-tight" id="plansBalanceNum">45</div>
+            <span class="text-[11px] text-teal-100 font-semibold">Créditos MoveClub</span>
+          </div>
+          <div class="h-10 w-px bg-white/20"></div>
+          <div class="text-center">
+            <span class="text-xs uppercase font-bold text-slate-400">Equivale a</span>
+            <div class="text-xl font-bold text-white tracking-tight" id="approxClassesNum">~9 clases</div>
+            <span class="text-[11px] text-slate-300">en promedio</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subscription Plans Options -->
+      <div class="space-y-4">
+        <div class="text-center max-w-xl mx-auto space-y-1">
+          <h3 class="text-2xl font-black text-slate-900">Elige o cambia tu Plan Mensual</h3>
+          <p class="text-sm text-slate-500">Cancela o cambia de plan en cualquier momento sin penalizaciones.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+          
+          <!-- Plan Básico -->
+          <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col justify-between relative">
+            <div class="space-y-4">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Para empezar</span>
+                <h4 class="text-xl font-bold text-slate-900 mt-1">Plan Básico</h4>
+                <div class="mt-2 flex items-baseline">
+                  <span class="text-3xl font-extrabold text-slate-900">$24.900</span>
+                  <span class="text-xs font-semibold text-slate-500 ml-1">/ mes</span>
+                </div>
+              </div>
+              
+              <div class="p-3 bg-teal-50 rounded-2xl border border-teal-100 text-teal-800 text-center font-bold text-sm">
+                25 Créditos mensuales (~5-6 clases)
+              </div>
+
+              <ul class="space-y-2.5 text-xs text-slate-600">
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Acceso a todos los estudios</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Cancelación flexible hasta 12h antes</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Acumula hasta 5 créditos sobrantes</li>
+              </ul>
+            </div>
+
+            <button onclick="app.openPaymentModal('Plan Básico (25 créditos/mes)', 25, 24900)" class="mt-6 w-full py-3 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition">
+              Elegir Plan Básico
+            </button>
+          </div>
+
+          <!-- Plan Pro (Most Popular) -->
+          <div class="bg-white rounded-3xl p-6 border-2 border-indigo-600 shadow-lg relative flex flex-col justify-between">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-indigo-600 text-white text-[11px] font-extrabold uppercase tracking-wider shadow-sm">
+              Más Popular ⭐
+            </div>
+
+            <div class="space-y-4 pt-2">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Rutina completa</span>
+                <h4 class="text-xl font-bold text-slate-900 mt-1">Plan Pro</h4>
+                <div class="mt-2 flex items-baseline">
+                  <span class="text-3xl font-extrabold text-slate-900">$39.900</span>
+                  <span class="text-xs font-semibold text-slate-500 ml-1">/ mes</span>
+                </div>
+              </div>
+              
+              <div class="p-3 bg-indigo-50 rounded-2xl border border-indigo-100 text-indigo-900 text-center font-bold text-sm">
+                50 Créditos mensuales (~10-12 clases)
+              </div>
+
+              <ul class="space-y-2.5 text-xs text-slate-600">
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-600 mr-2 shrink-0"></i> Acceso a todos los estudios y Spas</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-600 mr-2 shrink-0"></i> Reservas prioritarias 7 días antes</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-600 mr-2 shrink-0"></i> Acumula hasta 10 créditos sobrantes</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-600 mr-2 shrink-0"></i> Invitación gratis para 1 amigo al mes</li>
+              </ul>
+            </div>
+
+            <button onclick="app.openPaymentModal('Plan Pro (50 créditos/mes)', 50, 39900)" class="mt-6 w-full py-3 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition shadow-md shadow-indigo-200">
+              Elegir Plan Pro
+            </button>
+          </div>
+
+          <!-- Plan Elite -->
+          <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+            <div class="space-y-4">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Alto Rendimiento</span>
+                <h4 class="text-xl font-bold text-slate-900 mt-1">Plan Elite</h4>
+                <div class="mt-2 flex items-baseline">
+                  <span class="text-3xl font-extrabold text-slate-900">$69.900</span>
+                  <span class="text-xs font-semibold text-slate-500 ml-1">/ mes</span>
+                </div>
+              </div>
+              
+              <div class="p-3 bg-teal-50 rounded-2xl border border-teal-100 text-teal-800 text-center font-bold text-sm">
+                100 Créditos mensuales (~20-25 clases)
+              </div>
+
+              <ul class="space-y-2.5 text-xs text-slate-600">
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Acceso total ilimitado a toda la red</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Acceso a saunas, crioterapia y Spas VIP</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Acumula hasta 25 créditos sobrantes</li>
+              </ul>
+            </div>
+
+            <button onclick="app.openPaymentModal('Plan Elite (100 créditos/mes)', 100, 69900)" class="mt-6 w-full py-3 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition">
+              Elegir Plan Elite
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Quick Top-Up Packs & Transaction History -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
+        
+        <!-- Quick Top Up Packs -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+          <div>
+            <h4 class="text-base font-bold text-slate-900">¿Necesitas créditos extra?</h4>
+            <p class="text-xs text-slate-500">Recargas rápidas sin cambiar tu suscripción mensual.</p>
+          </div>
+
+          <div class="space-y-2.5">
+            <button onclick="app.openPaymentModal('Recarga Pack +10 Créditos', 10, 11900)" class="w-full p-3.5 rounded-2xl border border-slate-200 hover:border-teal-500 hover:bg-teal-50/50 transition flex items-center justify-between text-left">
+              <div>
+                <span class="font-bold text-sm text-slate-900">+10 Créditos</span>
+                <span class="block text-[11px] text-slate-500">Para 2 clases adicionales</span>
+              </div>
+              <span class="font-bold text-xs bg-slate-100 text-slate-800 px-3 py-1.5 rounded-xl">$11.900</span>
+            </button>
+
+            <button onclick="app.openPaymentModal('Recarga Pack +25 Créditos', 25, 24900)" class="w-full p-3.5 rounded-2xl border border-slate-200 hover:border-teal-500 hover:bg-teal-50/50 transition flex items-center justify-between text-left">
+              <div>
+                <span class="font-bold text-sm text-slate-900">+25 Créditos</span>
+                <span class="block text-[11px] text-slate-500">Para 5-6 clases adicionales</span>
+              </div>
+              <span class="font-bold text-xs bg-slate-100 text-slate-800 px-3 py-1.5 rounded-xl">$24.900</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-base font-bold text-slate-900">Historial de Transacciones</h4>
+            <span class="text-xs text-slate-400">Últimos movimientos</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead>
+                <tr class="border-b border-slate-100 text-slate-400 font-semibold uppercase">
+                  <th class="py-2.5">Detalle</th>
+                  <th class="py-2.5">Tipo</th>
+                  <th class="py-2.5">Fecha</th>
+                  <th class="py-2.5 text-right">Créditos</th>
+                </tr>
+              </thead>
+              <tbody id="transactionsTableBody" class="divide-y divide-slate-100">
+                <!-- Transactions rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: FAVORITOS ==================== -->
+    <section id="view-favorites" class="hidden space-y-6">
+      <div class="border-b border-slate-200 pb-5">
+        <h2 class="text-2xl font-black text-slate-900">Tus Estudios Favoritos</h2>
+        <p class="text-sm text-slate-500">Accede rápidamente a los horarios de tus centros de entrenamiento preferidos.</p>
+      </div>
+
+      <div id="favoritesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Favorites rendered dynamically -->
+      </div>
+
+      <div id="noFavoritesState" class="hidden text-center py-16 px-4 bg-white rounded-3xl border border-slate-200/80 shadow-sm">
+        <div class="w-16 h-16 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="heart" class="w-8 h-8"></i>
+        </div>
+        <h3 class="text-lg font-bold text-slate-800">Aún no has guardado favoritos</h3>
+        <p class="text-sm text-slate-500 max-w-md mx-auto mt-1 mb-4">Haz clic en el ícono de corazón en cualquier tarjeta de estudio para guardarlo aquí.</p>
+        <button onclick="app.switchView('explore')" class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition">
+          Explorar estudios
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 5: PORTAL ESTUDIO (ADMIN) ==================== -->
+    <section id="view-admin" class="hidden space-y-6">
+      <div class="border-b border-slate-200 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold mb-1">
+            <i data-lucide="building" class="w-3.5 h-3.5"></i>
+            <span>Portal de Partners & Estudios</span>
+          </div>
+          <h2 class="text-2xl font-black text-slate-900">Panel de Administración de Clases</h2>
+          <p class="text-sm text-slate-500">Publica nuevas clases, asigna cupos y gestiona la oferta de tu estudio.</p>
+        </div>
+
+        <button onclick="app.openAdminNewClassModal()" class="px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition flex items-center space-x-1.5 shadow-md shadow-indigo-200 shrink-0">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Publicar Nueva Clase</span>
+        </button>
+      </div>
+
+      <!-- Quick Metrics -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400 uppercase">Estudios Registrados</span>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="adminStudiosCount">8</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400 uppercase">Total Clases en Horario</span>
+          <div class="text-2xl font-black text-indigo-600 mt-1" id="adminClassesCount">--</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400 uppercase">Estado Red MoveClub</span>
+          <div class="text-sm font-bold text-emerald-600 mt-2 flex items-center">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+            Operacional al 100%
+          </div>
+        </div>
+      </div>
+
+      <!-- Classes Schedule Table in Admin Mode -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-base font-bold text-slate-900">Horarios y Disponibilidad de Clases</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="border-b border-slate-200 text-slate-400 font-semibold uppercase">
+                <th class="py-3">Clase / Disciplina</th>
+                <th class="py-3">Estudio</th>
+                <th class="py-3">Instructor</th>
+                <th class="py-3">Fecha y Hora</th>
+                <th class="py-3">Costo</th>
+                <th class="py-3">Cupos Libres</th>
+              </tr>
+            </thead>
+            <tbody id="adminClassesTableBody" class="divide-y divide-slate-100">
+              <!-- Admin classes table rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      <!-- Partner Earnings Calculator & Reception QR Scanner Simulation -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Calculator for Gym Owners -->
+        <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white p-6 rounded-3xl shadow-md space-y-4">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-300 flex items-center justify-center">
+              <i data-lucide="calculator" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-black text-base text-white">Calculadora de Ingresos para Estudios</h4>
+              <p class="text-xs text-slate-300">Simula cuánto dinero extra puede generar tu centro al mes con MoveClub.</p>
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-2 text-xs">
+            <div class="space-y-1">
+              <div class="flex justify-between font-bold">
+                <span class="text-slate-300">Cupos libres liberados por día:</span>
+                <span class="text-teal-300 font-extrabold" id="calcSpotsVal">4 cupos / día</span>
+              </div>
+              <input type="range" id="calcSpotsRange" min="1" max="15" value="4" oninput="app.updatePartnerCalculator()" class="w-full accent-teal-400">
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between font-bold">
+                <span class="text-slate-300">Valor promedio por crédito acordado:</span>
+                <span class="text-teal-300 font-extrabold" id="calcRateVal">$2.200 CLP / crédito</span>
+              </div>
+              <input type="range" id="calcRateRange" min="1500" max="3500" step="100" value="2200" oninput="app.updatePartnerCalculator()" class="w-full accent-teal-400">
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 mt-4 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] uppercase tracking-wider text-slate-400 font-bold block">Ingreso Extra Estimado</span>
+                <span class="text-2xl sm:text-3xl font-black text-teal-300" id="calcEstimatedIncome">$1.056.000 CLP</span>
+                <span class="text-[10px] text-slate-300 block">al mes en tu cuenta bancaria (24 días de operación)</span>
+              </div>
+              <div class="px-3 py-1.5 rounded-xl bg-teal-500/20 text-teal-200 text-xs font-extrabold border border-teal-400/30">
+                100% Ganancia Neta
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reception QR Scanner Simulation -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <i data-lucide="scan-line" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="font-black text-base text-slate-900">Validador de Pase en Recepción</h4>
+              <p class="text-xs text-slate-500">Ingresa o escanea el código del alumno al ingresar al local.</p>
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-1">
+            <div class="flex space-x-2">
+              <input type="text" id="adminQrInput" placeholder="Ej: MC-BOOK-77291-PASS" class="flex-1 p-3 rounded-xl border border-slate-200 text-xs font-mono font-bold uppercase focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              <button onclick="app.validateReceptionPass()" class="px-4 py-3 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition flex items-center space-x-1.5 shadow-sm">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>Validar</span>
+              </button>
+            </div>
+
+            <div id="receptionValidationResult" class="hidden p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-1">
+              <div class="flex items-center font-bold text-emerald-800">
+                <i data-lucide="badge-check" class="w-4 h-4 mr-1 text-emerald-600"></i>
+                <span>¡Pase Válido y Confirmado!</span>
+              </div>
+              <p id="receptionPassDetails" class="text-emerald-700 text-[11px]">Alumno: Ignacio Sánchez • Clase de Pádel</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. Booking Confirmation Modal -->
+  <div id="bookingModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="app.closeBookingModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full p-6 sm:p-8 space-y-6">
+        
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <i data-lucide="ticket" class="w-4 h-4"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Confirmar Reserva de Clase</h3>
+          </div>
+          <button onclick="app.closeBookingModal()" class="text-slate-400 hover:text-slate-600 p-1">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div id="bookingModalContent" class="space-y-4">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-2 text-xs">
+          <div class="flex justify-between text-slate-600">
+            <span>Tu saldo actual:</span>
+            <span class="font-bold" id="modalCurrentBalance">-- créditos</span>
+          </div>
+          <div class="flex justify-between text-slate-900 font-bold">
+            <span>Costo de esta clase:</span>
+            <span class="text-indigo-600" id="modalClassCost">-0 créditos</span>
+          </div>
+          <div class="h-px bg-slate-200 my-1"></div>
+          <div class="flex justify-between text-teal-700 font-bold">
+            <span>Saldo restante tras reserva:</span>
+            <span id="modalRemainingBalance">-- créditos</span>
+          </div>
+        </div>
+
+        <div class="flex space-x-3">
+          <button onclick="app.closeBookingModal()" class="w-1/2 py-3 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
+            Volver
+          </button>
+          <button id="confirmBookingBtn" onclick="app.confirmBooking()" class="w-1/2 py-3 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition shadow-md shadow-indigo-200">
+            Confirmar Reserva
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Digital QR Pass Modal -->
+  <div id="qrModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" onclick="app.closeQrModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-slate-900 text-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full digital-pass p-6 sm:p-8 space-y-6">
+        
+        <div class="flex items-center justify-between border-b border-white/10 pb-4">
+          <div class="flex items-center space-x-2">
+            <span class="text-lg font-black tracking-tight text-white">Move<span class="text-indigo-400">Club</span> Digital Pass</span>
+          </div>
+          <button onclick="app.closeQrModal()" class="text-slate-400 hover:text-white p-1">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div id="qrModalContent" class="space-y-4 text-center">
+          <!-- QR Pass details and generated QR code -->
+        </div>
+
+        <div class="text-center pt-2">
+          <p class="text-[11px] text-slate-400">Presenta este código en la recepción del estudio antes de iniciar tu clase.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Studio Detail Modal -->
+  <div id="studioDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="app.closeStudioModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+        <div id="studioDetailContent">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Review Modal -->
+  <div id="reviewModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="app.closeReviewModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="text-lg font-bold text-slate-900">Califica tu experiencia</h3>
+          <button onclick="app.closeReviewModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <div class="space-y-4">
+          <div class="text-center space-y-2">
+            <span class="text-xs text-slate-500 font-semibold">Puntuación:</span>
+            <div class="flex justify-center space-x-2" id="starRatingContainer">
+              <button onclick="app.setRatingScore(1)" class="star-btn text-2xl text-amber-400">★</button>
+              <button onclick="app.setRatingScore(2)" class="star-btn text-2xl text-amber-400">★</button>
+              <button onclick="app.setRatingScore(3)" class="star-btn text-2xl text-amber-400">★</button>
+              <button onclick="app.setRatingScore(4)" class="star-btn text-2xl text-amber-400">★</button>
+              <button onclick="app.setRatingScore(5)" class="star-btn text-2xl text-amber-400">★</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Comentario sobre la clase y el instructor:</label>
+            <textarea id="reviewCommentInput" rows="3" class="w-full p-3 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="¿Qué te pareció la clase, la música y el estudio?"></textarea>
+          </div>
+        </div>
+
+        <button onclick="app.submitReview()" class="w-full py-3 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition">
+          Enviar Calificación
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Admin New Class Modal -->
+  <div id="adminNewClassModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="app.closeAdminModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full p-6 sm:p-8 space-y-5">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="text-lg font-bold text-slate-900">Publicar Nueva Clase</h3>
+          <button onclick="app.closeAdminModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <form id="adminClassForm" onsubmit="app.handleCreateAdminClass(event)" class="space-y-4 text-xs">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Estudio:</label>
+            <select id="adminStudioSelect" required class="w-full p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Título de la Clase:</label>
+            <input type="text" id="adminClassTitle" required placeholder="Ej. Vinyasa Power Flow & Beats" class="w-full p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Categoría:</label>
+              <select id="adminClassCategory" class="w-full p-2.5 rounded-xl border border-slate-200">
+                <option value="Pádel">Pádel</option>
+                <option value="Tenis">Tenis</option>
+                <option value="Gimnasio">Gimnasio / Open Gym</option>
+                <option value="Danza">Danza & Baile</option>
+                <option value="Pilates">Pilates</option>
+                <option value="Yoga">Yoga</option>
+                <option value="Spinning">Spinning</option>
+                <option value="CrossFit">CrossFit & Funcional</option>
+                <option value="Boxeo">Boxeo & Combate</option>
+                <option value="Escalada & Boulder">Escalada & Boulder</option>
+                <option value="Spa & Bienestar">Spa & Bienestar</option>
+                <option value="Natación">Natación</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Nivel:</label>
+              <select id="adminClassLevel" class="w-full p-2.5 rounded-xl border border-slate-200">
+                <option value="Todos los niveles">Todos los niveles</option>
+                <option value="Principiante">Principiante</option>
+                <option value="Intermedio">Intermedio</option>
+                <option value="Avanzado">Avanzado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Fecha y Hora:</label>
+              <input type="datetime-local" id="adminClassStartTime" required class="w-full p-2.5 rounded-xl border border-slate-200">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Duración (minutos):</label>
+              <input type="number" id="adminClassDuration" value="50" min="20" max="120" class="w-full p-2.5 rounded-xl border border-slate-200">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Costo en Créditos:</label>
+              <input type="number" id="adminClassCredits" value="5" min="1" max="20" class="w-full p-2.5 rounded-xl border border-slate-200">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Capacidad Total:</label>
+              <input type="number" id="adminClassCapacity" value="16" min="1" max="50" class="w-full p-2.5 rounded-xl border border-slate-200">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Descripción corta:</label>
+            <textarea id="adminClassDescription" rows="2" placeholder="Resumen de lo que se trabajará en la clase..." class="w-full p-2.5 rounded-xl border border-slate-200"></textarea>
+          </div>
+
+          <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition">
+            Publicar Clase en MoveClub
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Payment Checkout Gateway Modal (Webpay, Fintoc, Mercado Pago) -->
+  <div id="paymentModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" onclick="app.closePaymentModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-6 sm:p-8 space-y-5">
+        
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
+              <i data-lucide="credit-card" class="w-4 h-4"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Checkout Seguro MoveClub</h3>
+          </div>
+          <button onclick="app.closePaymentModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-2 text-xs">
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-semibold">Producto:</span>
+            <span class="font-extrabold text-slate-900" id="checkoutPlanName">Plan Pro (50 créditos)</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-semibold">Créditos a recibir:</span>
+            <span class="font-black text-teal-600" id="checkoutCreditsNum">+50 créditos</span>
+          </div>
+          <div class="h-px bg-slate-200 my-1"></div>
+          <div class="flex justify-between text-sm">
+            <span class="font-bold text-slate-800">Total a pagar:</span>
+            <span class="font-black text-slate-900" id="checkoutTotalAmount">$39.900 CLP</span>
+          </div>
+        </div>
+
+        <!-- Payment Method Selection -->
+        <div class="space-y-2.5">
+          <label class="block text-xs font-bold text-slate-700">Elige tu método de pago:</label>
+          
+          <label class="flex items-center justify-between p-3.5 rounded-2xl border border-indigo-200 bg-indigo-50/40 cursor-pointer hover:bg-indigo-50 transition">
+            <div class="flex items-center space-x-3">
+              <input type="radio" name="payment_method" value="Transbank Webpay Plus" checked class="accent-indigo-600">
+              <div>
+                <span class="font-bold text-xs text-slate-900 block">Webpay Plus / Débito & Crédito</span>
+                <span class="text-[10px] text-slate-500">Tarjetas chilenas (Visa, Mastercard, Redcompra)</span>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-indigo-600 bg-white px-2 py-0.5 rounded-lg border border-indigo-100">Transbank</span>
+          </label>
+
+          <label class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 hover:border-teal-400 hover:bg-teal-50/30 cursor-pointer transition">
+            <div class="flex items-center space-x-3">
+              <input type="radio" name="payment_method" value="Fintoc Transferencia Bancaria" class="accent-teal-600">
+              <div>
+                <span class="font-bold text-xs text-slate-900 block">Fintoc (Transferencia Directa)</span>
+                <span class="text-[10px] text-slate-500">Banco de Chile, Santander, BCI, BancoEstado</span>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-lg border border-teal-200">Fintoc</span>
+          </label>
+
+          <label class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 hover:border-sky-400 hover:bg-sky-50/30 cursor-pointer transition">
+            <div class="flex items-center space-x-3">
+              <input type="radio" name="payment_method" value="Mercado Pago" class="accent-sky-600">
+              <div>
+                <span class="font-bold text-xs text-slate-900 block">Mercado Pago</span>
+                <span class="text-[10px] text-slate-500">Saldo Mercado Pago o Tarjetas en cuotas</span>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-lg border border-sky-200">Mercado Pago</span>
+          </label>
+        </div>
+
+        <div class="pt-2">
+          <button id="payNowBtn" onclick="app.processPayment()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-extrabold text-xs hover:from-indigo-700 hover:to-indigo-800 transition shadow-lg shadow-indigo-200 flex items-center justify-center space-x-2">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+            <span>Pagar Ahora de Forma Segura</span>
+          </button>
+          <div class="flex items-center justify-center space-x-1 text-[10px] text-slate-400 mt-2">
+            <i data-lucide="shield-check" class="w-3 h-3 text-emerald-500"></i>
+            <span>Transacción encriptada con certificado SSL de 256 bits</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 text-xs font-semibold max-w-md border border-slate-700">
+    <div id="toastIcon" class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center shrink-0">
+      <i data-lucide="check" class="w-4 h-4"></i>
+    </div>
+    <span id="toastMessage">Acción completada con éxito</span>
+  </div>
+
+  <!-- App Logic JavaScript -->
+  <script src="js/app.js"></script>
+</body>
+</html>
