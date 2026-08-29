@@ -490,125 +490,152 @@
           <p class="text-sm text-slate-500">Cancela o cambia de plan en cualquier momento sin penalizaciones.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 pt-4">
           
-          <!-- Plan Prueba Gratuita MoveClub -->
-          <div class="bg-gradient-to-b from-emerald-50 to-white rounded-3xl p-6 border-2 border-emerald-500 shadow-md relative flex flex-col justify-between">
-            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-emerald-600 text-white text-[11px] font-extrabold uppercase tracking-wider shadow-sm">
-              🎁 Prueba Gratis
+          <!-- Plan 0: Prueba Gratuita 7 Días -->
+          <div class="bg-gradient-to-b from-emerald-50 to-white rounded-3xl p-5 border-2 border-emerald-500 shadow-md relative flex flex-col justify-between">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold uppercase tracking-wider shadow-sm">
+              🎁 Prueba 7 Días
             </div>
-            <div class="space-y-4 pt-2">
+            <div class="space-y-3 pt-2">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Regalo de Bienvenida</span>
-                <h4 class="text-xl font-bold text-slate-900 mt-1">Prueba 14 Días</h4>
-                <div class="mt-2 flex items-baseline">
-                  <span class="text-3xl font-extrabold text-emerald-600">$0</span>
-                  <span class="text-xs font-semibold text-slate-500 ml-1">/ 14 días</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700">2 Clases Gratis</span>
+                <h4 class="text-lg font-bold text-slate-900 mt-0.5">Prueba 7 Días</h4>
+                <div class="mt-1 flex items-baseline">
+                  <span class="text-2xl font-black text-emerald-600">$0</span>
+                  <span class="text-[10px] font-semibold text-slate-500 ml-1">/ 7 días</span>
                 </div>
               </div>
               
-              <div class="p-3 bg-emerald-100/80 rounded-2xl border border-emerald-200 text-emerald-900 text-center font-extrabold text-sm">
-                25 Créditos de Regalo (~4-5 clases)
+              <div class="p-2.5 bg-emerald-100/80 rounded-xl border border-emerald-200 text-emerald-900 text-center font-extrabold text-xs">
+                10 Créditos de Regalo
               </div>
 
-              <ul class="space-y-2.5 text-xs text-slate-600">
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 mr-2 shrink-0"></i> 25 créditos listos para usar</li>
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 mr-2 shrink-0"></i> Acceso a Pádel, Pilates, Gym y Yoga</li>
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-emerald-600 mr-2 shrink-0"></i> Sin cobros ni tarjeta obligatoria</li>
+              <ul class="space-y-2 text-[11px] text-slate-600">
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mr-1.5 shrink-0"></i> 10 créditos para 2 clases</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mr-1.5 shrink-0"></i> Vigencia por 7 días</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mr-1.5 shrink-0"></i> Sin cobros ni tarjeta</li>
               </ul>
             </div>
 
-            <button onclick="app.claimFreeTrial()" class="mt-6 w-full py-3 rounded-xl bg-emerald-600 text-white text-xs font-extrabold hover:bg-emerald-700 transition shadow-md shadow-emerald-200">
-              Disfrutar 25 Créditos Gratis
+            <button onclick="app.claimFreeTrial()" class="mt-5 w-full py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold hover:bg-emerald-700 transition shadow-md shadow-emerald-200">
+              Activar 10 Créditos Gratis
             </button>
           </div>
 
-          <!-- Plan Básico -->
-          <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col justify-between relative">
-            <div class="space-y-4">
+          <!-- Plan 1: Básico 26 créditos / $34.990 -->
+          <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col justify-between relative">
+            <div class="space-y-3">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Para empezar</span>
-                <h4 class="text-xl font-bold text-slate-900 mt-1">Plan Básico</h4>
-                <div class="mt-2 flex items-baseline">
-                  <span class="text-3xl font-extrabold text-slate-900">$24.900</span>
-                  <span class="text-xs font-semibold text-slate-500 ml-1">/ mes</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Para empezar</span>
+                <h4 class="text-lg font-bold text-slate-900 mt-0.5">Plan Básico</h4>
+                <div class="mt-1 flex items-baseline">
+                  <span class="text-2xl font-black text-slate-900">$34.990</span>
+                  <span class="text-[10px] font-semibold text-slate-500 ml-1">/ mes</span>
                 </div>
               </div>
               
-              <div class="p-3 bg-teal-50 rounded-2xl border border-teal-100 text-teal-800 text-center font-bold text-sm">
-                25 Créditos mensuales (~5-6 clases)
+              <div class="p-2.5 bg-teal-50 rounded-xl border border-teal-100 text-teal-800 text-center font-bold text-xs">
+                26 Créditos mensuales (~5-6 clases)
               </div>
 
-              <ul class="space-y-2.5 text-xs text-slate-600">
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Acceso a todos los estudios</li>
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Cancelación flexible hasta 12h antes</li>
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Acumula hasta 5 créditos sobrantes</li>
+              <ul class="space-y-2 text-[11px] text-slate-600">
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-teal-600 mr-1.5 shrink-0"></i> Acceso a todos los estudios</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-teal-600 mr-1.5 shrink-0"></i> Cancelación flexible hasta 12h</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-teal-600 mr-1.5 shrink-0"></i> Acumula hasta 5 créditos</li>
               </ul>
             </div>
 
-            <button onclick="app.openPaymentModal('Plan Básico (25 créditos/mes)', 25, 24900)" class="mt-6 w-full py-3 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition">
-              Elegir Plan Básico
+            <button onclick="app.openPaymentModal('Plan Básico (26 créditos/mes)', 26, 34990)" class="mt-5 w-full py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition">
+              Elegir Plan ($34.990)
             </button>
           </div>
 
-          <!-- Plan Pro (Most Popular) -->
-          <div class="bg-white rounded-3xl p-6 border-2 border-indigo-600 shadow-lg relative flex flex-col justify-between">
-            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-indigo-600 text-white text-[11px] font-extrabold uppercase tracking-wider shadow-sm">
+          <!-- Plan 2: Standard 34 créditos / $44.990 -->
+          <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col justify-between relative">
+            <div class="space-y-3">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Ritmo constante</span>
+                <h4 class="text-lg font-bold text-slate-900 mt-0.5">Plan Standard</h4>
+                <div class="mt-1 flex items-baseline">
+                  <span class="text-2xl font-black text-slate-900">$44.990</span>
+                  <span class="text-[10px] font-semibold text-slate-500 ml-1">/ mes</span>
+                </div>
+              </div>
+              
+              <div class="p-2.5 bg-teal-50 rounded-xl border border-teal-100 text-teal-800 text-center font-bold text-xs">
+                34 Créditos mensuales (~7-8 clases)
+              </div>
+
+              <ul class="space-y-2 text-[11px] text-slate-600">
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-teal-600 mr-1.5 shrink-0"></i> Acceso a todos los estudios</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-teal-600 mr-1.5 shrink-0"></i> Reservas con 5 días antes</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-teal-600 mr-1.5 shrink-0"></i> Acumula hasta 8 créditos</li>
+              </ul>
+            </div>
+
+            <button onclick="app.openPaymentModal('Plan Standard (34 créditos/mes)', 34, 44990)" class="mt-5 w-full py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition">
+              Elegir Plan ($44.990)
+            </button>
+          </div>
+
+          <!-- Plan 3: Pro 45 créditos / $59.990 (Más Popular ⭐) -->
+          <div class="bg-white rounded-3xl p-5 border-2 border-indigo-600 shadow-lg relative flex flex-col justify-between">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-extrabold uppercase tracking-wider shadow-sm">
               Más Popular ⭐
             </div>
 
-            <div class="space-y-4 pt-2">
+            <div class="space-y-3 pt-2">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Rutina completa</span>
-                <h4 class="text-xl font-bold text-slate-900 mt-1">Plan Pro</h4>
-                <div class="mt-2 flex items-baseline">
-                  <span class="text-3xl font-extrabold text-slate-900">$39.900</span>
-                  <span class="text-xs font-semibold text-slate-500 ml-1">/ mes</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-600">Rutina completa</span>
+                <h4 class="text-lg font-bold text-slate-900 mt-0.5">Plan Pro</h4>
+                <div class="mt-1 flex items-baseline">
+                  <span class="text-2xl font-black text-slate-900">$59.990</span>
+                  <span class="text-[10px] font-semibold text-slate-500 ml-1">/ mes</span>
                 </div>
               </div>
               
-              <div class="p-3 bg-indigo-50 rounded-2xl border border-indigo-100 text-indigo-900 text-center font-bold text-sm">
-                50 Créditos mensuales (~10-12 clases)
+              <div class="p-2.5 bg-indigo-50 rounded-xl border border-indigo-100 text-indigo-900 text-center font-bold text-xs">
+                45 Créditos mensuales (~10-11 clases)
               </div>
 
-              <ul class="space-y-2.5 text-xs text-slate-600">
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-600 mr-2 shrink-0"></i> Acceso a todos los estudios y Spas</li>
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-600 mr-2 shrink-0"></i> Reservas prioritarias 7 días antes</li>
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-600 mr-2 shrink-0"></i> Acumula hasta 10 créditos sobrantes</li>
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-indigo-600 mr-2 shrink-0"></i> Invitación gratis para 1 amigo al mes</li>
+              <ul class="space-y-2 text-[11px] text-slate-600">
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-indigo-600 mr-1.5 shrink-0"></i> Acceso a todos los estudios y Spas</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-indigo-600 mr-1.5 shrink-0"></i> Reservas prioritarias 7 días antes</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-indigo-600 mr-1.5 shrink-0"></i> Acumula hasta 10 créditos</li>
               </ul>
             </div>
 
-            <button onclick="app.openPaymentModal('Plan Pro (50 créditos/mes)', 50, 39900)" class="mt-6 w-full py-3 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition shadow-md shadow-indigo-200">
-              Elegir Plan Pro
+            <button onclick="app.openPaymentModal('Plan Pro (45 créditos/mes)', 45, 59990)" class="mt-5 w-full py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition shadow-md shadow-indigo-200">
+              Elegir Plan ($59.990)
             </button>
           </div>
 
-          <!-- Plan Elite -->
-          <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-            <div class="space-y-4">
+          <!-- Plan 4: Elite 60 créditos / $78.990 -->
+          <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+            <div class="space-y-3">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Alto Rendimiento</span>
-                <h4 class="text-xl font-bold text-slate-900 mt-1">Plan Elite</h4>
-                <div class="mt-2 flex items-baseline">
-                  <span class="text-3xl font-extrabold text-slate-900">$69.900</span>
-                  <span class="text-xs font-semibold text-slate-500 ml-1">/ mes</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Alto Rendimiento</span>
+                <h4 class="text-lg font-bold text-slate-900 mt-0.5">Plan Elite</h4>
+                <div class="mt-1 flex items-baseline">
+                  <span class="text-2xl font-black text-slate-900">$78.990</span>
+                  <span class="text-[10px] font-semibold text-slate-500 ml-1">/ mes</span>
                 </div>
               </div>
               
-              <div class="p-3 bg-teal-50 rounded-2xl border border-teal-100 text-teal-800 text-center font-bold text-sm">
-                100 Créditos mensuales (~20-25 clases)
+              <div class="p-2.5 bg-teal-50 rounded-xl border border-teal-100 text-teal-800 text-center font-bold text-xs">
+                60 Créditos mensuales (~13-15 clases)
               </div>
 
-              <ul class="space-y-2.5 text-xs text-slate-600">
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Acceso total ilimitado a toda la red</li>
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Acceso a saunas, crioterapia y Spas VIP</li>
-                <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-teal-600 mr-2 shrink-0"></i> Acumula hasta 25 créditos sobrantes</li>
+              <ul class="space-y-2 text-[11px] text-slate-600">
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-teal-600 mr-1.5 shrink-0"></i> Acceso ilimitado a toda la red</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-teal-600 mr-1.5 shrink-0"></i> Acceso a saunas y Spas VIP</li>
+                <li class="flex items-center"><i data-lucide="check" class="w-3.5 h-3.5 text-teal-600 mr-1.5 shrink-0"></i> Acumula hasta 15 créditos</li>
               </ul>
             </div>
 
-            <button onclick="app.openPaymentModal('Plan Elite (100 créditos/mes)', 100, 69900)" class="mt-6 w-full py-3 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition">
-              Elegir Plan Elite
+            <button onclick="app.openPaymentModal('Plan Elite (60 créditos/mes)', 60, 78990)" class="mt-5 w-full py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition">
+              Elegir Plan ($78.990)
             </button>
           </div>
 
@@ -1152,20 +1179,20 @@
       </div>
       <div>
         <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase tracking-wider mb-2">🎁 Bienvenido a MoveClub</span>
-        <h3 class="text-2xl font-black text-slate-900">¡Te regalamos 25 Créditos Gratis!</h3>
+        <h3 class="text-2xl font-black text-slate-900">¡Te regalamos 10 Créditos Gratis!</h3>
         <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-          Tu membresía incluye una <strong>Prueba Gratuita de 25 créditos</strong> para que reserves tus primeras clases en los mejores estudios de <strong>Pádel, Pilates, CrossFit, Yoga y Gym</strong> en Osorno y Temuco.
+          Tu membresía incluye una <strong>Prueba Gratuita de 10 créditos</strong> válidos por <strong>7 días (1 semana)</strong> para que reserves tus <strong>2 primeras clases gratis</strong> en los mejores estudios de <strong>Pádel, Pilates, CrossFit, Yoga y Gym</strong> en Osorno y Temuco.
         </p>
       </div>
 
       <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 text-left space-y-2 text-xs">
         <div class="flex items-center text-slate-700">
           <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 mr-2 shrink-0"></i>
-          <span><strong>25 créditos listos</strong> en tu saldo de bienvenida</span>
+          <span><strong>10 créditos de bienvenida</strong> (suficientes para 2 clases gratis)</span>
         </div>
         <div class="flex items-center text-slate-700">
           <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 mr-2 shrink-0"></i>
-          <span>Válido para 3 a 5 clases en cualquier estudio</span>
+          <span><strong>Vigencia de 7 días (1 semana)</strong> en toda la red</span>
         </div>
         <div class="flex items-center text-slate-700">
           <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 mr-2 shrink-0"></i>

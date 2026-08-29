@@ -530,27 +530,27 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "plan_tier": user["plan_tier"]
                 })
 
-            # 5. POST /api/user/reset_trial (Activar 25 Créditos de Prueba MoveClub)
+            # 5. POST /api/user/reset_trial (Activar 10 Créditos de Prueba MoveClub - 7 Días)
             elif path == "/api/user/reset_trial":
                 conn = get_connection()
                 cursor = conn.cursor()
                 cursor.execute('''
                     UPDATE users 
-                    SET credits_balance = 25, 
-                        plan_tier = 'Prueba Gratuita (25 créditos de regalo)'
+                    SET credits_balance = 10, 
+                        plan_tier = 'Prueba Gratuita (10 créditos / 7 días)'
                     WHERE id = 1
                 ''')
                 cursor.execute('''
                     INSERT INTO credit_transactions (user_id, amount, type, description)
-                    VALUES (1, 25, 'topup', '🎁 Bono de Bienvenida MoveClub: 25 Créditos Gratis de Prueba')
+                    VALUES (1, 10, 'topup', '🎁 Bono de Bienvenida MoveClub: 10 Créditos Gratis (Prueba 7 Días - 2 Clases)')
                 ''')
                 conn.commit()
                 conn.close()
                 return self._send_json({
                     "success": True, 
-                    "message": "🎁 ¡25 Créditos Gratis de Prueba activados con éxito!",
-                    "new_balance": 25,
-                    "plan_tier": "Prueba Gratuita (25 créditos de regalo)"
+                    "message": "🎁 ¡10 Créditos Gratis de Prueba activados (Válidos por 7 días para 2 clases)!",
+                    "new_balance": 10,
+                    "plan_tier": "Prueba Gratuita (10 créditos / 7 días)"
                 })
 
             # 6. POST /api/favorites/toggle

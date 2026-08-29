@@ -68,7 +68,7 @@ const app = {
         await this.fetchUser();
       }
     } catch(e) {}
-    this.showToast('🎁 ¡25 Créditos de Bienvenida listos en tu cuenta!');
+    this.showToast('🎁 ¡10 Créditos de Bienvenida listos en tu cuenta (2 clases gratis)!');
   },
 
   async claimFreeTrial() {
@@ -80,7 +80,7 @@ const app = {
       }
     } catch(e) {}
     this.switchView('explore');
-    this.showToast('🎁 ¡Tu Prueba Gratuita de 25 créditos está activa! Elige tu primera clase.');
+    this.showToast('🎁 ¡Prueba Gratuita de 10 créditos activa por 7 días! Elige tus 2 clases.');
   },
 
   // Setup Date Carousel
