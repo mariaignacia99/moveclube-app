@@ -722,7 +722,7 @@ const app = {
             </span>
 
             <!-- Credits Pill Overlay -->
-            <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-black bg-teal-600 text-white shadow-md flex items-center space-x-1">
+            <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 flex items-center space-x-1">
               <i data-lucide="coins" class="w-3.5 h-3.5 mr-1"></i>
               ${c.credit_cost} créditos
             </span>
@@ -730,7 +730,7 @@ const app = {
             <!-- Studio Name & Rating on bottom of image -->
             <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
               <div>
-                <span class="text-xs text-indigo-300 font-semibold block">${c.neighborhood || 'Santiago'}</span>
+                <span class="text-xs text-cyan-300 font-semibold block">${c.neighborhood || 'Osorno'}</span>
                 <h4 class="font-bold text-sm leading-tight text-white drop-shadow-sm cursor-pointer hover:underline" onclick="app.openStudioModal(${c.studio_id})">
                   ${c.studio_name}
                 </h4>
@@ -746,7 +746,7 @@ const app = {
           <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
               <div class="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                <span class="flex items-center text-indigo-600 font-bold">
+                <span class="flex items-center text-cyan-600 font-bold">
                   <i data-lucide="clock" class="w-3.5 h-3.5 mr-1"></i>
                   ${hourStr} hrs (${c.duration_minutes} min)
                 </span>
@@ -785,7 +785,7 @@ const app = {
               <button onclick="app.openStudioModal(${c.studio_id})" class="w-1/3 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
                 Estudio
               </button>
-              <button onclick="app.openBookingModal(${c.id})" class="w-2/3 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-extrabold hover:bg-indigo-700 transition shadow-sm shadow-indigo-200 flex items-center justify-center space-x-1.5">
+              <button onclick="app.openBookingModal(${c.id})" class="w-2/3 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white text-xs font-extrabold shadow-md shadow-cyan-500/20 hover:opacity-95 transition flex items-center justify-center space-x-1.5">
                 <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
                 <span>Reservar (${c.credit_cost} cr)</span>
               </button>
