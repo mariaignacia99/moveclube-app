@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="brand_blue">#3B82F6</color>
+    <color name="brand_cyan">#06B6D4</color>
+    <color name="brand_dark">#0B0F19</color>
+    <color name="brand_lime">#4ADE80</color>
+    <color name="brand_purple">#A855F7</color>
+    <color name="white">#FFFFFF</color>
+    <string name="app_name">MoveClub</string>
+    <style name="Theme.MoveClub" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">#000000</item>
+    </style>
+    <style name="Theme.MoveClub.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>
