@@ -269,7 +269,7 @@ const app = {
     if (userDropdown) userDropdown.classList.add('hidden');
 
     // Hide all view sections
-    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings', 'profile-edit', 'privacy'];
+    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings', 'profile-edit', 'privacy', 'billing'];
     sections.forEach(s => {
       const el = document.getElementById(`view-${s}`);
       const navEl = document.getElementById(`nav-${s}`);
@@ -284,7 +284,7 @@ const app = {
 
     // Show target section
     const targetSection = document.getElementById(`view-${viewName}`);
-    const isProfileSubView = ['account', 'settings', 'profile-edit', 'privacy'].includes(viewName);
+    const isProfileSubView = ['account', 'settings', 'profile-edit', 'privacy', 'billing'].includes(viewName);
     const targetNav = document.getElementById(`nav-${isProfileSubView ? 'profile' : viewName}`);
     const targetMobNav = document.getElementById(`mobile-nav-${isProfileSubView ? 'profile' : viewName}`);
     if (targetSection) targetSection.classList.remove('hidden');
@@ -314,11 +314,38 @@ const app = {
       this.renderProfileEditView();
     } else if (viewName === 'privacy') {
       this.renderPrivacyView();
+    } else if (viewName === 'billing') {
+      this.renderBillingView();
     } else if (viewName === 'explore' && this.state.viewMode === 'map') {
       setTimeout(() => this.initOrUpdateMap(), 100);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    lucide.createIcons();
+  },
+
+  renderBillingView() {
+    const u = this.state.user;
+    const activeCont = document.getElementById('billingActiveCardContainer');
+    const emptyCont = document.getElementById('billingEmptyStateContainer');
+
+    if (u && u.card_last4) {
+      if (activeCont) activeCont.classList.remove('hidden');
+      if (emptyCont) emptyCont.classList.add('hidden');
+
+      const brandEl = document.getElementById('billingCardBrand');
+      if (brandEl) brandEl.innerText = u.card_brand ? `Tarjeta ${u.card_brand}` : 'Tarjeta de crédito';
+
+      const numEl = document.getElementById('billingCardNumber');
+      if (numEl) numEl.innerText = `•••• •••• •••• ${u.card_last4}`;
+
+      const expEl = document.getElementById('billingCardExpiry');
+      if (expEl) expEl.innerText = u.card_expiry || '12/2028';
+    } else {
+      if (activeCont) activeCont.classList.add('hidden');
+      if (emptyCont) emptyCont.classList.remove('hidden');
+    }
+
     lucide.createIcons();
   },
 
