@@ -1276,26 +1276,26 @@ const app = {
       const isUrgent = !isFull && c.available_spots <= 3;
 
       return `
-        <div class="fitpass-card bg-[#0E1422] rounded-3xl overflow-hidden border border-slate-800/90 hover:border-cyan-400/50 shadow-xl flex flex-col justify-between transition-all duration-300">
+        <div class="fitpass-card bg-white rounded-3xl overflow-hidden border border-slate-200/90 hover:border-blue-500/50 shadow-sm hover:shadow-xl flex flex-col justify-between transition-all duration-300">
           <!-- Studio Photo & Category Badge -->
           <div class="relative h-44 overflow-hidden group">
             <img src="${c.studio_image}" alt="${c.studio_name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#0E1422] via-slate-950/30 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
             
             <!-- Category & Coming Soon Tag -->
             <div class="absolute top-3 left-3 flex flex-col space-y-1">
-              <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-black/85 text-cyan-300 border border-cyan-500/30 backdrop-blur-md shadow-sm">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/95 text-slate-900 backdrop-blur-md shadow-sm">
                 ${c.category}
               </span>
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 shadow-md">
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-gradient-to-r from-amber-400 to-orange-400 text-slate-950 shadow-md">
                 ✨ Fase de Convenio
               </span>
             </div>
 
             <!-- Credits Pill Overlay with Dynamic Peak / Valley / Surge Indicator -->
             <div class="absolute top-3 right-3 flex flex-col items-end space-y-1">
-              <span class="px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white shadow-lg shadow-cyan-500/30 flex items-center space-x-1">
-                <i data-lucide="coins" class="w-3.5 h-3.5 mr-1 text-cyan-200"></i>
+              <span class="px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 flex items-center space-x-1">
+                <i data-lucide="coins" class="w-3.5 h-3.5 mr-1"></i>
                 ${c.credit_cost} créditos
               </span>
               ${c.is_surge ? `
@@ -1307,7 +1307,7 @@ const app = {
                   <span>🔥 Horario Punta</span>
                 </span>
               ` : `
-                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/90 text-slate-950 backdrop-blur-md shadow-sm flex items-center space-x-0.5 font-black">
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-600/90 text-white backdrop-blur-md shadow-sm flex items-center space-x-0.5">
                   <span>🟢 Tarifa Valle</span>
                 </span>
               `}
@@ -1316,12 +1316,12 @@ const app = {
             <!-- Studio Name & Rating on bottom of image -->
             <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
               <div>
-                <span class="text-xs text-cyan-400 font-bold block">📍 ${c.neighborhood || c.city || 'Osorno'}</span>
-                <h4 class="font-extrabold text-sm leading-tight text-white drop-shadow-md cursor-pointer hover:text-cyan-300 transition" onclick="app.openStudioModal(${c.studio_id})">
+                <span class="text-xs text-cyan-300 font-bold block">📍 ${c.neighborhood || c.city || 'Osorno'}</span>
+                <h4 class="font-extrabold text-sm leading-tight text-white drop-shadow-sm cursor-pointer hover:text-cyan-200 transition" onclick="app.openStudioModal(${c.studio_id})">
                   ${c.studio_name}
                 </h4>
               </div>
-              <div class="flex items-center space-x-1 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-lg text-xs font-black text-amber-400 border border-amber-500/20">
+              <div class="flex items-center space-x-1 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-lg text-xs font-bold text-amber-300 border border-white/10">
                 <span>★</span>
                 <span>${c.studio_rating || '4.9'}</span>
               </div>
@@ -1331,30 +1331,30 @@ const app = {
           <!-- Class Details Body -->
           <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
-              <div class="flex items-center justify-between text-xs font-semibold">
-                <span class="flex items-center text-cyan-400 font-bold">
-                  <i data-lucide="clock" class="w-3.5 h-3.5 mr-1 text-cyan-400"></i>
+              <div class="flex items-center justify-between text-xs text-slate-500 font-semibold">
+                <span class="flex items-center text-blue-600 font-bold">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 mr-1"></i>
                   ${hourStr} hrs (${c.duration_minutes} min)
                 </span>
-                <span class="bg-slate-800/80 px-2 py-0.5 rounded-md text-[11px] text-slate-300 border border-slate-700/60">${c.level}</span>
+                <span class="bg-slate-100 px-2 py-0.5 rounded-md text-[11px] text-slate-600 font-semibold">${c.level}</span>
               </div>
 
-              <h3 class="font-black text-base text-white line-clamp-1">${c.title}</h3>
-              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${c.description || 'Entrenamiento enfocado en tonificación, resistencia y movilidad guiado por instructores profesionales.'}</p>
+              <h3 class="font-black text-base text-slate-900 line-clamp-1">${c.title}</h3>
+              <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${c.description || 'Entrenamiento enfocado en tonificación, resistencia y movilidad guiado por instructores profesionales.'}</p>
             </div>
 
             <!-- Instructor & Spots status -->
-            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
               <div class="flex items-center space-x-2.5">
-                <img src="${c.instructor_avatar}" alt="${c.instructor_name}" class="w-7 h-7 rounded-full object-cover border border-cyan-500/30">
+                <img src="${c.instructor_avatar}" alt="${c.instructor_name}" class="w-7 h-7 rounded-full object-cover border border-slate-200">
                 <div>
-                  <span class="block text-xs font-bold text-slate-200 leading-tight">${c.instructor_name}</span>
+                  <span class="block text-xs font-bold text-slate-800 leading-tight">${c.instructor_name}</span>
                   <span class="block text-[10px] text-slate-400">Instructor Lead</span>
                 </div>
               </div>
 
               <div>
-                <span class="inline-flex items-center text-[11px] font-extrabold text-amber-400 bg-amber-950/40 px-2.5 py-1 rounded-full border border-amber-500/30">
+                <span class="inline-flex items-center text-[11px] font-extrabold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
                   🔥 ${c.votes_count || 24} interesados
                 </span>
               </div>
@@ -1362,10 +1362,10 @@ const app = {
 
             <!-- Action Buttons (Option 2: Coming Soon & Voting) -->
             <div class="pt-1 flex space-x-2">
-              <button onclick="app.openStudioModal(${c.studio_id})" class="w-1/2 py-2.5 rounded-xl border border-slate-700/80 text-slate-300 text-xs font-bold hover:bg-slate-800 hover:text-white transition">
+              <button onclick="app.openStudioModal(${c.studio_id})" class="w-1/2 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 hover:text-slate-900 transition">
                 Ver Estudio
               </button>
-              <button onclick="app.voteForStudio(${c.studio_id})" id="btnVoteCard-${c.studio_id}" class="w-1/2 py-2.5 rounded-xl ${c.has_voted ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-md shadow-cyan-500/25'} text-xs font-black transition flex items-center justify-center space-x-1">
+              <button onclick="app.voteForStudio(${c.studio_id})" id="btnVoteCard-${c.studio_id}" class="w-1/2 py-2.5 rounded-xl ${c.has_voted ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-md shadow-blue-500/25'} text-xs font-black transition flex items-center justify-center space-x-1">
                 <i data-lucide="${c.has_voted ? 'check' : 'thumbs-up'}" class="w-3.5 h-3.5"></i>
                 <span>${c.has_voted ? 'Votado ✓' : 'Pedir Apertura'}</span>
               </button>

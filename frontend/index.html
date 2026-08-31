@@ -52,7 +52,7 @@
   <!-- QRCode.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-<body class="bg-[#07090E] text-white flex flex-col min-h-screen">
+<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">
 
   <!-- TOP HEADER / NAVBAR -->
   <header class="sticky top-0 z-40 header-glass">
@@ -62,7 +62,7 @@
         <!-- Brand & Location -->
         <div class="flex items-center space-x-2 sm:space-x-4 min-w-0">
           <div class="flex items-center space-x-1.5 sm:space-x-2.5 cursor-pointer group flex-shrink-0" onclick="app.switchView('explore')">
-            <div id="navbarLogoIcon" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-md shadow-cyan-500/20 border border-slate-800 bg-black flex items-center justify-center p-0.5 group-hover:scale-105 transition">
+            <div id="navbarLogoIcon" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-md shadow-cyan-500/20 border border-slate-200 bg-white flex items-center justify-center p-0.5 shadow-sm group-hover:scale-105 transition">
               <img src="/images/app_icon.png" alt="MoveClub Logo" class="w-full h-full object-cover rounded-lg">
             </div>
             <div class="flex items-center">
@@ -275,13 +275,13 @@
         <!-- Search Bar with Live Suggestions Dropdown -->
         <div class="relative">
           <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          <input type="text" id="searchInput" oninput="app.handleSearch(this.value)" onfocus="app.handleSearchFocus()" onkeydown="if(event.key==='Enter') this.blur()" placeholder="Buscar pádel, pilates, ruta pádel, crossfit..." class="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-[#0E1422] border border-cyan-500/30 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 text-sm shadow-lg shadow-cyan-950/40 transition">
+          <input type="text" id="searchInput" oninput="app.handleSearch(this.value)" onfocus="app.handleSearchFocus()" onkeydown="if(event.key==='Enter') this.blur()" placeholder="Buscar pádel, pilates, ruta pádel, crossfit..." class="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-white border border-slate-200/90 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm shadow-sm transition">
           <button id="clearSearchBtn" onclick="app.resetFilters()" class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-black hover:bg-slate-300">
             ✕
           </button>
 
           <!-- Live Search Autocomplete Floating Dropdown -->
-          <div id="liveSearchDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#0E1422] rounded-2xl shadow-2xl border border-cyan-500/40 overflow-hidden z-50 max-h-80 overflow-y-auto divide-y divide-slate-800 animate-fade-in">
+          <div id="liveSearchDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 max-h-80 overflow-y-auto divide-y divide-slate-100 animate-fade-in">
             <!-- Rendered dynamically by app.renderLiveSearchDropdown() -->
           </div>
         </div>
@@ -319,7 +319,7 @@
         </div>
 
         <!-- Dynamic Search Results Indicator Banner -->
-        <div id="searchResultsBanner" class="hidden p-3.5 bg-gradient-to-r from-cyan-950/80 to-blue-950/80 border border-cyan-500/30 rounded-2xl flex items-center justify-between text-xs font-bold text-cyan-200 shadow-sm animate-fade-in">
+        <div id="searchResultsBanner" class="hidden p-3.5 bg-blue-50/90 border border-blue-200 rounded-2xl flex items-center justify-between text-xs font-bold text-blue-950 shadow-sm animate-fade-in">
           <div class="flex items-center space-x-2">
             <i data-lucide="search" class="w-4 h-4 text-indigo-600"></i>
             <span id="searchResultsText">Resultados de búsqueda</span>
@@ -537,7 +537,7 @@
       </div>
 
       <!-- Filter Controls & View Switcher Bar -->
-      <div id="filterControlsSection" class="bg-[#0E1422] p-3.5 rounded-2xl border border-slate-800 shadow-md flex flex-wrap items-center justify-between gap-3">
+      <div id="filterControlsSection" class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-2 text-xs">
           
           <!-- Horario Filter -->
@@ -3166,6 +3166,6 @@
   </div>
 
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_1915"></script>
+  <script src="js/app.js?v=20260831_1920"></script>
 </body>
 </html>
