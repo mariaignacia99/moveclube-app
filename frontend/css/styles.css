@@ -1,51 +1,47 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap");
 
 :root {
-  --primary-purple: #7C3AED;
-  --primary-purple-bright: #8B5CF6;
-  --primary-purple-dark: #6D28D9;
-  --primary-purple-deep: #4C1D95;
-  --primary-purple-light: #F3E8FF;
-  --primary-purple-subtle: #FAF5FF;
-  
   --primary-cyan: #06B6D4;
   --primary-blue: #2563EB;
+  --primary-indigo: #4F46E5;
   
-  --brand-gradient: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #6366F1 100%);
-  --brand-gradient-hover: linear-gradient(135deg, #7C3AED 0%, #6D28D9 50%, #4F46E5 100%);
+  --brand-gradient: linear-gradient(135deg, #06B6D4 0%, #2563EB 50%, #4F46E5 100%);
+  --brand-gradient-hover: linear-gradient(135deg, #0891B2 0%, #1D4ED8 50%, #4338CA 100%);
   
-  --primary: #7C3AED;
-  --primary-hover: #6D28D9;
-  --primary-light: #F3E8FF;
-  --accent: #8B5CF6;
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-light: #EFF6FF;
+  --accent: #06B6D4;
+  --accent-light: #ECFEFF;
+  
   --dark: #0F172A;
   --text-main: #0F172A;
-  --text-purple: #7C3AED;
-  --text-muted: #6B7280;
+  --text-muted: #64748B;
   --bg-main: #F8FAFC;
   --bg-card: #FFFFFF;
   --border: #E2E8F0;
-  --credit-color: #7C3AED;
-  --credit-bg: #F3E8FF;
+  
+  --credit-color: #0284C7;
+  --credit-bg: #E0F2FE;
   --success: #10B981;
   --warning: #F59E0B;
 }
 
 .btn-moveclub {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #6366F1 100%);
+  background: linear-gradient(135deg, #06B6D4 0%, #2563EB 50%, #4F46E5 100%);
   color: #FFFFFF !important;
   font-weight: 800;
-  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.28);
   transition: all 0.2s ease;
 }
 .btn-moveclub:hover {
-  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 50%, #4F46E5 100%);
+  background: linear-gradient(135deg, #0891B2 0%, #1D4ED8 50%, #4338CA 100%);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(109, 40, 217, 0.4);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.38);
 }
 
 .text-brand-gradient {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #6366F1 100%);
+  background: linear-gradient(135deg, #06B6D4 0%, #2563EB 50%, #4F46E5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -87,7 +83,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #7C3AED !important;
+  color: #0F172A !important;
 }
 
 main {
@@ -118,11 +114,11 @@ header, section, article {
   background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #DDD6FE;
+  background: #CBD5E1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #C4B5FD;
+  background: #94A3B8;
 }
 
 /* Header & Navigation */
@@ -135,15 +131,15 @@ header, section, article {
 }
 
 .credits-badge {
-  background: linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%);
-  border: 1px solid rgba(139, 92, 246, 0.4);
-  color: #7C3AED;
-  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.15);
+  background: #0F172A;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  color: #38BDF8;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .credits-badge:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(124, 58, 237, 0.25);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
 }
 
 /* Category Pills & Carousels */
@@ -160,21 +156,21 @@ header, section, article {
   transition: all 0.2s ease;
   border: 1px solid #E2E8F0;
   background: #FFFFFF;
-  color: #7C3AED;
+  color: #475569;
   font-weight: 700;
   white-space: nowrap;
 }
 .category-pill.active {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #6366F1 100%);
+  background: #0F172A;
   color: #FFFFFF !important;
   font-weight: 800;
-  border-color: transparent;
-  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
+  border-color: #0F172A;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
 }
 .category-pill:not(.active):hover {
-  background: #F3E8FF;
-  color: #6D28D9;
-  border-color: #DDD6FE;
+  background: #F1F5F9;
+  color: #0F172A;
+  border-color: #CBD5E1;
 }
 
 /* Date Pills */
@@ -182,15 +178,15 @@ header, section, article {
   transition: all 0.2s ease;
   border: 1px solid #E2E8F0;
   background: #FFFFFF;
-  color: #7C3AED;
+  color: #475569;
   font-weight: 700;
   white-space: nowrap;
 }
 .date-pill.active {
-  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #6366F1 100%);
+  background: linear-gradient(135deg, #06B6D4 0%, #2563EB 50%, #4F46E5 100%);
   color: white !important;
   border-color: transparent;
-  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
 }
 
 /* Studio & Class Cards */
@@ -204,8 +200,8 @@ header, section, article {
 }
 .fitpass-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 32px -10px rgba(124, 58, 237, 0.15);
-  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 16px 32px -10px rgba(15, 23, 42, 0.12);
+  border-color: rgba(37, 99, 235, 0.4);
 }
 
 /* Animations */

@@ -962,28 +962,28 @@ const app = {
     }
 
     let html = `
-      <div class="p-2.5 bg-purple-50 text-[10px] font-black text-purple-700 uppercase tracking-wider flex items-center justify-between border-b border-purple-100">
+      <div class="p-2.5 bg-slate-50 text-[10px] font-black text-slate-500 uppercase tracking-wider flex items-center justify-between border-b border-slate-100">
         <span>Estudios y Centros Coincidentes</span>
-        <span class="text-purple-600 font-extrabold">${matchingStudios.length} sugerencias</span>
+        <span class="text-blue-600 font-extrabold">${matchingStudios.length} sugerencias</span>
       </div>
       <div class="divide-y divide-slate-100">
     `;
 
     matchingStudios.forEach(s => {
       html += `
-        <div onclick="app.selectStudioFromDropdown(${s.id})" class="p-2.5 hover:bg-purple-50/70 flex items-center justify-between cursor-pointer transition group">
+        <div onclick="app.selectStudioFromDropdown(${s.id})" class="p-2.5 hover:bg-blue-50/70 flex items-center justify-between cursor-pointer transition group">
           <div class="flex items-center space-x-2.5 min-w-0">
             <img src="${s.image_url}" alt="${s.name}" class="w-9 h-9 rounded-xl object-cover border border-slate-200 shrink-0">
             <div class="min-w-0">
-              <span class="block text-xs font-black text-slate-900 group-hover:text-purple-600 truncate">${s.name}</span>
+              <span class="block text-xs font-black text-slate-900 group-hover:text-blue-600 truncate">${s.name}</span>
               <span class="block text-[10px] text-slate-500 truncate">${s.category} • 📍 ${s.neighborhood || s.city}</span>
             </div>
           </div>
           <div class="flex items-center space-x-1.5 shrink-0 ml-2">
-            <span class="text-[9px] font-extrabold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+            <span class="text-[9px] font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
               🔥 ${s.votes_count || 24} votos
             </span>
-            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600"></i>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600"></i>
           </div>
         </div>
       `;
@@ -1109,16 +1109,16 @@ const app = {
       const topRated = [...this.state.studios].sort((a, b) => (b.rating || 0) - (a.rating || 0));
       topRatedContainer.innerHTML = topRated.map((s, idx) => `
         <div onclick="app.filterByStudio(${s.id})" class="flex flex-col shrink-0 w-44 group cursor-pointer text-left">
-          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-md group-hover:shadow-purple-500/10 transition relative bg-white border border-slate-200/80">
+          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-md group-hover:shadow-blue-500/10 transition relative bg-white border border-slate-200/80">
             <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
             ${s.is_favorite ? '<div class="absolute top-2 right-2 w-6 h-6 bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center text-rose-400 shadow-sm"><i data-lucide="heart" class="w-3.5 h-3.5 fill-rose-500"></i></div>' : ''}
           </div>
-          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-[#7C3AED] transition">${s.name}</span>
+          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-blue-600 transition">${s.name}</span>
           <span class="text-[11px] text-slate-500 font-medium">${(0.4 + idx * 0.3).toFixed(1)} km</span>
           <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-700">
             <span class="text-amber-500">⭐ ${s.rating || 4.9}</span>
             <span class="text-slate-400 font-normal">(${s.review_count || 100}+)</span>
-            <span class="text-[#7C3AED] font-bold ml-1">Genial</span>
+            <span class="text-blue-600 font-bold ml-1">Genial</span>
           </div>
         </div>
       `).join('');
@@ -1129,12 +1129,12 @@ const app = {
       const fitness = this.state.studios.filter(s => s.category !== 'Spa & Bienestar');
       fitnessContainer.innerHTML = (fitness.length > 0 ? fitness : this.state.studios).map((s, idx) => `
         <div onclick="app.filterByStudio(${s.id})" class="flex flex-col shrink-0 w-44 group cursor-pointer text-left">
-          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-md group-hover:shadow-purple-500/10 transition relative bg-white border border-slate-200/80">
+          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-md group-hover:shadow-blue-500/10 transition relative bg-white border border-slate-200/80">
             <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
           </div>
-          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-[#7C3AED] transition">${s.name}</span>
+          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-blue-600 transition">${s.name}</span>
           <span class="text-[11px] text-slate-500 font-medium">${(0.2 + idx * 0.4).toFixed(1)} km</span>
-          <span class="text-[10px] text-purple-700 font-bold truncate">${s.category} • ${s.neighborhood || s.city}</span>
+          <span class="text-[10px] text-blue-700 font-bold truncate">${s.category} • ${s.neighborhood || s.city}</span>
           <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-700">
             <span class="text-amber-500">⭐ ${s.rating || 4.9}</span>
             <span class="text-slate-400 font-normal">(${s.review_count || 120}+)</span>
@@ -1149,16 +1149,16 @@ const app = {
       const spas = this.state.studios.filter(s => s.category.includes('Spa') || s.category.includes('Yoga') || s.category.includes('Pilates'));
       spasContainer.innerHTML = (spas.length > 0 ? spas : this.state.studios.slice(0, 4)).map((s, idx) => `
         <div onclick="app.filterByStudio(${s.id})" class="flex flex-col shrink-0 w-44 group cursor-pointer text-left">
-          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-md group-hover:shadow-purple-500/10 transition relative bg-white border border-slate-200/80">
+          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-md group-hover:shadow-blue-500/10 transition relative bg-white border border-slate-200/80">
             <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
           </div>
-          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-[#7C3AED] transition">${s.name}</span>
+          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-blue-600 transition">${s.name}</span>
           <span class="text-[11px] text-slate-500 font-medium">${(0.5 + idx * 0.3).toFixed(1)} km</span>
-          <span class="text-[10px] text-purple-700 font-bold truncate">Saunas, Masajes & Spas</span>
+          <span class="text-[10px] text-blue-700 font-bold truncate">Saunas, Masajes & Spas</span>
           <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-700">
             <span class="text-amber-500">⭐ 5.0</span>
             <span class="text-slate-400 font-normal">(90+)</span>
-            <span class="text-[#7C3AED] font-bold ml-1">Oferta</span>
+            <span class="text-blue-600 font-bold ml-1">Oferta</span>
           </div>
         </div>
       `).join('');
@@ -1190,12 +1190,12 @@ const app = {
       html += `
         <div onclick="app.filterByStudio(${s.id})" class="flex flex-col items-center space-y-1 cursor-pointer shrink-0 w-20 group text-center">
           <div class="relative">
-            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-purple-200 group-hover:border-[#7C3AED] transition shadow-sm p-0.5 bg-white">
+            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-200 group-hover:border-blue-600 transition shadow-sm p-0.5 bg-white">
               <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover rounded-full">
             </div>
             ${s.is_favorite ? '<div class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-rose-500 rounded-full flex items-center justify-center text-white text-[9px] shadow-sm"><i data-lucide="heart" class="w-2.5 h-2.5 fill-white"></i></div>' : ''}
           </div>
-          <span class="text-[11px] font-bold text-slate-800 truncate w-full group-hover:text-[#7C3AED] transition">${s.name}</span>
+          <span class="text-[11px] font-bold text-slate-800 truncate w-full group-hover:text-blue-600 transition">${s.name}</span>
           <span class="text-[9px] text-slate-400 truncate w-full">${s.neighborhood || s.city}</span>
         </div>
       `;
@@ -1204,10 +1204,10 @@ const app = {
     for (let i = 0; i < 3; i++) {
       html += `
         <div onclick="app.switchView('favorites')" class="flex flex-col items-center space-y-1 cursor-pointer shrink-0 w-16 group text-center">
-          <div class="w-14 h-14 rounded-full border-2 border-dashed border-purple-200 hover:border-[#7C3AED] flex items-center justify-center text-purple-400 hover:text-[#7C3AED] transition bg-purple-50/50">
+          <div class="w-14 h-14 rounded-full border-2 border-dashed border-slate-300 hover:border-blue-600 flex items-center justify-center text-slate-400 hover:text-blue-600 transition bg-slate-50">
             <i data-lucide="plus" class="w-5 h-5"></i>
           </div>
-          <span class="text-[10px] font-semibold text-purple-600">Guardar</span>
+          <span class="text-[10px] font-semibold text-slate-500">Guardar</span>
         </div>
       `;
     }
@@ -1276,7 +1276,7 @@ const app = {
       const isUrgent = !isFull && c.available_spots <= 3;
 
       return `
-        <div class="fitpass-card bg-white rounded-3xl overflow-hidden border border-slate-200/90 hover:border-purple-500/50 shadow-sm hover:shadow-xl flex flex-col justify-between transition-all duration-300">
+        <div class="fitpass-card bg-white rounded-3xl overflow-hidden border border-slate-200/90 hover:border-blue-500/50 shadow-sm hover:shadow-xl flex flex-col justify-between transition-all duration-300">
           <!-- Studio Photo & Category Badge -->
           <div class="relative h-44 overflow-hidden group">
             <img src="${c.studio_image}" alt="${c.studio_name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
@@ -1284,17 +1284,17 @@ const app = {
             
             <!-- Category & Coming Soon Tag -->
             <div class="absolute top-3 left-3 flex flex-col space-y-1">
-              <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/95 text-[#7C3AED] backdrop-blur-md shadow-sm">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/95 text-slate-900 backdrop-blur-md shadow-sm">
                 ${c.category}
               </span>
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md">
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-gradient-to-r from-amber-400 to-orange-400 text-slate-950 shadow-md">
                 ✨ Fase de Convenio
               </span>
             </div>
 
             <!-- Credits Pill Overlay with Dynamic Peak / Valley / Surge Indicator -->
             <div class="absolute top-3 right-3 flex flex-col items-end space-y-1">
-              <span class="px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white shadow-md shadow-purple-500/25 flex items-center space-x-1">
+              <span class="px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 flex items-center space-x-1">
                 <i data-lucide="coins" class="w-3.5 h-3.5 mr-1"></i>
                 ${c.credit_cost} créditos
               </span>
@@ -1316,8 +1316,8 @@ const app = {
             <!-- Studio Name & Rating on bottom of image -->
             <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
               <div>
-                <span class="text-xs text-purple-200 font-bold block">📍 ${c.neighborhood || c.city || 'Osorno'}</span>
-                <h4 class="font-extrabold text-sm leading-tight text-white drop-shadow-sm cursor-pointer hover:text-purple-200 transition" onclick="app.openStudioModal(${c.studio_id})">
+                <span class="text-xs text-cyan-300 font-bold block">📍 ${c.neighborhood || c.city || 'Osorno'}</span>
+                <h4 class="font-extrabold text-sm leading-tight text-white drop-shadow-sm cursor-pointer hover:text-cyan-200 transition" onclick="app.openStudioModal(${c.studio_id})">
                   ${c.studio_name}
                 </h4>
               </div>
@@ -1332,11 +1332,11 @@ const app = {
           <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
               <div class="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                <span class="flex items-center text-[#7C3AED] font-bold">
-                  <i data-lucide="clock" class="w-3.5 h-3.5 mr-1 text-[#7C3AED]"></i>
+                <span class="flex items-center text-blue-600 font-bold">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 mr-1"></i>
                   ${hourStr} hrs (${c.duration_minutes} min)
                 </span>
-                <span class="bg-purple-50 px-2 py-0.5 rounded-md text-[11px] text-purple-700 font-semibold border border-purple-100">${c.level}</span>
+                <span class="bg-slate-100 px-2 py-0.5 rounded-md text-[11px] text-slate-600 font-semibold">${c.level}</span>
               </div>
 
               <h3 class="font-black text-base text-slate-900 line-clamp-1">${c.title}</h3>
@@ -1346,7 +1346,7 @@ const app = {
             <!-- Instructor & Spots status -->
             <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
               <div class="flex items-center space-x-2.5">
-                <img src="${c.instructor_avatar}" alt="${c.instructor_name}" class="w-7 h-7 rounded-full object-cover border border-purple-100">
+                <img src="${c.instructor_avatar}" alt="${c.instructor_name}" class="w-7 h-7 rounded-full object-cover border border-slate-200">
                 <div>
                   <span class="block text-xs font-bold text-slate-800 leading-tight">${c.instructor_name}</span>
                   <span class="block text-[10px] text-slate-400">Instructor Lead</span>
@@ -1354,7 +1354,7 @@ const app = {
               </div>
 
               <div>
-                <span class="inline-flex items-center text-[11px] font-extrabold text-[#7C3AED] bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100">
+                <span class="inline-flex items-center text-[11px] font-extrabold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
                   🔥 ${c.votes_count || 24} interesados
                 </span>
               </div>
@@ -1362,10 +1362,10 @@ const app = {
 
             <!-- Action Buttons (Option 2: Coming Soon & Voting) -->
             <div class="pt-1 flex space-x-2">
-              <button onclick="app.openStudioModal(${c.studio_id})" class="w-1/2 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-purple-50 hover:text-[#7C3AED] transition">
+              <button onclick="app.openStudioModal(${c.studio_id})" class="w-1/2 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 hover:text-slate-900 transition">
                 Ver Estudio
               </button>
-              <button onclick="app.voteForStudio(${c.studio_id})" id="btnVoteCard-${c.studio_id}" class="w-1/2 py-2.5 rounded-xl ${c.has_voted ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white shadow-md shadow-purple-500/25'} text-xs font-black transition flex items-center justify-center space-x-1">
+              <button onclick="app.voteForStudio(${c.studio_id})" id="btnVoteCard-${c.studio_id}" class="w-1/2 py-2.5 rounded-xl ${c.has_voted ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-md shadow-blue-500/25'} text-xs font-black transition flex items-center justify-center space-x-1">
                 <i data-lucide="${c.has_voted ? 'check' : 'thumbs-up'}" class="w-3.5 h-3.5"></i>
                 <span>${c.has_voted ? 'Votado ✓' : 'Pedir Apertura'}</span>
               </button>
