@@ -2,6 +2,7 @@ import http.server
 import socketserver
 import json
 import os
+import sys
 import urllib.parse
 import urllib.request
 import ssl
@@ -9,6 +10,10 @@ import time
 import uuid
 import secrets
 from datetime import datetime
+
+# Ensure current directory is in sys.path for Render deployment
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from db import get_connection, init_db, hash_password, verify_password
 from notifications import build_google_calendar_url, build_ical_content, generate_booking_confirmation_email_html, generate_reminder_email_html
 
