@@ -19,7 +19,7 @@ const app = {
     selectedBookingForReview: null,
     reviewRating: 5,
     filters: {
-      city: 'Osorno',
+      city: 'all',
       date: '',
       category: 'all',
       time_of_day: 'all',

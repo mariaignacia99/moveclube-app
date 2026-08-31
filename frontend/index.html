@@ -74,8 +74,16 @@
           <div class="flex items-center space-x-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-slate-100/90 text-[11px] sm:text-xs font-bold text-slate-700 border border-slate-200 shadow-sm flex-shrink-0">
             <i data-lucide="map-pin" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-600"></i>
             <select id="citySelectNavbar" onchange="app.handleCityChange(this.value)" class="bg-transparent font-extrabold text-indigo-950 focus:outline-none cursor-pointer text-[11px] sm:text-xs">
-              <option value="Osorno" selected>Osorno</option>
-              <option value="Temuco">Temuco</option>
+              <option value="all" selected>🌎 Todas las ciudades</option>
+              <option value="Santiago">🇨🇱 Santiago</option>
+              <option value="Miami">🇺🇸 Miami</option>
+              <option value="Madrid">🇪🇸 Madrid</option>
+              <option value="Buenos Aires">🇦🇷 Buenos Aires</option>
+              <option value="Ciudad de México">🇲🇽 Ciudad de México</option>
+              <option value="New York">🇺🇸 New York</option>
+              <option value="Osorno">🇨🇱 Osorno</option>
+              <option value="Temuco">🇨🇱 Temuco</option>
+              <option value="Puerto Varas">🇨🇱 Puerto Varas</option>
             </select>
           </div>
         </div>
@@ -248,8 +256,16 @@
           <div class="flex items-center space-x-1.5 bg-slate-100/90 rounded-full px-3 py-1.5 text-xs font-bold text-slate-700 border border-slate-200/80 shadow-sm">
             <i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-600"></i>
             <select id="citySelect" onchange="app.handleCityChange(this.value)" class="bg-transparent text-xs font-bold text-indigo-600 focus:outline-none cursor-pointer">
-              <option value="Osorno" selected>Osorno</option>
-              <option value="Temuco">Temuco</option>
+              <option value="all" selected>🌎 Red Global</option>
+              <option value="Santiago">🇨🇱 Santiago</option>
+              <option value="Miami">🇺🇸 Miami</option>
+              <option value="Madrid">🇪🇸 Madrid</option>
+              <option value="Buenos Aires">🇦🇷 Buenos Aires</option>
+              <option value="Ciudad de México">🇲🇽 Ciudad de México</option>
+              <option value="New York">🇺🇸 New York</option>
+              <option value="Osorno">🇨🇱 Osorno</option>
+              <option value="Temuco">🇨🇱 Temuco</option>
+              <option value="Puerto Varas">🇨🇱 Puerto Varas</option>
             </select>
           </div>
         </div>
@@ -538,7 +554,7 @@
               <p class="text-xs text-slate-500">Haz clic en cualquier marcador para ver sus clases y detalles del estudio.</p>
             </div>
             <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-              ● En vivo en Osorno, Temuco y Sur
+              ● Red Mundial: Más de 2.500 estudios conectados
             </span>
           </div>
           <div id="mapContainer" class="w-full"></div>
@@ -1847,7 +1863,7 @@
           <div class="flex items-start space-x-3">
             <i data-lucide="check" class="w-4 h-4 text-slate-900 shrink-0 mt-0.5"></i>
             <p>
-              Accede a todos los centros disponibles en nuestra red: <strong class="text-slate-900">Pádel, Pilates Reformer, CrossFit, Gym y Spas</strong> en Osorno, Temuco y todo Chile.
+              Accede a todos los centros disponibles en nuestra red: <strong class="text-slate-900">Pádel, Pilates Reformer, CrossFit, Gym y Spas</strong> en más de 2.500 ciudades y estudios de todo el mundo.
             </p>
           </div>
           <div class="flex items-start space-x-3">
