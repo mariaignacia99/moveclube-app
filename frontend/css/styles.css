@@ -41,9 +41,34 @@
 }
 
 .text-brand-gradient {
-  background: linear-gradient(135deg, #06B6D4 0%, #2563EB 50%, #4F46E5 100%);
+  background: linear-gradient(90deg, #00F2FE 0%, #38BDF8 30%, #818CF8 65%, #C084FC 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.brand-moveclub-text {
+  font-family: "Plus Jakarta Sans", -apple-system, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  display: inline-flex;
+  align-items: center;
+}
+
+.brand-moveclub-text .move-text {
+  color: #0F172A;
+  letter-spacing: 0.1em;
+}
+
+.brand-moveclub-text-dark .move-text {
+  color: #FFFFFF;
+  letter-spacing: 0.1em;
+}
+
+.brand-moveclub-text .club-text {
+  background: linear-gradient(90deg, #00F2FE 0%, #38BDF8 30%, #818CF8 65%, #C084FC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.1em;
 }
 
 *, *::before, *::after {
