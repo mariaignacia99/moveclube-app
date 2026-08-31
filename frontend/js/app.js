@@ -269,7 +269,7 @@ const app = {
     if (userDropdown) userDropdown.classList.add('hidden');
 
     // Hide all view sections
-    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile'];
+    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account'];
     sections.forEach(s => {
       const el = document.getElementById(`view-${s}`);
       const navEl = document.getElementById(`nav-${s}`);
@@ -284,8 +284,8 @@ const app = {
 
     // Show target section
     const targetSection = document.getElementById(`view-${viewName}`);
-    const targetNav = document.getElementById(`nav-${viewName}`);
-    const targetMobNav = document.getElementById(`mobile-nav-${viewName}`);
+    const targetNav = document.getElementById(`nav-${viewName === 'account' ? 'profile' : viewName}`);
+    const targetMobNav = document.getElementById(`mobile-nav-${viewName === 'account' ? 'profile' : viewName}`);
     if (targetSection) targetSection.classList.remove('hidden');
     if (targetNav) targetNav.classList.add('active');
     if (targetMobNav) {
@@ -305,11 +305,31 @@ const app = {
       this.renderAdminView();
     } else if (viewName === 'profile') {
       this.renderProfileView();
+    } else if (viewName === 'account') {
+      this.renderAccountView();
     } else if (viewName === 'explore' && this.state.viewMode === 'map') {
       setTimeout(() => this.initOrUpdateMap(), 100);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    lucide.createIcons();
+  },
+
+  renderAccountView() {
+    const u = this.state.user;
+    if (!u) {
+      this.openAuthModal('login');
+      return;
+    }
+    const remCreditsEl = document.getElementById('accountRemainingCredits');
+    if (remCreditsEl) remCreditsEl.innerText = `Te quedan ${u.credits_balance} créditos`;
+
+    const planTierEl = document.getElementById('accountPlanTier');
+    if (planTierEl) planTierEl.innerText = (u.plan_tier || u.plan || 'PLAN DE 40 CRÉDITOS').toUpperCase();
+
+    const rolloverEl = document.getElementById('accountRolloverAmount');
+    if (rolloverEl) rolloverEl.innerText = `${u.credits_balance} créditos`;
+
     lucide.createIcons();
   },
 
@@ -326,20 +346,12 @@ const app = {
     const credEl = document.getElementById('profileCreditsRestantes');
     if (credEl) credEl.innerText = `${u.credits_balance} créditos`;
     const vigEl = document.getElementById('profileVigenciaText');
-    if (vigEl) vigEl.innerText = '7 días';
+    if (vigEl) vigEl.innerText = 'sep. 4';
     const bookEl = document.getElementById('profileBookingsCount');
     if (bookEl) bookEl.innerText = this.state.bookings ? this.state.bookings.length : 0;
     const favCount = this.state.studios ? this.state.studios.filter(s => s.is_favorite).length : 0;
     const favEl = document.getElementById('profileFavoritesCount');
     if (favEl) favEl.innerText = favCount;
-
-    // Mi Cuenta & Membresía card
-    const accPlanEl = document.getElementById('profileAccountPlanTitle');
-    if (accPlanEl) accPlanEl.innerText = u.plan_tier || u.plan || 'Plan Active (20 créditos/mes)';
-    const accCreditsEl = document.getElementById('profileAccountCredits');
-    if (accCreditsEl) accCreditsEl.innerText = `${u.credits_balance} cr`;
-    const accRolloverEl = document.getElementById('profileAccountRollover');
-    if (accRolloverEl) accRolloverEl.innerText = u.credits_balance > 20 ? `+${u.credits_balance - 20} cr acum.` : 'Protegidos';
 
     const roleBadge = document.getElementById('profileRoleBadge');
     const adminCard = document.getElementById('profileAdminCard');

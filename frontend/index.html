@@ -1082,69 +1082,21 @@
           <p class="text-xs text-slate-500 font-medium mt-0.5" id="profilePageUserEmail">sanchezhenriquezmariaignacia99@gmail.com</p>
         </div>
 
-        <!-- 2 Metrics: Restantes / Renovación del ciclo -->
-        <div class="flex items-center justify-center text-center pt-1 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
+        <!-- 2 Metrics: Restantes / Renovación del ciclo (ClassPass Exact Style) -->
+        <div class="flex items-center justify-center text-center pt-1 py-2">
           <div class="flex-1">
-            <div class="text-base font-black text-teal-700" id="profileCreditsRestantes">303 créditos</div>
-            <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Saldo Disponible</span>
+            <div class="text-base sm:text-lg font-black text-slate-950" id="profileCreditsRestantes">50 créditos</div>
+            <span class="text-xs text-slate-500 font-medium">Restantes</span>
           </div>
           <div class="w-px h-8 bg-slate-200"></div>
           <div class="flex-1">
-            <div class="text-base font-black text-slate-900" id="profileVigenciaText">7 días</div>
-            <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Ciclo Activo</span>
+            <div class="text-base sm:text-lg font-black text-slate-950" id="profileVigenciaText">sep. 4</div>
+            <span class="text-xs text-slate-500 font-medium">Renovación del ciclo</span>
           </div>
         </div>
       </div>
 
-      <!-- 💳 TARJETA MI CUENTA: PLAN CONTRATADO & CRÉDITOS DISPONIBLES -->
-      <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-4 text-left">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-xl bg-cyan-50 text-cyan-700 flex items-center justify-center font-bold">
-              <i data-lucide="shield-check" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Mi Cuenta & Membresía</span>
-              <h4 class="font-extrabold text-sm text-slate-900 leading-tight" id="profileAccountPlanTitle">Plan Active (20 créditos/mes)</h4>
-            </div>
-          </div>
-          <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center space-x-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1"></span>
-            <span>Activo</span>
-          </span>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3 pt-1">
-          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-            <span class="text-[11px] font-bold text-slate-500 block">Créditos Disponibles</span>
-            <span class="text-xl font-black text-cyan-600 font-mono" id="profileAccountCredits">50 cr</span>
-          </div>
-          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-            <span class="text-[11px] font-bold text-slate-500 block">Acumulados (Rollover)</span>
-            <span class="text-xl font-black text-purple-600 font-mono" id="profileAccountRollover">Protegidos</span>
-          </div>
-        </div>
-
-        <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
-          <span class="flex items-center space-x-1 font-semibold">
-            <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
-            <span>Renovación automática:</span>
-          </span>
-          <span class="font-bold text-slate-800" id="profileAccountRenewal">Próximo ciclo mensual</span>
-        </div>
-
-        <div class="flex items-center space-x-2 pt-1">
-          <button onclick="app.switchView('plans')" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white font-black text-xs shadow-md shadow-cyan-500/20 hover:shadow-lg transition flex items-center justify-center space-x-1.5">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-            <span>Gestionar o Mejorar Plan</span>
-          </button>
-          <button onclick="app.cancelSubscription()" class="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 text-xs font-bold transition">
-            Cancelar
-          </button>
-        </div>
-      </div>
-
-      <!-- 👑 TARJETA DESTACADA: PANEL DE ADMINISTRADORA -->
+      <!-- 👑 TARJETA DESTACADA: PANEL DE ADMINISTRADORA (Solo para Admin) -->
       <div id="profileAdminCard" class="bg-gradient-to-br from-purple-950 via-slate-900 to-indigo-950 rounded-3xl p-5 text-white shadow-xl border-2 border-purple-500/40 text-left space-y-3">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2.5">
@@ -1166,38 +1118,23 @@
         </button>
       </div>
 
-      <!-- Menu List (Clean Rows with Line Dividers) -->
+      <!-- Menu List (Clean Rows with Line Dividers - Exact ClassPass UI) -->
       <div class="bg-white rounded-2xl border border-slate-200/90 divide-y divide-slate-100 shadow-sm overflow-hidden text-[14px]">
         
-        <!-- 0. Panel Admin Row -->
-        <div onclick="app.switchView('admin')" class="px-5 py-3.5 flex items-center justify-between cursor-pointer bg-purple-50/50 hover:bg-purple-100/70 transition">
-          <div class="flex items-center space-x-3.5 text-purple-900 font-extrabold">
-            <i data-lucide="crown" class="w-5 h-5 text-purple-600"></i>
-            <span>👑 Panel Administrador MoveClub</span>
-          </div>
-          <span class="text-xs font-black text-purple-700 flex items-center space-x-1">
-            <span>Abrir</span>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-purple-500"></i>
-          </span>
-        </div>
-
-        <!-- 1. Cuenta -->
-        <div onclick="app.switchView('plans')" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+        <!-- 1. Cuenta (Navigates to dedicated Cuenta view) -->
+        <div onclick="app.switchView('account')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
-            <i data-lucide="credit-card" class="w-5 h-5 text-indigo-600"></i>
-            <div>
-              <span class="block leading-tight">Mi Cuenta (Plan & Créditos)</span>
-              <span class="text-[11px] text-slate-400 font-normal block">Revisar plan contratado y recargas</span>
-            </div>
+            <i data-lucide="credit-card" class="w-5 h-5 text-slate-700"></i>
+            <span>Cuenta</span>
           </div>
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
         </div>
 
         <!-- 2. Reservas -->
-        <div onclick="app.switchView('bookings')" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+        <div onclick="app.switchView('bookings')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
             <i data-lucide="calendar" class="w-5 h-5 text-slate-700"></i>
-            <span>Mis Reservas</span>
+            <span>Reservas</span>
           </div>
           <div class="flex items-center space-x-2.5">
             <span class="text-sm font-semibold text-slate-500" id="profileBookingsCount">0</span>
@@ -1206,10 +1143,10 @@
         </div>
 
         <!-- 3. Sitios guardados -->
-        <div onclick="app.switchView('favorites')" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+        <div onclick="app.switchView('favorites')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
             <i data-lucide="heart" class="w-5 h-5 text-slate-700"></i>
-            <span>Estudios Favoritos</span>
+            <span>Sitios guardados</span>
           </div>
           <div class="flex items-center space-x-2.5">
             <span class="text-sm font-semibold text-slate-500" id="profileFavoritesCount">2</span>
@@ -1218,7 +1155,7 @@
         </div>
 
         <!-- 4. Tráete a tu gente -->
-        <div onclick="app.openReferralModal()" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+        <div onclick="app.openReferralModal()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
             <i data-lucide="gift" class="w-5 h-5 text-slate-700"></i>
             <span>Tráete a tu gente y llévate 100 créditos 🎁</span>
@@ -1226,38 +1163,145 @@
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
         </div>
 
-        <!-- 5. Ver Propuestas de Logotipo -->
-        <div onclick="app.openBrandLogosModal()" class="px-5 py-3.5 flex items-center justify-between cursor-pointer bg-blue-50/50 hover:bg-blue-100/70 transition">
-          <div class="flex items-center space-x-3.5 text-blue-900 font-black">
-            <i data-lucide="palette" class="w-5 h-5 text-blue-600"></i>
-            <span>🎨 Ver las 3 Propuestas de Logotipo</span>
+        <!-- 5. Mensajes -->
+        <div onclick="app.showToast('Bandeja de mensajes al día', 'bell')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
+            <i data-lucide="message-circle" class="w-5 h-5 text-slate-700"></i>
+            <span>Mensajes</span>
           </div>
-          <div class="flex items-center space-x-1 text-xs font-black text-blue-600">
-            <span>Ver</span>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-blue-500"></i>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </div>
+
+        <!-- 6. Amigos -->
+        <div onclick="app.showToast('0 amigos conectados', 'users')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
+            <i data-lucide="users" class="w-5 h-5 text-slate-700"></i>
+            <span>Amigos</span>
+          </div>
+          <div class="flex items-center space-x-2.5">
+            <span class="text-sm font-semibold text-slate-500">0</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
           </div>
         </div>
 
-        <!-- 6. Iniciar Sesión / Registrar Nuevo Alumno -->
-        <div onclick="app.openAuthModal('login')" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
-          <div class="flex items-center space-x-3.5 text-indigo-900 font-bold">
-            <i data-lucide="user-plus" class="w-5 h-5 text-indigo-600"></i>
+        <!-- 7. Tus logros -->
+        <div onclick="app.showToast('5 logros desbloqueados', 'award')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
+            <i data-lucide="award" class="w-5 h-5 text-slate-700"></i>
+            <span>Tus logros</span>
+          </div>
+          <div class="flex items-center space-x-2.5">
+            <span class="text-sm font-semibold text-slate-500">5</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+        </div>
+
+        <!-- 8. Ver Propuestas de Logotipo -->
+        <div onclick="app.openBrandLogosModal()" class="px-5 py-4 flex items-center justify-between cursor-pointer bg-blue-50/50 hover:bg-blue-100/70 transition">
+          <div class="flex items-center space-x-3.5 text-blue-900 font-black">
+            <i data-lucide="sparkles" class="w-5 h-5 text-blue-600"></i>
+            <span>🎨 Ver las 3 Propuestas de Logotipo</span>
+          </div>
+          <span class="text-xs font-black text-blue-700 flex items-center space-x-1">
+            <span>Ver</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-blue-500"></i>
+          </span>
+        </div>
+
+        <!-- 9. Cambiar de Usuario -->
+        <div onclick="app.openAuthModal('login')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
+            <i data-lucide="user-check" class="w-5 h-5 text-slate-700"></i>
             <span>Cambiar de Usuario / Registrar Alumno</span>
           </div>
           <span class="text-xs font-bold text-indigo-600">Acceder</span>
         </div>
 
-        <!-- 7. Cerrar Sesión -->
-        <div onclick="app.handleLogout()" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-rose-50/80 transition text-rose-600">
-          <div class="flex items-center space-x-3.5 font-bold">
-            <i data-lucide="log-out" class="w-5 h-5 text-rose-500"></i>
+        <!-- 10. Cerrar Sesión -->
+        <div onclick="app.logout()" class="px-5 py-4 flex items-center justify-between cursor-pointer text-rose-600 hover:bg-rose-50/60 font-bold transition">
+          <div class="flex items-center space-x-3.5">
+            <i data-lucide="log-out" class="w-5 h-5"></i>
             <span>Cerrar Sesión</span>
           </div>
           <i data-lucide="chevron-right" class="w-4 h-4 text-rose-300"></i>
         </div>
+      </div>
+    </section>
 
+    <!-- ==================== VIEW 7: SECCIÓN DEDICADA CUENTA (CLASSPASS STYLE) ==================== -->
+    <section id="view-account" class="space-y-5 max-w-md mx-auto hidden animate-fade-in pb-28 pt-2">
+      
+      <!-- Back Navigation Header -->
+      <div class="space-y-3">
+        <button onclick="app.switchView('profile')" class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-200/90 flex items-center justify-center text-slate-800 hover:bg-slate-50 transition active:scale-95">
+          <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </button>
+        <h1 class="text-3xl font-black text-slate-950 tracking-tight">Cuenta</h1>
       </div>
 
+      <!-- Card 1: Membresía & Créditos (Exact ClassPass Design) -->
+      <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-4 text-left">
+        <div class="flex items-start space-x-3.5">
+          <!-- Blue Square Icon -->
+          <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-blue-500/25">
+            <i data-lucide="repeat" class="w-6 h-6 stroke-[2.5]"></i>
+          </div>
+          
+          <!-- Plan & Credits Header Info -->
+          <div class="flex-1 min-w-0">
+            <h3 class="text-lg font-black text-slate-900 leading-tight" id="accountRemainingCredits">Te quedan 50 créditos</h3>
+            <p class="text-[11px] font-extrabold text-slate-400 tracking-wider uppercase mt-1" id="accountPlanTier">PLAN DE 40 CRÉDITOS</p>
+            <p class="text-xs text-slate-500 font-medium mt-0.5" id="accountRenewalDate">Se renueva el 4 de septiembre</p>
+          </div>
+        </div>
+
+        <!-- Rollover explanation text -->
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Puedes transferir a tu próximo ciclo tu saldo de <span id="accountRolloverAmount" class="font-bold text-slate-900">50 créditos</span>. 
+          <a href="javascript:void(0)" onclick="app.showToast('Tus créditos no utilizados pasan automáticamente al siguiente mes mientras tu suscripción siga activa.')" class="text-slate-900 font-bold underline">Más información</a>
+        </p>
+
+        <!-- 2 Side-by-Side Pill Buttons -->
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <button onclick="app.switchView('plans')" class="w-full py-3 rounded-full bg-slate-950 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm transition active:scale-98 shadow-sm flex items-center justify-center">
+            Añadir créditos
+          </button>
+          <button onclick="app.switchView('plans')" class="w-full py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs sm:text-sm transition active:scale-98 shadow-md shadow-blue-500/20 flex items-center justify-center">
+            Gestionar plan
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 2: Saldo de la cuenta -->
+      <div class="bg-white rounded-3xl overflow-hidden border border-slate-200/90 shadow-sm text-left">
+        <div class="p-5 space-y-3.5">
+          <h4 class="text-base font-extrabold text-slate-900">Saldo de la cuenta</h4>
+          
+          <div class="flex items-center justify-between text-xs font-medium text-slate-600">
+            <span>Recompensas por recomendación</span>
+            <span class="font-bold text-slate-900">0 CLP</span>
+          </div>
+
+          <div class="flex items-center justify-between text-xs font-medium text-slate-600">
+            <span>Saldo de la tarjeta regalo</span>
+            <span class="font-bold text-slate-900">0 CLP</span>
+          </div>
+
+          <div class="border-t border-slate-100 pt-3 flex items-center justify-between text-xs font-extrabold text-slate-900">
+            <span>Total</span>
+            <span>0 CLP</span>
+          </div>
+        </div>
+
+        <!-- Referral Banner -->
+        <div onclick="app.openReferralModal()" class="bg-amber-50/70 hover:bg-amber-100/60 p-4 border-t border-amber-100/80 flex items-center justify-between cursor-pointer transition">
+          <div class="flex items-center space-x-2.5 text-slate-900 font-bold text-xs">
+            <span class="text-base">🎁</span>
+            <span>¡Recomienda a 3 amigos y llévate 100 créditos!</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </div>
+      </div>
     </section>
 
   </main>
