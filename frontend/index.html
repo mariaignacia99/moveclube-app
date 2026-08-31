@@ -1197,7 +1197,7 @@
         </div>
 
         <!-- 8. Ajustes (Settings) -->
-        <div onclick="app.openSettingsModal()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+        <div onclick="app.switchView('settings')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
             <i data-lucide="settings" class="w-5 h-5 text-slate-700"></i>
             <span>Ajustes</span>
@@ -1311,6 +1311,105 @@
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
         </div>
       </div>
+    </section>
+
+    <!-- ==================== VIEW 8: SECCIÓN DEDICADA AJUSTES (CLASSPASS STYLE) ==================== -->
+    <section id="view-settings" class="space-y-6 max-w-md mx-auto hidden animate-fade-in pb-28 pt-2 text-left">
+      
+      <!-- Top Navigation Header -->
+      <div class="flex items-center justify-between relative py-2">
+        <button onclick="app.switchView('profile')" class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-200/90 flex items-center justify-center text-slate-800 hover:bg-slate-50 transition active:scale-95 z-10">
+          <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </button>
+        <h2 class="text-base font-extrabold text-slate-900 absolute inset-x-0 text-center pointer-events-none">Ajustes</h2>
+        <div class="w-10"></div>
+      </div>
+
+      <!-- Section 1: Información -->
+      <div class="space-y-2">
+        <h3 class="text-lg font-black text-slate-900 tracking-tight">Información</h3>
+        <div class="bg-white rounded-2xl border border-slate-200/90 divide-y divide-slate-100 shadow-sm overflow-hidden text-[14px]">
+          <div onclick="app.showToast('Información de usuario verificada')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <div>
+              <span class="block font-bold text-slate-900" id="settingsUserName">María Ignacia Sánchez</span>
+              <span class="text-xs text-slate-500 font-medium block mt-0.5" id="settingsUserEmail">sanchezhenriquezmariaignacia99@gmail.com</span>
+              <span class="text-[11px] text-slate-400 block mt-0.5" id="settingsUserHandle">nachasanchezh</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Preferencias -->
+      <div class="space-y-2">
+        <h3 class="text-lg font-black text-slate-900 tracking-tight">Preferencias</h3>
+        <div class="bg-white rounded-2xl border border-slate-200/90 divide-y divide-slate-100 shadow-sm overflow-hidden text-[14px]">
+          <div onclick="app.showToast('Tus datos están protegidos y cifrados en MoveClub', 'shield')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <span class="font-bold text-slate-900">Privacidad</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Facturación -->
+      <div class="space-y-2">
+        <h3 class="text-lg font-black text-slate-900 tracking-tight">Facturación</h3>
+        <div class="bg-white rounded-2xl border border-slate-200/90 divide-y divide-slate-100 shadow-sm overflow-hidden text-[14px]">
+          <div onclick="app.switchView('plans')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <span class="font-bold text-slate-900">Gestionar información de facturación</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+          <div onclick="app.showToast('Sin cargos pendientes en tu cuenta', 'check-circle')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <span class="font-bold text-slate-900">Cargos recientes</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+          <div onclick="app.cancelSubscription()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <span class="font-bold text-slate-900">Cancelar suscripción</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Ayuda -->
+      <div class="space-y-2">
+        <h3 class="text-lg font-black text-slate-900 tracking-tight">Ayuda</h3>
+        <div class="bg-white rounded-2xl border border-slate-200/90 divide-y divide-slate-100 shadow-sm overflow-hidden text-[14px]">
+          <div onclick="window.open('https://wa.me/56953341729?text=Hola%20MoveClub%2C%20necesito%20ayuda%20con%20mi%20cuenta', '_blank')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <span class="font-bold text-slate-900">Contacta con nosotros</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+          <div onclick="app.showToast('Centro de ayuda en línea disponible 24/7')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <span class="font-bold text-slate-900">Centro de ayuda</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+          <div onclick="app.showToast('Términos y condiciones oficiales vigentes para Chile')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <span class="font-bold text-slate-900">Términos y condiciones</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+          <div onclick="app.showToast('Política de privacidad y protección de datos MoveClub')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <span class="font-bold text-slate-900">Política de privacidad</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+          <div onclick="app.showToast('Normas de convivencia y uso de instalaciones')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <span class="font-bold text-slate-900">Normas de la comunidad</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Cerrar sesión -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden text-[14px]">
+        <div onclick="app.logout()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-rose-50/60 transition text-slate-900 font-bold">
+          <span>Cerrar sesión</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </div>
+      </div>
+
+      <!-- Version text -->
+      <div class="text-center pt-2">
+        <p class="text-xs text-slate-400 font-medium">version 10.18.0(4771)</p>
+      </div>
+
     </section>
 
   </main>

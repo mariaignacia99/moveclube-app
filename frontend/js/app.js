@@ -269,7 +269,7 @@ const app = {
     if (userDropdown) userDropdown.classList.add('hidden');
 
     // Hide all view sections
-    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account'];
+    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings'];
     sections.forEach(s => {
       const el = document.getElementById(`view-${s}`);
       const navEl = document.getElementById(`nav-${s}`);
@@ -284,8 +284,9 @@ const app = {
 
     // Show target section
     const targetSection = document.getElementById(`view-${viewName}`);
-    const targetNav = document.getElementById(`nav-${viewName === 'account' ? 'profile' : viewName}`);
-    const targetMobNav = document.getElementById(`mobile-nav-${viewName === 'account' ? 'profile' : viewName}`);
+    const isProfileSubView = ['account', 'settings'].includes(viewName);
+    const targetNav = document.getElementById(`nav-${isProfileSubView ? 'profile' : viewName}`);
+    const targetMobNav = document.getElementById(`mobile-nav-${isProfileSubView ? 'profile' : viewName}`);
     if (targetSection) targetSection.classList.remove('hidden');
     if (targetNav) targetNav.classList.add('active');
     if (targetMobNav) {
@@ -307,11 +308,31 @@ const app = {
       this.renderProfileView();
     } else if (viewName === 'account') {
       this.renderAccountView();
+    } else if (viewName === 'settings') {
+      this.renderSettingsView();
     } else if (viewName === 'explore' && this.state.viewMode === 'map') {
       setTimeout(() => this.initOrUpdateMap(), 100);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    lucide.createIcons();
+  },
+
+  renderSettingsView() {
+    const u = this.state.user;
+    if (!u) {
+      this.openAuthModal('login');
+      return;
+    }
+    const nameEl = document.getElementById('settingsUserName');
+    if (nameEl) nameEl.innerText = u.name;
+
+    const emailEl = document.getElementById('settingsUserEmail');
+    if (emailEl) emailEl.innerText = u.email;
+
+    const handleEl = document.getElementById('settingsUserHandle');
+    if (handleEl) handleEl.innerText = u.email ? u.email.split('@')[0] : 'usuario';
+
     lucide.createIcons();
   },
 
