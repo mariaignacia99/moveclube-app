@@ -910,6 +910,96 @@ const app = {
     this.fetchClasses();
   },
 
+  quickSearch(term) {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.value = term;
+    }
+    this.handleSearch(term);
+    this.closeLiveSearchDropdown();
+  },
+
+  handleSearchFocus() {
+    const input = document.getElementById('searchInput');
+    const val = input ? input.value.trim() : '';
+    this.renderLiveSearchDropdown(val);
+  },
+
+  closeLiveSearchDropdown() {
+    const dd = document.getElementById('liveSearchDropdown');
+    if (dd) dd.classList.add('hidden');
+  },
+
+  renderLiveSearchDropdown(query = '') {
+    const dd = document.getElementById('liveSearchDropdown');
+    if (!dd) return;
+
+    const studios = this.state.studios || [];
+    const norm = (str) => (str || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const qNorm = norm(query);
+
+    let matchingStudios = [];
+    if (qNorm.length > 0) {
+      matchingStudios = studios.filter(s => 
+        norm(s.name).includes(qNorm) || 
+        norm(s.category).includes(qNorm) || 
+        norm(s.city).includes(qNorm) ||
+        norm(s.neighborhood).includes(qNorm) ||
+        norm(s.description).includes(qNorm)
+      ).slice(0, 6);
+    } else {
+      matchingStudios = studios.slice(0, 5);
+    }
+
+    if (matchingStudios.length === 0) {
+      dd.innerHTML = `
+        <div class="p-3 text-center text-xs text-slate-400">
+          Mostrando clases para "${query}" abajo
+        </div>
+      `;
+      dd.classList.remove('hidden');
+      return;
+    }
+
+    let html = `
+      <div class="p-2.5 bg-slate-50 text-[10px] font-black text-slate-500 uppercase tracking-wider flex items-center justify-between">
+        <span>Estudios y Centros Coincidentes</span>
+        <span class="text-indigo-600 font-extrabold">${matchingStudios.length} sugerencias</span>
+      </div>
+      <div class="divide-y divide-slate-100">
+    `;
+
+    matchingStudios.forEach(s => {
+      html += `
+        <div onclick="app.selectStudioFromDropdown(${s.id})" class="p-2.5 hover:bg-indigo-50/70 flex items-center justify-between cursor-pointer transition group">
+          <div class="flex items-center space-x-2.5 min-w-0">
+            <img src="${s.image_url}" alt="${s.name}" class="w-9 h-9 rounded-xl object-cover border border-slate-200 shrink-0">
+            <div class="min-w-0">
+              <span class="block text-xs font-black text-slate-900 group-hover:text-indigo-600 truncate">${s.name}</span>
+              <span class="block text-[10px] text-slate-500 truncate">${s.category} • 📍 ${s.neighborhood || s.city}</span>
+            </div>
+          </div>
+          <div class="flex items-center space-x-1.5 shrink-0 ml-2">
+            <span class="text-[9px] font-extrabold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+              🔥 ${s.votes_count || 24} votos
+            </span>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600"></i>
+          </div>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+    dd.innerHTML = html;
+    dd.classList.remove('hidden');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  },
+
+  selectStudioFromDropdown(studioId) {
+    this.closeLiveSearchDropdown();
+    this.openStudioModal(studioId);
+  },
+
   handleSearch(query) {
     const q = query.trim();
     this.state.filters.search = q;
@@ -920,6 +1010,7 @@ const app = {
     const filterControlsEl = document.getElementById('filterControlsSection');
     const bannerEl = document.getElementById('searchResultsBanner');
     const bannerText = document.getElementById('searchResultsText');
+    const clearBtn = document.getElementById('clearSearchBtn');
 
     if (q.length > 0) {
       if (discoveryEl) discoveryEl.classList.add('hidden');
@@ -928,12 +1019,16 @@ const app = {
       if (filterControlsEl) filterControlsEl.classList.add('hidden');
       if (bannerEl) bannerEl.classList.remove('hidden');
       if (bannerText) bannerText.innerText = `Resultados para "${q}"`;
+      if (clearBtn) clearBtn.classList.remove('hidden');
+      this.renderLiveSearchDropdown(q);
     } else {
       if (discoveryEl) discoveryEl.classList.remove('hidden');
       if (catEl) catEl.classList.remove('hidden');
       if (dateEl) dateEl.classList.remove('hidden');
       if (filterControlsEl) filterControlsEl.classList.remove('hidden');
       if (bannerEl) bannerEl.classList.add('hidden');
+      if (clearBtn) clearBtn.classList.add('hidden');
+      this.closeLiveSearchDropdown();
     }
 
     clearTimeout(this._searchTimeout);
@@ -3225,6 +3320,12 @@ const app = {
       const dropdown = document.getElementById('userDropdown');
       if (btn && dropdown && !btn.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.classList.add('hidden');
+      }
+
+      const searchInput = document.getElementById('searchInput');
+      const liveDropdown = document.getElementById('liveSearchDropdown');
+      if (searchInput && liveDropdown && !searchInput.contains(e.target) && !liveDropdown.contains(e.target)) {
+        liveDropdown.classList.add('hidden');
       }
     });
   }
