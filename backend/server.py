@@ -539,6 +539,7 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "Santiago": {"country": "Chile", "flag": "🇨🇱", "continent": "Sudamérica"},
                     "Osorno": {"country": "Chile", "flag": "🇨🇱", "continent": "Sudamérica"},
                     "Temuco": {"country": "Chile", "flag": "🇨🇱", "continent": "Sudamérica"},
+                    "Valdivia": {"country": "Chile", "flag": "🇨🇱", "continent": "Sudamérica"},
                     "Puerto Varas": {"country": "Chile", "flag": "🇨🇱", "continent": "Sudamérica"},
                     "Miami": {"country": "Estados Unidos", "flag": "🇺🇸", "continent": "Norteamérica"},
                     "Madrid": {"country": "España", "flag": "🇪🇸", "continent": "Europa"},

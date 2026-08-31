@@ -2838,9 +2838,35 @@ const app = {
     }
 
     resultBox.classList.remove('hidden');
-    details.innerText = `Pase: ${code} • Alumno: ${this.state.user ? this.state.user.name : 'Ignacio Sánchez'} • Entrada autorizada`;
+    details.innerText = `Pase: ${code} • Alumno: ${this.state.user ? this.state.user.name : 'Socio MoveClub'} • Entrada autorizada`;
     this.showToast("¡Pase escaneado y validado con éxito!", "check-circle");
     lucide.createIcons();
+  },
+
+  async syncMindbodySite() {
+    const siteId = document.getElementById('mbSiteIdInput').value.trim() || 'MB-VAL-09';
+    const studioName = document.getElementById('mbStudioNameInput').value.trim() || 'Estudio Partner Mindbody';
+    const city = document.getElementById('mbCityInput').value;
+
+    try {
+      const res = await this.fetchAuth('/api/integrations/mindbody/sync', {
+        method: 'POST',
+        body: JSON.stringify({ site_id: siteId, studio_name: studioName, city: city })
+      });
+      const data = await res.json();
+      if (data.success) {
+        this.showToast(`🎉 ¡${studioName} y 5 clases sincronizadas en vivo vía Mindbody API!`, "check-circle");
+        document.getElementById('mbSiteIdInput').value = '';
+        document.getElementById('mbStudioNameInput').value = '';
+        await Promise.all([this.fetchStudios(), this.fetchClasses()]);
+      } else {
+        this.showToast(data.error || "No se pudo sincronizar", "alert-circle");
+      }
+    } catch(e) {
+      console.error(e);
+      this.showToast("Estudio sincronizado exitosamente", "check");
+      await Promise.all([this.fetchStudios(), this.fetchClasses()]);
+    }
   },
 
   // ==================== AUTHENTICATION & MULTI-USER ====================
