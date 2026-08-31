@@ -399,6 +399,19 @@ const app = {
     }
   },
 
+  openSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+  },
+
+  closeSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) modal.classList.add('hidden');
+  },
+
   closeReferralModal() {
     const modal = document.getElementById('referralModal');
     if (modal) modal.classList.add('hidden');

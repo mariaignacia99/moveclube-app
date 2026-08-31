@@ -1196,7 +1196,16 @@
           </div>
         </div>
 
-        <!-- 8. Ver Propuestas de Logotipo -->
+        <!-- 8. Ajustes (Settings) -->
+        <div onclick="app.openSettingsModal()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
+            <i data-lucide="settings" class="w-5 h-5 text-slate-700"></i>
+            <span>Ajustes</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </div>
+
+        <!-- 9. Ver Propuestas de Logotipo -->
         <div onclick="app.openBrandLogosModal()" class="px-5 py-4 flex items-center justify-between cursor-pointer bg-blue-50/50 hover:bg-blue-100/70 transition">
           <div class="flex items-center space-x-3.5 text-blue-900 font-black">
             <i data-lucide="sparkles" class="w-5 h-5 text-blue-600"></i>
@@ -1208,7 +1217,7 @@
           </span>
         </div>
 
-        <!-- 9. Cambiar de Usuario -->
+        <!-- 10. Cambiar de Usuario -->
         <div onclick="app.openAuthModal('login')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
             <i data-lucide="user-check" class="w-5 h-5 text-slate-700"></i>
@@ -1217,7 +1226,7 @@
           <span class="text-xs font-bold text-indigo-600">Acceder</span>
         </div>
 
-        <!-- 10. Cerrar Sesión -->
+        <!-- 11. Cerrar Sesión -->
         <div onclick="app.logout()" class="px-5 py-4 flex items-center justify-between cursor-pointer text-rose-600 hover:bg-rose-50/60 font-bold transition">
           <div class="flex items-center space-x-3.5">
             <i data-lucide="log-out" class="w-5 h-5"></i>
@@ -2437,6 +2446,87 @@
         </button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- 8. Settings Modal (Ajustes) -->
+  <div id="settingsModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="app.closeSettingsModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-6 space-y-5">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center">
+              <i data-lucide="settings" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-black text-slate-900">Ajustes</h3>
+              <p class="text-xs text-slate-400">Preferencias de cuenta y notificaciones</p>
+            </div>
+          </div>
+          <button onclick="app.closeSettingsModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Notification Toggles -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-400">Notificaciones</h4>
+          
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div class="space-y-0.5">
+              <span class="text-xs font-bold text-slate-800 block">Recordatorios de Clases</span>
+              <span class="text-[10px] text-slate-500 block">Aviso 2 horas antes de tu entrenamiento</span>
+            </div>
+            <input type="checkbox" checked class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer">
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div class="space-y-0.5">
+              <span class="text-xs font-bold text-slate-800 block">Lista de Espera</span>
+              <span class="text-[10px] text-slate-500 block">Alerta cuando se libere un cupo</span>
+            </div>
+            <input type="checkbox" checked class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer">
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div class="space-y-0.5">
+              <span class="text-xs font-bold text-slate-800 block">Confirmaciones por Correo</span>
+              <span class="text-[10px] text-slate-500 block">Envío automático de pase QR al email</span>
+            </div>
+            <input type="checkbox" checked class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer">
+          </div>
+        </div>
+
+        <!-- Legal & Support links -->
+        <div class="space-y-2 pt-1 border-t border-slate-100">
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-400">Legal y Soporte</h4>
+          
+          <button onclick="app.showToast('Política de 12h: Cancelaciones con > 12h devuelven 100% de créditos', 'shield-check')" class="w-full p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-left flex items-center justify-between transition">
+            <span class="text-xs font-bold text-slate-700">Política de Cancelación (12 Horas)</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          </button>
+
+          <button onclick="window.open('https://wa.me/56953341729?text=Hola%20MoveClub%2C%20necesito%20ayuda%20con%20mi%20cuenta', '_blank')" class="w-full p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-left flex items-center justify-between text-emerald-800 transition font-bold">
+            <span class="text-xs flex items-center space-x-2">
+              <i data-lucide="message-circle" class="w-4 h-4 text-emerald-600"></i>
+              <span>Soporte Oficial por WhatsApp</span>
+            </span>
+            <i data-lucide="external-link" class="w-4 h-4 text-emerald-600"></i>
+          </button>
+        </div>
+
+        <!-- App version -->
+        <div class="text-center pt-2 border-t border-slate-100">
+          <p class="text-[11px] text-slate-400 font-semibold">MoveClub iOS v1.0.4 (Compilación 2026)</p>
+          <p class="text-[10px] text-slate-400">Desarrollado para Osorno, Temuco y todo Chile</p>
+        </div>
+
+      </div>
     </div>
   </div>
 
