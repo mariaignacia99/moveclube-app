@@ -744,11 +744,11 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                 '''
                 params = []
 
-                if city_filter and city_filter != "all" and city_filter != "Todas":
+                if city_filter and city_filter != "all" and city_filter != "Todas" and not search:
                     sql += " AND s.city = ?"
                     params.append(city_filter)
 
-                # Only apply strict single-day date filter if not searching by text, or as preferred
+                # Only apply strict single-day date filter if not searching by text
                 if date_filter and not search:
                     sql += " AND c.start_time LIKE ?"
                     params.append(f"{date_filter}%")
@@ -772,7 +772,7 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     import unicodedata
                     return "".join(c for c in unicodedata.normalize("NFD", str(text)) if unicodedata.category(c) != "Mn").lower()
 
-                # Robust Accent-Insensitive Fuzzy Search
+                # Robust Accent-Insensitive Multi-term Fuzzy Search
                 if search:
                     norm_search = strip_accents(search.strip())
                     filtered_search = []
@@ -784,21 +784,27 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                             strip_accents(c.get("instructor_name", "")),
                             strip_accents(c.get("neighborhood", "")),
                             strip_accents(c.get("city", "")),
+                            strip_accents(c.get("address", "")),
                             strip_accents(c.get("description", ""))
                         ])
-                        # If any word in search query matches
                         search_words = norm_search.split()
-                        if all(w in searchable for w in search_words):
+                        if any(w in searchable for w in search_words) or norm_search in searchable:
                             filtered_search.append(c)
                     classes = filtered_search
                 else:
                     classes = all_classes
 
-                # Filter time of day if requested
+                # Filter time of day if requested (robust parsing)
                 if time_of_day and time_of_day != "all":
                     filtered = []
                     for c in classes:
-                        hour = int(c["start_time"].split(" ")[1].split(":")[0])
+                        st = c.get("start_time", "08:00")
+                        time_part = st.split(" ")[1] if " " in st else st
+                        try:
+                            hour = int(time_part.split(":")[0])
+                        except Exception:
+                            hour = 8
+
                         if time_of_day == "morning" and hour < 12:
                             filtered.append(c)
                         elif time_of_day == "afternoon" and 12 <= hour < 18:
