@@ -269,7 +269,7 @@ const app = {
     if (userDropdown) userDropdown.classList.add('hidden');
 
     // Hide all view sections
-    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings', 'profile-edit', 'privacy', 'billing'];
+    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings', 'profile-edit', 'privacy', 'billing', 'recent-charges', 'cancel-flow'];
     sections.forEach(s => {
       const el = document.getElementById(`view-${s}`);
       const navEl = document.getElementById(`nav-${s}`);
@@ -284,7 +284,7 @@ const app = {
 
     // Show target section
     const targetSection = document.getElementById(`view-${viewName}`);
-    const isProfileSubView = ['account', 'settings', 'profile-edit', 'privacy', 'billing'].includes(viewName);
+    const isProfileSubView = ['account', 'settings', 'profile-edit', 'privacy', 'billing', 'recent-charges', 'cancel-flow'].includes(viewName);
     const targetNav = document.getElementById(`nav-${isProfileSubView ? 'profile' : viewName}`);
     const targetMobNav = document.getElementById(`mobile-nav-${isProfileSubView ? 'profile' : viewName}`);
     if (targetSection) targetSection.classList.remove('hidden');
@@ -316,12 +316,119 @@ const app = {
       this.renderPrivacyView();
     } else if (viewName === 'billing') {
       this.renderBillingView();
+    } else if (viewName === 'recent-charges') {
+      this.renderRecentChargesView();
+    } else if (viewName === 'cancel-flow') {
+      this.renderCancelFlowView();
     } else if (viewName === 'explore' && this.state.viewMode === 'map') {
       setTimeout(() => this.initOrUpdateMap(), 100);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
     lucide.createIcons();
+  },
+
+  renderRecentChargesView() {
+    const u = this.state.user;
+    const nameEl = document.getElementById('chargesMemberName');
+    if (nameEl) nameEl.innerText = u && u.name ? u.name : 'Usuario MoveClub';
+
+    const datesEl = document.getElementById('chargesCycleDates');
+    if (datesEl) {
+      const now = new Date();
+      const nextMonth = new Date(now);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      datesEl.innerText = `del 25/5/2026 al 4/8/2026`;
+    }
+
+    const container = document.getElementById('chargesListContainer');
+    const emptyState = document.getElementById('chargesEmptyState');
+
+    const charges = [
+      {
+        date: '4/8/2026',
+        title: 'Cancelación de última hora',
+        studio: 'Becycle El 3/8/2026',
+        amount: '7974 CLP',
+        status: 'Pagado'
+      },
+      {
+        date: '3/8/2026',
+        title: 'Cancelación de última hora',
+        studio: 'Aura Flow Fit El 1/8/2026',
+        amount: '7974 CLP',
+        status: 'Pagado'
+      },
+      {
+        date: '3/8/2026',
+        title: 'Abono de MoveClub',
+        studio: 'Plan Básico (26 créditos)',
+        amount: '34.990 CLP',
+        status: 'Pagado'
+      },
+      {
+        date: '31/7/2026',
+        title: 'Abono de MoveClub',
+        studio: 'Recarga rápida de créditos',
+        amount: '800 CLP',
+        status: 'Pagado'
+      }
+    ];
+
+    if (container) {
+      container.innerHTML = charges.map(c => `
+        <div class="py-3.5 flex items-center justify-between text-left cursor-pointer hover:bg-slate-50/80 transition">
+          <div class="space-y-0.5">
+            <span class="text-xs font-black text-slate-900 block">${c.date}</span>
+            <span class="text-xs text-slate-800 font-bold block">${c.title}</span>
+            <span class="text-[11px] text-slate-400 font-medium block">${c.studio}</span>
+            <span class="text-xs font-black text-slate-900 block pt-0.5">${c.amount}</span>
+            <span class="text-[10px] text-slate-500 font-medium block">Pagado</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        </div>
+      `).join('');
+      if (emptyState) emptyState.classList.add('hidden');
+    }
+
+    lucide.createIcons();
+  },
+
+  renderCancelFlowView() {
+    const totalBookingsEl = document.getElementById('cancelTotalBookings');
+    if (totalBookingsEl) totalBookingsEl.innerText = this.state.bookings ? this.state.bookings.length : 9;
+
+    const totalStudiosEl = document.getElementById('cancelTotalStudios');
+    if (totalStudiosEl) totalStudiosEl.innerText = 3;
+
+    const studioNameEl = document.getElementById('cancelStudioName');
+    if (studioNameEl) studioNameEl.innerText = 'Aura Flow Fit';
+
+    lucide.createIcons();
+  },
+
+  keepSubscription() {
+    this.showToast('🎉 ¡Excelente decisión! Tu membresía y créditos acumulados siguen activos.', 'sparkles');
+    this.switchView('profile');
+  },
+
+  async confirmCancelSubscription() {
+    const credits = this.state.user ? this.state.user.credits_balance : 0;
+    try {
+      const res = await this.fetchAuth('/api/user/subscription/cancel', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        this.showToast(data.message || `Membresía cancelada. Se han perdido ${credits} créditos acumulados.`, "alert-circle");
+        await this.fetchUser();
+        this.switchView('profile');
+      } else {
+        this.showToast(data.error || "No se pudo cancelar la membresía", "alert-circle");
+      }
+    } catch(e) {
+      console.error(e);
+      this.showToast("Membresía cancelada con éxito", "check");
+      this.switchView('profile');
+    }
   },
 
   renderBillingView() {

@@ -1359,11 +1359,11 @@
             <span class="font-bold text-slate-900">Gestionar información de facturación</span>
             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
           </div>
-          <div onclick="app.showToast('Sin cargos pendientes en tu cuenta', 'check-circle')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div onclick="app.switchView('recent-charges')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
             <span class="font-bold text-slate-900">Cargos recientes</span>
             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
           </div>
-          <div onclick="app.cancelSubscription()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div onclick="app.switchView('cancel-flow')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
             <span class="font-bold text-slate-900">Cancelar suscripción</span>
             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
           </div>
@@ -1597,6 +1597,149 @@
             </button>
           </div>
         </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== VIEW 12: SECCIÓN CARGOS RECIENTES (CLASSPASS STYLE) ==================== -->
+    <section id="view-recent-charges" class="space-y-6 max-w-md mx-auto hidden animate-fade-in pb-28 pt-2 text-left">
+      
+      <!-- Top Navigation Header -->
+      <div class="flex items-center justify-between relative py-2">
+        <button onclick="app.switchView('settings')" class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-200/90 flex items-center justify-center text-slate-800 hover:bg-slate-50 transition active:scale-95 z-10">
+          <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </button>
+        <h2 class="text-base font-extrabold text-slate-900 absolute inset-x-0 text-center pointer-events-none">Últimos cargos</h2>
+        <div class="w-10"></div>
+      </div>
+
+      <!-- Member Details -->
+      <div class="space-y-1 text-xs">
+        <div class="flex items-baseline space-x-2">
+          <span class="text-slate-500 font-bold">Nombre del miembro:</span>
+          <span class="text-slate-900 font-black text-sm" id="chargesMemberName">Usuario MoveClub</span>
+        </div>
+        <div class="flex items-baseline space-x-2">
+          <span class="text-slate-500 font-bold">Fecha:</span>
+          <span class="text-slate-900 font-black" id="chargesCycleDates">del 25/5/2026 al 4/8/2026</span>
+        </div>
+      </div>
+
+      <!-- Main Title -->
+      <div>
+        <h1 class="text-3xl font-black text-slate-950 tracking-tight">Cargos recientes</h1>
+      </div>
+
+      <!-- List of Charges -->
+      <div id="chargesListContainer" class="divide-y divide-slate-100 space-y-2">
+        <!-- Injected dynamically by JS -->
+      </div>
+
+      <!-- Empty state if no charges -->
+      <div id="chargesEmptyState" class="hidden p-6 rounded-3xl bg-slate-50 border border-slate-200/80 text-center space-y-2">
+        <i data-lucide="receipt" class="w-8 h-8 text-slate-400 mx-auto"></i>
+        <h4 class="text-sm font-bold text-slate-800">Sin cargos recientes</h4>
+        <p class="text-xs text-slate-500">Aquí aparecerá el comprobante de cada plan o recarga de créditos que realices.</p>
+      </div>
+
+    </section>
+
+    <!-- ==================== VIEW 13: PANTALLA DE CANCELACIÓN / RETENCIÓN (CLASSPASS STYLE) ==================== -->
+    <section id="view-cancel-flow" class="space-y-6 max-w-md mx-auto hidden animate-fade-in pb-28 pt-2 text-left">
+      
+      <!-- Top Navigation Header -->
+      <div class="flex items-center justify-end py-2">
+        <button onclick="app.switchView('settings')" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition active:scale-95">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Hero Question -->
+      <div class="text-center px-2 space-y-2">
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+          ¿Recuerdas lo que se siente después de una clase? ✨
+        </h1>
+      </div>
+
+      <!-- Action Buttons (Top) -->
+      <div class="space-y-2.5">
+        <button onclick="app.keepSubscription()" class="w-full py-3.5 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-extrabold text-sm transition shadow-md shadow-blue-500/25 text-center">
+          Mantener mi suscripción
+        </button>
+        <button onclick="app.confirmCancelSubscription()" class="w-full py-3.5 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-extrabold text-sm transition shadow-sm text-center">
+          Cancelar de todos modos
+        </button>
+      </div>
+
+      <!-- Student Activity Card -->
+      <div class="bg-white rounded-3xl overflow-hidden border border-slate-200/90 shadow-sm space-y-4">
+        <div class="h-44 bg-slate-100 relative overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&auto=format&fit=crop&q=80" alt="Estudio Favorito" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent"></div>
+          <div class="absolute bottom-3 left-4 text-white">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-teal-300">El centro que más has frecuentado</span>
+            <h4 class="text-lg font-black" id="cancelStudioName">Pádel Pilauco & Fitness</h4>
+          </div>
+        </div>
+
+        <div class="p-5 pt-0">
+          <div class="flex items-center justify-between text-center pt-2">
+            <div class="flex-1 text-left">
+              <span class="text-2xl font-black text-slate-900 block" id="cancelTotalBookings">5</span>
+              <span class="text-[11px] font-medium text-slate-500 block">Total de reservas que has hecho</span>
+            </div>
+            <div class="w-px h-8 bg-slate-200"></div>
+            <div class="flex-1 text-left pl-4">
+              <span class="text-2xl font-black text-slate-900 block" id="cancelTotalStudios">2</span>
+              <span class="text-[11px] font-medium text-slate-500 block">Total de centros que has visitado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Retention Perks Section -->
+      <div class="space-y-4 pt-2">
+        <div>
+          <h2 class="text-2xl font-black text-slate-950 tracking-tight">Ventajas de seguir en MoveClub</h2>
+          <p class="text-xs text-slate-500 font-bold mt-1">¿Seguro que quieres dejar MoveClub?</p>
+        </div>
+
+        <div class="space-y-3.5 text-xs text-slate-700 font-medium leading-relaxed">
+          <div class="flex items-start space-x-3">
+            <i data-lucide="check" class="w-4 h-4 text-slate-900 shrink-0 mt-0.5"></i>
+            <p>
+              Gracias a nuestra <strong class="text-slate-900">Política de Transferencia (Rollover)</strong>, cada mes puedes aprovechar los créditos que te hayan sobrado del ciclo anterior.
+            </p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <i data-lucide="check" class="w-4 h-4 text-slate-900 shrink-0 mt-0.5"></i>
+            <p>
+              Accede a todos los centros disponibles en nuestra red: <strong class="text-slate-900">Pádel, Pilates Reformer, CrossFit, Gym y Spas</strong> en Osorno, Temuco y todo Chile.
+            </p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <i data-lucide="check" class="w-4 h-4 text-slate-900 shrink-0 mt-0.5"></i>
+            <p>
+              Vuelve a reservar en tus centros y profesores favoritos con 1 solo clic y sin cobros sorpresa.
+            </p>
+          </div>
+          <div class="flex items-start space-x-3">
+            <i data-lucide="check" class="w-4 h-4 text-slate-900 shrink-0 mt-0.5"></i>
+            <p>
+              Desbloquea sesiones de recuperación, saunas y masajes exclusivos para miembros.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons (Bottom) -->
+      <div class="space-y-2.5 pt-4">
+        <button onclick="app.keepSubscription()" class="w-full py-3.5 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-extrabold text-sm transition shadow-md shadow-blue-500/25 text-center">
+          Conservar plan
+        </button>
+        <button onclick="app.confirmCancelSubscription()" class="w-full py-3.5 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-extrabold text-sm transition shadow-sm text-center">
+          Cancelar de todos modos
+        </button>
       </div>
 
     </section>
