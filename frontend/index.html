@@ -1344,7 +1344,7 @@
       <div class="space-y-2">
         <h3 class="text-lg font-black text-slate-900 tracking-tight">Preferencias</h3>
         <div class="bg-white rounded-2xl border border-slate-200/90 divide-y divide-slate-100 shadow-sm overflow-hidden text-[14px]">
-          <div onclick="app.showToast('Tus datos están protegidos y cifrados en MoveClub', 'shield')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div onclick="app.switchView('privacy')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
             <span class="font-bold text-slate-900">Privacidad</span>
             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
           </div>
@@ -1472,6 +1472,80 @@
               </div>
               <input type="tel" id="editProfilePhone" placeholder="9 1234 5678" class="flex-1 text-slate-900 font-bold text-base border-0 focus:ring-0 p-0 bg-transparent placeholder:text-slate-300">
             </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== VIEW 10: SECCIÓN PRIVACIDAD (CLASSPASS STYLE) ==================== -->
+    <section id="view-privacy" class="space-y-6 max-w-md mx-auto hidden animate-fade-in pb-28 pt-2 text-left">
+      
+      <!-- Top Navigation Header -->
+      <div class="flex items-center justify-between relative py-2">
+        <button onclick="app.switchView('settings')" class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-200/90 flex items-center justify-center text-slate-800 hover:bg-slate-50 transition active:scale-95 z-10">
+          <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </button>
+        <h2 class="text-base font-extrabold text-slate-900 absolute inset-x-0 text-center pointer-events-none">Privacidad</h2>
+        <div class="w-10"></div>
+      </div>
+
+      <!-- Section 1: ¿Quién puede encontrarme? -->
+      <div class="space-y-4 pt-1">
+        <h3 class="text-xl font-black text-slate-900 tracking-tight">¿Quién puede encontrarme?</h3>
+        
+        <div class="border-b border-slate-200/80 pb-5">
+          <div class="flex items-start justify-between space-x-4">
+            <div class="space-y-1.5 pr-2">
+              <h4 class="text-[15px] font-bold text-slate-900 leading-snug">Permitir a los miembros que me busquen</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Los miembros de MoveClub solo podrán ver tu nombre completo, tu foto de perfil y la ciudad. No se compartirá nada más, a menos que aceptes una solicitud de amistad.
+              </p>
+            </div>
+            
+            <!-- iOS Style Blue Switch -->
+            <label class="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
+              <input type="checkbox" id="toggleAllowSearch" checked class="sr-only peer" onchange="app.savePrivacySettings()">
+              <div class="w-12 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: ¿Qué información puede compartir MoveClub con tus amigos? -->
+      <div class="space-y-4 pt-2">
+        <h3 class="text-xl font-black text-slate-900 tracking-tight leading-snug">
+          ¿Qué información puede compartir MoveClub con tus amigos?
+        </h3>
+
+        <div class="divide-y divide-slate-200/80">
+          
+          <!-- Row 1: Próximas clases -->
+          <div class="py-4 flex items-center justify-between">
+            <span class="text-sm font-bold text-slate-900">Próximas clases</span>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="toggleShareUpcoming" checked class="sr-only peer" onchange="app.savePrivacySettings()">
+              <div class="w-12 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+
+          <!-- Row 2: Clases anteriores -->
+          <div class="py-4 flex items-center justify-between">
+            <span class="text-sm font-bold text-slate-900">Clases anteriores</span>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="toggleSharePast" checked class="sr-only peer" onchange="app.savePrivacySettings()">
+              <div class="w-12 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+
+          <!-- Row 3: Clases favoritas -->
+          <div class="py-4 flex items-center justify-between">
+            <span class="text-sm font-bold text-slate-900">Clases favoritas</span>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="toggleShareFavorites" checked class="sr-only peer" onchange="app.savePrivacySettings()">
+              <div class="w-12 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
           </div>
 
         </div>

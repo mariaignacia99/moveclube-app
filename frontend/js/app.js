@@ -269,7 +269,7 @@ const app = {
     if (userDropdown) userDropdown.classList.add('hidden');
 
     // Hide all view sections
-    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings', 'profile-edit'];
+    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings', 'profile-edit', 'privacy'];
     sections.forEach(s => {
       const el = document.getElementById(`view-${s}`);
       const navEl = document.getElementById(`nav-${s}`);
@@ -284,7 +284,7 @@ const app = {
 
     // Show target section
     const targetSection = document.getElementById(`view-${viewName}`);
-    const isProfileSubView = ['account', 'settings', 'profile-edit'].includes(viewName);
+    const isProfileSubView = ['account', 'settings', 'profile-edit', 'privacy'].includes(viewName);
     const targetNav = document.getElementById(`nav-${isProfileSubView ? 'profile' : viewName}`);
     const targetMobNav = document.getElementById(`mobile-nav-${isProfileSubView ? 'profile' : viewName}`);
     if (targetSection) targetSection.classList.remove('hidden');
@@ -312,12 +312,22 @@ const app = {
       this.renderSettingsView();
     } else if (viewName === 'profile-edit') {
       this.renderProfileEditView();
+    } else if (viewName === 'privacy') {
+      this.renderPrivacyView();
     } else if (viewName === 'explore' && this.state.viewMode === 'map') {
       setTimeout(() => this.initOrUpdateMap(), 100);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
     lucide.createIcons();
+  },
+
+  renderPrivacyView() {
+    lucide.createIcons();
+  },
+
+  savePrivacySettings() {
+    this.showToast('Preferencias de privacidad actualizadas', 'shield-check');
   },
 
   renderSettingsView() {
