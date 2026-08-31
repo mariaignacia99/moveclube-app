@@ -1,10 +1,26 @@
-#!/usr/bin/env python3
 import sqlite3
 import os
 import json
+import hashlib
+import secrets
 from datetime import datetime, timedelta
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fitpass.db")
+
+def hash_password(password: str, salt: str = None) -> str:
+    """Genera un hash seguro con salt para contraseñas"""
+    if not salt:
+        salt = secrets.token_hex(8)
+    hashed = hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
+    return f"{salt}:{hashed}"
+
+def verify_password(password: str, password_hash: str) -> bool:
+    """Valida una contraseña contra su hash"""
+    if not password_hash or ":" not in password_hash:
+        return False
+    salt, hashed = password_hash.split(":", 1)
+    expected = hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
+    return secrets.compare_digest(hashed, expected)
 
 def get_connection():
     conn = sqlite3.connect(DB_PATH, timeout=10)
@@ -33,17 +49,28 @@ def init_db(force_reseed=False):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
+        password_hash TEXT,
+        role TEXT DEFAULT 'user', -- 'user', 'admin'
         phone TEXT,
         city TEXT DEFAULT 'Osorno',
         credits_balance INTEGER DEFAULT 10,
         plan_tier TEXT DEFAULT 'Prueba Gratuita (10 créditos / 7 días)',
         avatar_url TEXT,
+        is_verified INTEGER DEFAULT 1,
         card_last4 TEXT,
         card_brand TEXT,
         card_holder TEXT,
         card_expiry TEXT,
         trial_ends_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS user_sessions (
+        token TEXT PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id)
     );
 
     CREATE TABLE IF NOT EXISTS studios (
@@ -85,6 +112,7 @@ def init_db(force_reseed=False):
         start_time TEXT NOT NULL, -- ISO Format YYYY-MM-DD HH:MM
         duration_minutes INTEGER DEFAULT 50,
         credit_cost INTEGER NOT NULL,
+        is_peak_hour INTEGER DEFAULT 0,
         max_capacity INTEGER DEFAULT 16,
         available_spots INTEGER DEFAULT 12,
         description TEXT,
@@ -98,6 +126,11 @@ def init_db(force_reseed=False):
         user_id INTEGER NOT NULL,
         class_id INTEGER NOT NULL,
         status TEXT DEFAULT 'confirmed', -- confirmed, cancelled, completed
+        spots_count INTEGER DEFAULT 1,
+        guest_names TEXT,
+        split_mode TEXT DEFAULT 'host_paid',
+        invite_code TEXT,
+        total_credits_spent INTEGER DEFAULT 5,
         booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         qr_code_id TEXT NOT NULL,
         rating INTEGER,
@@ -125,24 +158,55 @@ def init_db(force_reseed=False):
         FOREIGN KEY (studio_id) REFERENCES studios (id)
     );
 
+    CREATE TABLE IF NOT EXISTS waitlist (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        class_id INTEGER NOT NULL,
+        position INTEGER DEFAULT 1,
+        status TEXT DEFAULT 'waiting', -- 'waiting', 'promoted', 'cancelled', 'skipped'
+        joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        promoted_at TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id),
+        FOREIGN KEY (class_id) REFERENCES classes (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        type TEXT DEFAULT 'booking', -- 'booking', 'reminder', 'waitlist', 'system'
+        data_json TEXT,
+        is_read INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    );
+
     CREATE INDEX IF NOT EXISTS idx_classes_studio ON classes(studio_id);
     CREATE INDEX IF NOT EXISTS idx_classes_time ON classes(start_time);
     CREATE INDEX IF NOT EXISTS idx_classes_category ON classes(category);
     CREATE INDEX IF NOT EXISTS idx_studios_city ON studios(city);
     CREATE INDEX IF NOT EXISTS idx_bookings_user ON bookings(user_id);
+    CREATE INDEX IF NOT EXISTS idx_waitlist_class ON waitlist(class_id, status);
+    CREATE INDEX IF NOT EXISTS idx_waitlist_user ON waitlist(user_id, status);
+    CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, is_read);
     ''')
 
     conn.commit()
 
-    # Dynamic migrations
+    # Dynamic migrations for users
     for col in [
+        ("password_hash", "TEXT"),
+        ("role", "TEXT DEFAULT 'user'"),
+        ("is_verified", "INTEGER DEFAULT 1"),
         ("phone", "TEXT"),
         ("city", "TEXT DEFAULT 'Osorno'"),
         ("card_last4", "TEXT"),
         ("card_brand", "TEXT"),
         ("card_holder", "TEXT"),
         ("card_expiry", "TEXT"),
-        ("trial_ends_at", "TIMESTAMP")
+        ("trial_ends_at", "TIMESTAMP"),
+        ("pending_debt_clp", "INTEGER DEFAULT 0")
     ]:
         try:
             cursor.execute(f"ALTER TABLE users ADD COLUMN {col[0]} {col[1]}")
@@ -150,10 +214,25 @@ def init_db(force_reseed=False):
         except Exception:
             pass
 
-    # Ensure any stale 70 credits demo state is cleaned to 0 credits (fresh state)
+    # Dynamic migrations for bookings (Group Bookings & Pádel Matches)
+    for col in [
+        ("spots_count", "INTEGER DEFAULT 1"),
+        ("guest_names", "TEXT"),
+        ("split_mode", "TEXT DEFAULT 'host_paid'"),
+        ("invite_code", "TEXT"),
+        ("total_credits_spent", "INTEGER DEFAULT 5")
+    ]:
+        try:
+            cursor.execute(f"ALTER TABLE bookings ADD COLUMN {col[0]} {col[1]}")
+            conn.commit()
+        except Exception:
+            pass
+
+    # Ensure admin user has role and default password
     try:
-        cursor.execute("UPDATE users SET credits_balance = 0, plan_tier = 'Sin Plan Activo', card_last4 = NULL WHERE credits_balance = 70")
-        cursor.execute("DELETE FROM bookings WHERE user_id = 1 AND EXISTS (SELECT 1 FROM users WHERE id = 1 AND credits_balance = 0)")
+        admin_hash = hash_password("moveclub2026")
+        cursor.execute("UPDATE users SET role = 'admin', password_hash = ? WHERE email = 'sanchezhenriquezmariaignacia99@gmail.com' AND (password_hash IS NULL OR password_hash = '')", (admin_hash,))
+        cursor.execute("UPDATE users SET role = 'admin' WHERE id = 1")
         conn.commit()
     except Exception:
         pass
@@ -169,16 +248,19 @@ def seed_data(conn):
     cursor = conn.cursor()
     print("Sembrando red integral de MoveClub: Osorno, Temuco, Santiago y Puerto Varas...")
 
-    # 1. Default User (Prueba Gratuita 7 días - 10 créditos para 2 clases)
+    # 1. Default Admin User (María Ignacia)
     cursor.execute('''
-        INSERT INTO users (name, email, credits_balance, plan_tier, avatar_url)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO users (name, email, password_hash, role, credits_balance, plan_tier, avatar_url, city)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         "María Ignacia Sánchez",
         "sanchezhenriquezmariaignacia99@gmail.com",
+        hash_password("moveclub2026"),
+        "admin",
         10,
         "Prueba Gratuita (10 créditos / 7 días)",
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        "Osorno"
     ))
     user_id = cursor.lastrowid
 
@@ -806,44 +888,44 @@ def seed_data(conn):
 
     class_templates = [
         # Osorno
-        (studio_ids["Pádel Park Osorno & Indoor Club"], instructor_ids["Matías 'Mati' Gómez"], "Clínica Técnica de Pádel & Bandeja", "Pádel", 60, 5, 4, "Perfeccionamiento de bandeja, salida de pared y volea en cancha techada.", "Intermedio"),
-        (studio_ids["Pádel Park Osorno & Indoor Club"], instructor_ids["Matías 'Mati' Gómez"], "Rey de la Pista (Cupo Individual)", "Pádel", 75, 5, 4, "Te asignamos compañero y rivales de tu misma categoría para 1h15 de juego.", "Todos los niveles"),
-        (studio_ids["Club de Tenis Osorno & Academia"], instructor_ids["Ignacio 'Nacho' Carrasco"], "Clínica de Tenis: Drive & Revés con Topspin", "Tenis", 60, 5, 4, "Clase práctica en polvo de ladrillo para aceleración de raqueta y profundidad.", "Todos los niveles"),
-        (studio_ids["Studio Danza Sur & Ritmos"], instructor_ids["Valeska Pineda"], "Dance Fit & Ritmos Latinos", "Danza", 50, 4, 16, "Cardio bailable combinando salsa, reggaeton y bachata para quemar calorías.", "Todos los niveles"),
-        (studio_ids["Osorno Athletic Gym & Fitness"], instructor_ids["Felipe Cárdenas"], "Pase Open Gym Libre & Musculación", "Gimnasio", 90, 3, 20, "Acceso libre total a la sala de pesas, máquinas guiadas y zona de cardio.", "Todos los niveles"),
-        (studio_ids["Reformer Pilates Osorno"], instructor_ids["Constanza Vera"], "Reformer Core & Posture Alignment", "Pilates", 50, 7, 6, "Trabajo en resortes Allegro para fortalecer el abdomen y liberar tensión lumbar.", "Todos los niveles"),
-        (studio_ids["Volcán Boulder & Climbing Gym"], instructor_ids["Cristóbal 'Mono' Vidal"], "Bouldering Técnico & Fuerza de Agarre", "Escalada & Boulder", 55, 4, 12, "Técnica de pies y acondicionamiento muscular en muros de boulder.", "Todos los niveles"),
-        (studio_ids["Kutral CrossFit Osorno"], instructor_ids["Nicolás 'Kutral' Bahamondes"], "WOD Patagónico & Halterofilia", "CrossFit", 60, 5, 14, "Levantamiento olímpico de Clean & Jerk y circuito metabólico.", "Todos los niveles"),
-        (studio_ids["Rahue Yoga & Sound Studio"], instructor_ids["Fernanda Angulo"], "Vinyasa Flow & Respiración Sureña", "Yoga", 50, 4, 14, "Secuencia fluida con calor suave para abrir el pecho y calmar la mente.", "Todos los niveles"),
-        (studio_ids["Bosque Nativo Spa & Termas Urbanas"], instructor_ids["Dra. Javiera Neumann"], "Circuito Sauna Alerce + Inmersión Fría", "Spa & Bienestar", 45, 6, 6, "15 min en sauna seco nativo seguidos de inmersión en tina helada a 4°C.", "Bienestar"),
+        (studio_ids["Pádel Park Osorno & Indoor Club"], instructor_ids["Matías 'Mati' Gómez"], "Clínica Técnica de Pádel & Bandeja", "Pádel", 60, 10, 4, "Clase técnica personalizada con profesor: perfeccionamiento de bandeja, salida de pared y volea.", "Intermedio"),
+        (studio_ids["Pádel Park Osorno & Indoor Club"], instructor_ids["Matías 'Mati' Gómez"], "Rey de la Pista (Cupo Individual)", "Pádel", 75, 7, 4, "Te asignamos compañero y rivales de tu misma categoría para 1h15 de juego en cancha techada.", "Todos los niveles"),
+        (studio_ids["Club de Tenis Osorno & Academia"], instructor_ids["Ignacio 'Nacho' Carrasco"], "Clínica de Tenis: Drive & Revés con Topspin", "Tenis", 60, 9, 4, "Clase práctica con coach en polvo de ladrillo para aceleración y profundidad.", "Todos los niveles"),
+        (studio_ids["Studio Danza Sur & Ritmos"], instructor_ids["Valeska Pineda"], "Dance Fit & Ritmos Latinos", "Danza", 50, 5, 16, "Cardio bailable combinando salsa, reggaeton y bachata para quemar calorías.", "Todos los niveles"),
+        (studio_ids["Osorno Athletic Gym & Fitness"], instructor_ids["Felipe Cárdenas"], "Pase Diario Open Gym & Musculación", "Gimnasio", 90, 5, 20, "Pase diario libre total a sala de pesas, máquinas guiadas y zona de cardio.", "Todos los niveles"),
+        (studio_ids["Reformer Pilates Osorno"], instructor_ids["Constanza Vera"], "Reformer Core & Posture Alignment", "Pilates", 50, 9, 6, "Trabajo en camas Allegro con resortes para fortalecer abdomen y postura.", "Todos los niveles"),
+        (studio_ids["Volcán Boulder & Climbing Gym"], instructor_ids["Cristóbal 'Mono' Vidal"], "Bouldering Técnico & Fuerza de Agarre", "Escalada & Boulder", 55, 6, 12, "Técnica de pies y acondicionamiento muscular en muros de boulder.", "Todos los niveles"),
+        (studio_ids["Kutral CrossFit Osorno"], instructor_ids["Nicolás 'Kutral' Bahamondes"], "WOD Patagónico & Halterofilia", "CrossFit", 60, 7, 14, "Levantamiento olímpico de Clean & Jerk y circuito metabólico de alta intensidad.", "Todos los niveles"),
+        (studio_ids["Rahue Yoga & Sound Studio"], instructor_ids["Fernanda Angulo"], "Vinyasa Flow & Respiración Sureña", "Yoga", 50, 6, 14, "Secuencia fluida con calor suave para abrir el pecho y calmar la mente.", "Todos los niveles"),
+        (studio_ids["Bosque Nativo Spa & Termas Urbanas"], instructor_ids["Dra. Javiera Neumann"], "Circuito Sauna Alerce + Inmersión Fría", "Spa & Bienestar", 45, 8, 6, "15 min en sauna seco nativo seguidos de inmersión en tina helada a 4°C.", "Bienestar"),
 
         # Temuco
-        (studio_ids["Temuco Pádel Arena & Club"], instructor_ids["Rodrigo 'Chapa' Silva"], "Clínica de Pádel Avanzado & Estrategia", "Pádel", 60, 5, 4, "Táctica de juego en parejas y transiciones defensa-ataque.", "Intermedio/Avanzado"),
-        (studio_ids["Club de Tenis Temuco Frontera"], instructor_ids["Patricio Cornejo"], "Entrenamiento de Tenis: Saque & Red", "Tenis", 60, 5, 4, "Biomecánica del servicio y definición de voleas en la red.", "Todos los niveles"),
-        (studio_ids["Academia Danza Viva Temuco"], instructor_ids["Sofía Manríquez"], "Reggaeton Urbano & Dance Fusion", "Danza", 50, 4, 18, "Coreografías de alta energía con los tracks más pegados del momento.", "Todos los niveles"),
-        (studio_ids["IronFit Gym Temuco"], instructor_ids["Andrés 'Titan' Valdés"], "Pase Libre Open Gym & Fuerza", "Gimnasio", 90, 3, 25, "Entrenamiento libre en sala de máquinas pesadas y plataformas de levantamiento.", "Todos los niveles"),
-        (studio_ids["Ñielol Reformer & Core Studio"], instructor_ids["Catalina Mellado"], "Reformer Total Tone & Postura", "Pilates", 50, 7, 8, "Alineación de columna y tonificación de piernas y glúteos en cama Reformer.", "Todos los niveles"),
-        (studio_ids["Araucanía Indoor Cycling Lab"], instructor_ids["Esteban Riquelme"], "Full Beat 45' Cycling Temuco", "Spinning", 45, 5, 20, "Pedaleo al ritmo de las mejores pistas con intervalos de potencia.", "Todos los niveles"),
-        (studio_ids["Frontera Boxing & Fight Club"], instructor_ids["Sebastián 'Puma' Alarcón"], "10 Rounds Boxing Beats", "Boxeo", 50, 5, 16, "Golpes técnicos a sacos de agua con intervalos HIIT.", "Todos los niveles"),
-        (studio_ids["Centro Acuático & Natación Temuco"], instructor_ids["Marcelo Huenchumil"], "Nado Técnico & Aqua-HIIT", "Natación", 45, 4, 12, "Perfeccionamiento de estilo en piscina climatizada a 28°C.", "Todos los niveles"),
-        (studio_ids["Kallfu Yoga & Meditación"], instructor_ids["Paz Troncoso"], "Hatha Yoga & Pranayama", "Yoga", 50, 4, 12, "Posturas estables y técnicas de respiración profunda.", "Todos los niveles"),
+        (studio_ids["Temuco Pádel Arena & Club"], instructor_ids["Rodrigo 'Chapa' Silva"], "Clínica de Pádel Avanzado & Estrategia", "Pádel", 60, 10, 4, "Táctica de juego en parejas y transiciones defensa-ataque con entrenador.", "Intermedio/Avanzado"),
+        (studio_ids["Club de Tenis Temuco Frontera"], instructor_ids["Patricio Cornejo"], "Entrenamiento de Tenis: Saque & Red", "Tenis", 60, 9, 4, "Biomecánica del servicio y definición de voleas en la red.", "Todos los niveles"),
+        (studio_ids["Academia Danza Viva Temuco"], instructor_ids["Sofía Manríquez"], "Reggaeton Urbano & Dance Fusion", "Danza", 50, 5, 18, "Coreografías de alta energía con los tracks más pegados del momento.", "Todos los niveles"),
+        (studio_ids["IronFit Gym Temuco"], instructor_ids["Andrés 'Titan' Valdés"], "Pase Diario Libre Open Gym & Fuerza", "Gimnasio", 90, 5, 25, "Entrenamiento libre en sala de máquinas pesadas y plataformas de levantamiento.", "Todos los niveles"),
+        (studio_ids["Ñielol Reformer & Core Studio"], instructor_ids["Catalina Mellado"], "Reformer Total Tone & Postura", "Pilates", 50, 9, 8, "Alineación de columna y tonificación de glúteos en cama Reformer.", "Todos los niveles"),
+        (studio_ids["Araucanía Indoor Cycling Lab"], instructor_ids["Esteban Riquelme"], "Full Beat 45' Cycling Temuco", "Spinning", 45, 6, 20, "Pedaleo al ritmo de las mejores pistas con intervalos de potencia.", "Todos los niveles"),
+        (studio_ids["Frontera Boxing & Fight Club"], instructor_ids["Sebastián 'Puma' Alarcón"], "10 Rounds Boxing Beats", "Boxeo", 50, 6, 16, "Golpes técnicos a sacos de agua con intervalos HIIT.", "Todos los niveles"),
+        (studio_ids["Centro Acuático & Natación Temuco"], instructor_ids["Marcelo Huenchumil"], "Nado Técnico & Aqua-HIIT", "Natación", 45, 6, 12, "Perfeccionamiento de estilo en piscina climatizada a 28°C.", "Todos los niveles"),
+        (studio_ids["Kallfu Yoga & Meditación"], instructor_ids["Paz Troncoso"], "Hatha Yoga & Pranayama", "Yoga", 50, 6, 12, "Posturas estables y técnicas de respiración profunda.", "Todos los niveles"),
 
         # Santiago
-        (studio_ids["Santiago Pádel Club & Rooftop"], instructor_ids["Lucas 'Mago' Beltrán"], "Masterclass de Pádel en Altura", "Pádel", 60, 6, 4, "Lectura de juego, bandeja de potencia y definición aérea en cancha panorámica.", "Intermedio/Avanzado"),
-        (studio_ids["Club de Tenis El Alba"], instructor_ids["Nicolás Massú Jr."], "Clínica de Tenis de Alta Competencia", "Tenis", 60, 6, 4, "Patrones de juego de fondo de cancha y aceleración con efecto.", "Intermedio/Avanzado"),
-        (studio_ids["Danza Urbana Chile & Academy"], instructor_ids["Bárbara 'Babi' Moscoso"], "Heels & Commercial Dance Fit", "Danza", 55, 4, 20, "Sensualidad, postura, coordinación y cardio intenso en tacones o zapatillas.", "Todos los niveles"),
-        (studio_ids["PowerHouse Open Gym & Fitness"], instructor_ids["Héctor 'Hulk' Morales"], "Pase Open Gym Eleiko & Musculación", "Gimnasio", 90, 3, 30, "Acceso a máquinas de hipertrofia, plataformas de peso muerto y mancuernas hasta 60kg.", "Todos los niveles"),
-        (studio_ids["Zen Soul & Sound Yoga"], instructor_ids["Camila Valenzuela"], "Vinyasa Flow & Deep Stretch", "Yoga", 50, 4, 15, "Fluidez de movimiento sincronizada con la respiración.", "Todos los niveles"),
-        (studio_ids["Velocita Indoor Cycling"], instructor_ids["Sofía Morales"], "Full Beat 45' Ride Santiago", "Spinning", 45, 5, 24, "Coreografías dinámicas y sprints de alta intensidad.", "Todos los niveles"),
-        (studio_ids["IronBox Athletic Club"], instructor_ids["Rodrigo 'Toro' Bravo"], "WOD Hero & Halterofilia", "CrossFit", 60, 6, 14, "Fuerza en sentadilla trasera y circuito metabólico de alta exigencia.", "Todos los niveles"),
-        (studio_ids["Reformer Core Studio"], instructor_ids["Valentina Ruiz"], "Classical Reformer Alignment", "Pilates", 55, 6, 10, "El método clásico de Joseph Pilates enfocado en control y centro de poder.", "Todos los niveles"),
-        (studio_ids["Punch Club & Boxing Gym"], instructor_ids["Carlos 'Rocky' Mendez"], "Heavy Bag Beats 50'", "Boxeo", 50, 5, 18, "Combinaciones de golpes técnicos a sacos de agua Aqua Bag.", "Todos los niveles"),
-        (studio_ids["Glow Wellness & Spa Sanctuary"], instructor_ids["Dra. Elena Costa"], "Circuito Recovery: Sauna + Ice Bath", "Spa & Bienestar", 45, 6, 6, "Sauna infrarrojo a 65°C seguido de inmersión en frío a 4°C.", "Bienestar"),
-        (studio_ids["AquaFit Olympic Center"], instructor_ids["Javier Ossa"], "Aqua-HIIT & Resistencia", "Natación", 45, 4, 14, "Ejercicios funcionales con pesas acuáticas en piscina temperada.", "Todos los niveles"),
+        (studio_ids["Santiago Pádel Club & Rooftop"], instructor_ids["Lucas 'Mago' Beltrán"], "Masterclass de Pádel en Altura", "Pádel", 60, 12, 4, "Lectura de juego, bandeja de potencia y definición aérea con coach profesional.", "Intermedio/Avanzado"),
+        (studio_ids["Club de Tenis El Alba"], instructor_ids["Nicolás Massú Jr."], "Clínica de Tenis de Alta Competencia", "Tenis", 60, 10, 4, "Patrones de juego de fondo de cancha y aceleración con efecto.", "Intermedio/Avanzado"),
+        (studio_ids["Danza Urbana Chile & Academy"], instructor_ids["Bárbara 'Babi' Moscoso"], "Heels & Commercial Dance Fit", "Danza", 55, 5, 20, "Sensualidad, postura, coordinación y cardio intenso.", "Todos los niveles"),
+        (studio_ids["PowerHouse Open Gym & Fitness"], instructor_ids["Héctor 'Hulk' Morales"], "Pase Diario Open Gym Eleiko", "Gimnasio", 90, 5, 30, "Acceso a máquinas de hipertrofia, plataformas y mancuernas hasta 60kg.", "Todos los niveles"),
+        (studio_ids["Zen Soul & Sound Yoga"], instructor_ids["Camila Valenzuela"], "Vinyasa Flow & Deep Stretch", "Yoga", 50, 6, 15, "Fluidez de movimiento sincronizada con la respiración.", "Todos los niveles"),
+        (studio_ids["Velocita Indoor Cycling"], instructor_ids["Sofía Morales"], "Full Beat 45' Ride Santiago", "Spinning", 45, 6, 24, "Coreografías dinámicas y sprints de alta intensidad.", "Todos los niveles"),
+        (studio_ids["IronBox Athletic Club"], instructor_ids["Rodrigo 'Toro' Bravo"], "WOD Hero & Halterofilia", "CrossFit", 60, 7, 14, "Fuerza en sentadilla trasera y circuito metabólico de alta exigencia.", "Todos los niveles"),
+        (studio_ids["Reformer Core Studio"], instructor_ids["Valentina Ruiz"], "Classical Reformer Alignment", "Pilates", 55, 9, 10, "El método clásico de Joseph Pilates enfocado en control y centro de poder.", "Todos los niveles"),
+        (studio_ids["Punch Club & Boxing Gym"], instructor_ids["Carlos 'Rocky' Mendez"], "Heavy Bag Beats 50'", "Boxeo", 50, 6, 18, "Combinaciones de golpes técnicos a sacos de agua Aqua Bag.", "Todos los niveles"),
+        (studio_ids["Glow Wellness & Spa Sanctuary"], instructor_ids["Dra. Elena Costa"], "Circuito Recovery: Sauna + Ice Bath", "Spa & Bienestar", 45, 8, 6, "Sauna infrarrojo a 65°C seguido de inmersión en frío a 4°C.", "Bienestar"),
+        (studio_ids["AquaFit Olympic Center"], instructor_ids["Javier Ossa"], "Aqua-HIIT & Resistencia", "Natación", 45, 6, 14, "Ejercicios funcionales con pesas acuáticas en piscina temperada.", "Todos los niveles"),
 
         # Puerto Varas
-        (studio_ids["Llanquihue Lakefront Yoga & Wellness"], instructor_ids["Camila Rosas"], "Yoga frente al Lago & Volcanes", "Yoga", 55, 5, 14, "Vinyasa flow mirando el atardecer sobre el Lago Llanquihue.", "Todos los niveles"),
-        (studio_ids["Patagonia Pádel & Tennis Club"], instructor_ids["Diego 'Patagón' Soto"], "Pádel Indoor Patagónico (Partido Nivelado)", "Pádel", 60, 5, 4, "Match nivelado en cancha techada con chimenea y tercer tiempo.", "Todos los niveles")
+        (studio_ids["Llanquihue Lakefront Yoga & Wellness"], instructor_ids["Camila Rosas"], "Yoga frente al Lago & Volcanes", "Yoga", 55, 6, 14, "Vinyasa flow mirando el atardecer sobre el Lago Llanquihue.", "Todos los niveles"),
+        (studio_ids["Patagonia Pádel & Tennis Club"], instructor_ids["Diego 'Patagón' Soto"], "Pádel Indoor Patagónico (Clínica Técnica)", "Pádel", 60, 10, 4, "Clase técnica en cancha techada con chimenea y tercer tiempo.", "Todos los niveles")
     ]
 
     hours = ["07:00", "08:30", "10:00", "12:30", "17:30", "19:00", "20:15"]
@@ -857,17 +939,31 @@ def seed_data(conn):
             h = hours[(idx + day_offset) % len(hours)]
             start_time = f"{date_str} {h}"
             
+            # Dynamic Pricing based on peak hours (17:30, 19:00, 20:15)
+            is_peak = 1 if h in ["17:30", "19:00", "20:15"] else 0
+            base_cost = template[5]
+            if is_peak:
+                # Add peak surcharge in afternoon/evening (+2 to +3 credits)
+                if template[3] in ["Pádel", "Pilates"]:
+                    actual_cost = base_cost + 3  # e.g., Padel 10 -> 13 cr, Pilates 9 -> 12 cr
+                elif template[3] in ["CrossFit", "Tenis", "Spa & Bienestar"]:
+                    actual_cost = base_cost + 2  # e.g., 7 -> 9 cr
+                else:
+                    actual_cost = base_cost + 2  # e.g., 5 -> 7 cr
+            else:
+                actual_cost = base_cost
+
             max_cap = template[6]
             spots = max_cap - ((idx * 2 + day_offset * 3) % (max_cap - 1 if max_cap > 1 else 1))
             if spots <= 0:
                 spots = 1
 
             cursor.execute('''
-                INSERT INTO classes (studio_id, instructor_id, title, category, start_time, duration_minutes, credit_cost, max_capacity, available_spots, description, level)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO classes (studio_id, instructor_id, title, category, start_time, duration_minutes, credit_cost, is_peak_hour, max_capacity, available_spots, description, level)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 template[0], template[1], template[2], template[3],
-                start_time, template[4], template[5], max_cap, spots,
+                start_time, template[4], actual_cost, is_peak, max_cap, spots,
                 template[7], template[8]
             ))
             class_id_created.append(cursor.lastrowid)

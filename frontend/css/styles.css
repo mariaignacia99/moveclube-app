@@ -93,8 +93,12 @@ main {
   }
 }
 
-header, section, article, div {
+header, section, article {
   max-width: 100%;
+}
+
+#notificationDropdown, #userDropdown {
+  max-width: calc(100vw - 20px) !important;
 }
 
 /* Custom Scrollbars */
@@ -245,4 +249,27 @@ header, section, article, div {
 #toast.show {
   transform: translateY(0);
   opacity: 1;
+}
+
+/* Mobile Safe Areas and Viewport Adjustments */
+.safe-area-bottom {
+  padding-bottom: max(14px, env(safe-area-inset-bottom, 14px)) !important;
+}
+
+@media (max-width: 640px) {
+  header {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  /* Ensure main content has enough bottom breathing room above mobile bar */
+  main {
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 20px)) !important;
+  }
+  
+  /* Make sure modal content never overflows screen */
+  .modal-dialog {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
 }

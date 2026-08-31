@@ -8,6 +8,9 @@ const app = {
     classes: [],
     categories: [],
     bookings: [],
+    waitlists: [],
+    notifications: [],
+    unreadNotifications: 0,
     favorites: [],
     activeView: 'explore',
     viewMode: 'grid', // 'grid' | 'map'
@@ -28,6 +31,28 @@ const app = {
   map: null,
   mapMarkers: [],
 
+  // Auth Token Management
+  getToken() {
+    return localStorage.getItem('moveclub_token') || '';
+  },
+
+  setToken(token) {
+    if (token) {
+      localStorage.setItem('moveclub_token', token);
+    } else {
+      localStorage.removeItem('moveclub_token');
+    }
+  },
+
+  async fetchAuth(url, options = {}) {
+    const token = this.getToken();
+    options.headers = options.headers || {};
+    if (token) {
+      options.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return fetch(url, options);
+  },
+
   // Initialization
   async init() {
     this.initDateCarousel();
@@ -38,7 +63,8 @@ const app = {
       this.fetchUser(),
       this.fetchCategories(),
       this.fetchStudios(),
-      this.fetchClasses()
+      this.fetchClasses(),
+      this.fetchNotifications()
     ]);
 
     this.setupEventListeners();
@@ -50,6 +76,7 @@ const app = {
     }
 
     this.checkWelcomeModal();
+    this.checkPaymentReturnFromURL();
   },
 
   loadFromCache() {
@@ -237,6 +264,10 @@ const app = {
   switchView(viewName) {
     this.state.activeView = viewName;
 
+    // Close any floating user dropdown
+    const userDropdown = document.getElementById('userDropdown');
+    if (userDropdown) userDropdown.classList.add('hidden');
+
     // Hide all view sections
     const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile'];
     sections.forEach(s => {
@@ -265,6 +296,7 @@ const app = {
     // Trigger specific view loaders
     if (viewName === 'bookings') {
       this.fetchBookings();
+      this.fetchWaitlist();
     } else if (viewName === 'favorites') {
       this.fetchFavorites();
     } else if (viewName === 'plans') {
@@ -283,7 +315,10 @@ const app = {
 
   renderProfileView() {
     const u = this.state.user;
-    if (!u) return;
+    if (!u) {
+      this.openAuthModal('login');
+      return;
+    }
     const nameEl = document.getElementById('profilePageUserName');
     if (nameEl) nameEl.innerText = u.name;
     const emailEl = document.getElementById('profilePageUserEmail');
@@ -297,7 +332,51 @@ const app = {
     const favCount = this.state.studios ? this.state.studios.filter(s => s.is_favorite).length : 0;
     const favEl = document.getElementById('profileFavoritesCount');
     if (favEl) favEl.innerText = favCount;
+
+    // Mi Cuenta & Membresía card
+    const accPlanEl = document.getElementById('profileAccountPlanTitle');
+    if (accPlanEl) accPlanEl.innerText = u.plan_tier || u.plan || 'Plan Active (20 créditos/mes)';
+    const accCreditsEl = document.getElementById('profileAccountCredits');
+    if (accCreditsEl) accCreditsEl.innerText = `${u.credits_balance} cr`;
+    const accRolloverEl = document.getElementById('profileAccountRollover');
+    if (accRolloverEl) accRolloverEl.innerText = u.credits_balance > 20 ? `+${u.credits_balance - 20} cr acum.` : 'Protegidos';
+
+    const roleBadge = document.getElementById('profileRoleBadge');
+    const adminCard = document.getElementById('profileAdminCard');
+    if (u.role === 'admin') {
+      if (roleBadge) roleBadge.classList.remove('hidden');
+      if (adminCard) adminCard.classList.remove('hidden');
+    } else {
+      if (roleBadge) roleBadge.classList.add('hidden');
+      if (adminCard) adminCard.classList.add('hidden');
+    }
     lucide.createIcons();
+  },
+
+  async cancelSubscription() {
+    const credits = this.state.user ? this.state.user.credits_balance : 0;
+    const planName = this.state.user ? this.state.user.plan : 'Membresía Activa';
+
+    const msg = `⚠️ ADVERTENCIA DE CANCELACIÓN (Regla Oficial ClassPass):\n\n` +
+      `• Al cancelar tu suscripción al ${planName}, PERDERÁS inmediatamente todos tus ${credits} créditos acumulados.\n` +
+      `• Perderás el beneficio de acumulación automática (rollover) para el próximo mes.\n\n` +
+      `¿Estás 100% seguro de que deseas cancelar tu membresía?`;
+
+    if (!confirm(msg)) return;
+
+    try {
+      const res = await this.fetchAuth('/api/user/subscription/cancel', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        this.showToast(data.message, "alert-circle");
+        await this.fetchUser();
+        this.switchView('profile');
+      } else {
+        this.showToast(data.error || "No se pudo cancelar la membresía", "alert-circle");
+      }
+    } catch(e) {
+      console.error(e);
+    }
   },
 
   openReferralModal() {
@@ -364,8 +443,14 @@ const app = {
     this.switchView('explore');
     const input = document.getElementById('searchInput');
     if (input) {
-      input.focus();
-      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => {
+        input.focus();
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        input.classList.add('ring-4', 'ring-indigo-500/40', 'border-indigo-500');
+        setTimeout(() => {
+          input.classList.remove('ring-4', 'ring-indigo-500/40', 'border-indigo-500');
+        }, 1500);
+      }, 100);
     }
   },
 
@@ -394,32 +479,112 @@ const app = {
   // API: Fetch User
   async fetchUser() {
     try {
-      const res = await fetch('/api/user');
+      const res = await this.fetchAuth('/api/auth/me');
       const data = await res.json();
-      if (data.success) {
+      if (data.authenticated && data.user) {
         this.state.user = data.user;
         this.renderUser();
+      } else {
+        const profRes = await this.fetchAuth('/api/user/profile');
+        const profData = await profRes.json();
+        if (profData.success && profData.user) {
+          this.state.user = profData.user;
+          this.renderUser();
+        } else {
+          this.state.user = null;
+          this.renderGuest();
+        }
       }
     } catch (err) {
       console.error("Error fetching user:", err);
+      this.renderGuest();
     }
+  },
+
+  renderGuest() {
+    const guestNav = document.getElementById('headerGuestNav');
+    const userNav = document.getElementById('headerUserNav');
+    if (guestNav) guestNav.classList.remove('hidden');
+    if (userNav) userNav.classList.add('hidden');
   },
 
   renderUser() {
     const u = this.state.user;
-    if (!u) return;
+    if (!u) {
+      this.renderGuest();
+      return;
+    }
+
+    const guestNav = document.getElementById('headerGuestNav');
+    const userNav = document.getElementById('headerUserNav');
+    if (guestNav) guestNav.classList.add('hidden');
+    if (userNav) userNav.classList.remove('hidden');
 
     // Credits pill in navbar
     const creditsEl = document.getElementById('userCreditsDisplay');
     if (creditsEl) creditsEl.innerText = `${u.credits_balance} créditos`;
 
     // Dropdown details
-    document.getElementById('dropdownUserName').innerText = u.name;
-    document.getElementById('dropdownUserEmail').innerText = u.email;
-    document.getElementById('dropdownUserPlan').innerText = u.plan_tier;
+    const nameEl = document.getElementById('dropdownUserName');
+    if (nameEl) nameEl.innerText = u.name;
+    const emailEl = document.getElementById('dropdownUserEmail');
+    if (emailEl) emailEl.innerText = u.email;
+    const planEl = document.getElementById('dropdownUserPlan');
+    if (planEl) planEl.innerText = u.plan_tier || 'Prueba Gratuita';
+    const cityEl = document.getElementById('dropdownUserCity');
+    if (cityEl) cityEl.innerText = `📍 ${u.city || 'Osorno'}`;
+
     if (u.avatar_url) {
-      document.getElementById('userAvatarImg').src = u.avatar_url;
+      const avatarImg = document.getElementById('userAvatarImg');
+      if (avatarImg) avatarImg.src = u.avatar_url;
     }
+
+    // Role admin badge & links
+    const roleBadge = document.getElementById('dropdownUserRoleBadge');
+    const adminLink = document.getElementById('dropdownAdminLink');
+    if (u.role === 'admin') {
+      if (roleBadge) roleBadge.classList.remove('hidden');
+      if (adminLink) adminLink.classList.remove('hidden');
+    } else {
+      if (roleBadge) roleBadge.classList.add('hidden');
+      if (adminLink) adminLink.classList.add('hidden');
+    }
+
+    // Profile Page View (Mobile & Desktop)
+    const profPageName = document.getElementById('profilePageUserName');
+    if (profPageName) profPageName.innerText = u.name;
+
+    const profPageEmail = document.getElementById('profilePageUserEmail');
+    if (profPageEmail) profPageEmail.innerText = u.email;
+
+    const profCredits = document.getElementById('profileCreditsRestantes');
+    if (profCredits) profCredits.innerText = `${u.credits_balance} créditos`;
+
+    const profRoleBadge = document.getElementById('profileRoleBadge');
+    const profAdminCard = document.getElementById('profileAdminCard');
+    if (u.role === 'admin') {
+      if (profRoleBadge) profRoleBadge.classList.remove('hidden');
+      if (profAdminCard) profAdminCard.classList.remove('hidden');
+    } else {
+      if (profRoleBadge) profRoleBadge.classList.add('hidden');
+      if (profAdminCard) profAdminCard.classList.add('hidden');
+    }
+
+    const profBookings = document.getElementById('profileBookingsCount');
+    if (profBookings && this.state.bookings) {
+      profBookings.innerText = this.state.bookings.filter(b => b.status === 'confirmed').length;
+    }
+
+    const profFavs = document.getElementById('profileFavoritesCount');
+    if (profFavs && this.state.favorites) {
+      profFavs.innerText = this.state.favorites.length;
+    }
+
+    // Profile view inputs if present
+    const profName = document.getElementById('profileNameInput');
+    if (profName) profName.value = u.name;
+    const profEmail = document.getElementById('profileEmailInput');
+    if (profEmail) profEmail.value = u.email;
 
     // Plans view metrics
     const planBadge = document.getElementById('userPlanBadgeText');
@@ -731,7 +896,9 @@ const app = {
     grid.innerHTML = list.map(c => {
       const timeParts = c.start_time.split(' ');
       const hourStr = timeParts[1] || '08:00';
-      const isUrgent = c.available_spots <= 3;
+      const isFull = c.available_spots <= 0;
+      const isWaiting = this.state.waitlists && this.state.waitlists.some(w => w.class_id === c.id);
+      const isUrgent = !isFull && c.available_spots <= 3;
 
       return `
         <div class="fitpass-card bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm flex flex-col justify-between">
@@ -745,11 +912,26 @@ const app = {
               ${c.category}
             </span>
 
-            <!-- Credits Pill Overlay -->
-            <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 flex items-center space-x-1">
-              <i data-lucide="coins" class="w-3.5 h-3.5 mr-1"></i>
-              ${c.credit_cost} créditos
-            </span>
+            <!-- Credits Pill Overlay with Dynamic Peak / Valley / Surge Indicator -->
+            <div class="absolute top-3 right-3 flex flex-col items-end space-y-1">
+              <span class="px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 flex items-center space-x-1">
+                <i data-lucide="coins" class="w-3.5 h-3.5 mr-1"></i>
+                ${c.credit_cost} créditos
+              </span>
+              ${c.is_surge ? `
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-400 text-slate-950 shadow-md shadow-amber-400/30 flex items-center space-x-0.5 animate-pulse">
+                  <span>⚡ Alta Demanda (+1 cr)</span>
+                </span>
+              ` : c.is_peak_hour ? `
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-600/90 text-white backdrop-blur-md shadow-sm flex items-center space-x-0.5">
+                  <span>🔥 Horario Punta</span>
+                </span>
+              ` : `
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-600/90 text-white backdrop-blur-md shadow-sm flex items-center space-x-0.5">
+                  <span>🟢 Tarifa Valle</span>
+                </span>
+              `}
+            </div>
 
             <!-- Studio Name & Rating on bottom of image -->
             <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
@@ -792,7 +974,11 @@ const app = {
               </div>
 
               <div>
-                ${isUrgent ? `
+                ${isFull ? `
+                  <span class="inline-flex items-center text-[11px] font-extrabold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                    ⏳ Agotada (${c.waitlist_count || 0} en espera)
+                  </span>
+                ` : isUrgent ? `
                   <span class="spot-pulse inline-flex items-center text-[11px] font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-100">
                     🔥 ¡Solo ${c.available_spots} cupos!
                   </span>
@@ -809,10 +995,22 @@ const app = {
               <button onclick="app.openStudioModal(${c.studio_id})" class="w-1/3 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
                 Estudio
               </button>
-              <button onclick="app.openBookingModal(${c.id})" class="w-2/3 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white text-xs font-extrabold shadow-md shadow-cyan-500/20 hover:opacity-95 transition flex items-center justify-center space-x-1.5">
-                <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
-                <span>Reservar (${c.credit_cost} cr)</span>
-              </button>
+              ${isFull ? (isWaiting ? `
+                <button onclick="app.switchView('bookings'); app.setBookingsTab('waitlist');" class="w-2/3 py-2.5 rounded-xl bg-amber-100 border border-amber-300 text-amber-950 text-xs font-black shadow-sm transition flex items-center justify-center space-x-1.5 active:scale-98">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-700"></i>
+                  <span>⏳ En Espera (Ver)</span>
+                </button>
+              ` : `
+                <button onclick="app.joinWaitlist(${c.id})" class="w-2/3 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:brightness-105 text-slate-950 text-xs font-black shadow-md shadow-amber-500/20 transition flex items-center justify-center space-x-1.5 active:scale-98">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-950"></i>
+                  <span>⏳ Lista de Espera</span>
+                </button>
+              `) : `
+                <button onclick="app.openBookingModal(${c.id})" class="w-2/3 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white text-xs font-extrabold shadow-md shadow-cyan-500/20 hover:opacity-95 transition flex items-center justify-center space-x-1.5">
+                  <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
+                  <span>Reservar (${c.credit_cost} cr)</span>
+                </button>
+              `}
             </div>
 
           </div>
@@ -971,8 +1169,14 @@ const app = {
 
   // Toggle Favorite Studio
   async toggleFavorite(studioId) {
+    if (!this.state.user) {
+      this.openAuthModal('login');
+      this.showToast("Inicia sesión para guardar tus estudios favoritos", "heart");
+      return;
+    }
+
     try {
-      const res = await fetch('/api/favorites/toggle', {
+      const res = await this.fetchAuth('/api/favorites/toggle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studio_id: studioId })
@@ -990,22 +1194,71 @@ const app = {
 
   // Booking Flow: Open Modal
   openBookingModal(classId) {
+    if (!this.state.user) {
+      this.openAuthModal('register');
+      this.showToast("🎁 ¡Regístrate gratis para obtener tus 10 créditos y reservar!", "sparkles");
+      return;
+    }
+
     const cls = this.state.classes.find(c => c.id === classId);
     if (!cls) return;
 
     this.state.selectedClassForBooking = cls;
-    const user = this.state.user;
+    this.state.bookingSpots = 1;
+    this.state.bookingGuestNames = [];
 
+    const isPadel = cls.category === 'Pádel' || cls.category === 'Tenis';
     const modal = document.getElementById('bookingModal');
     const content = document.getElementById('bookingModalContent');
 
     content.innerHTML = `
       <div class="flex items-center space-x-4 p-3 bg-indigo-50/60 rounded-2xl border border-indigo-100">
-        <img src="${cls.studio_image}" class="w-14 h-14 rounded-xl object-cover">
+        <img src="${cls.studio_image}" class="w-14 h-14 rounded-xl object-cover shadow-sm">
         <div>
-          <span class="text-xs font-bold uppercase text-indigo-600">${cls.category}</span>
-          <h4 class="font-extrabold text-sm text-slate-900">${cls.title}</h4>
+          <div class="flex items-center space-x-1.5">
+            <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${isPadel ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'}">
+              ${isPadel ? '🎾 ' + cls.category : cls.category}
+            </span>
+            <span class="text-[10px] font-bold text-slate-500">${cls.available_spots} cupos disponibles</span>
+          </div>
+          <h4 class="font-extrabold text-sm text-slate-900 mt-0.5">${cls.title}</h4>
           <p class="text-xs text-slate-500">${cls.studio_name} • ${cls.neighborhood}</p>
+        </div>
+      </div>
+
+      <!-- Group / Spot Selector -->
+      <div class="space-y-2 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-black text-slate-800 flex items-center space-x-1.5">
+            <i data-lucide="users" class="w-4 h-4 text-indigo-600"></i>
+            <span>${isPadel ? '🎾 ¿Cuántos jugadores / cupos reservas?' : '👥 ¿Cuántos cupos deseas reservar?'}</span>
+          </label>
+          <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full" id="bookingSpotsBadge">1 cupo</span>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2 pt-1">
+          <button type="button" onclick="app.setBookingSpots(1)" id="spotBtn1" class="py-2.5 rounded-xl border text-xs font-bold transition flex flex-col items-center bg-indigo-600 text-white border-indigo-600 shadow-sm">
+            <span>👤 1</span>
+            <span class="text-[9px] opacity-80">Solo yo</span>
+          </button>
+          <button type="button" onclick="app.setBookingSpots(2)" id="spotBtn2" class="py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold transition flex flex-col items-center">
+            <span>👥 2</span>
+            <span class="text-[9px] text-slate-500">Pareja</span>
+          </button>
+          <button type="button" onclick="app.setBookingSpots(3)" id="spotBtn3" class="py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold transition flex flex-col items-center">
+            <span>👥 3</span>
+            <span class="text-[9px] text-slate-500">+2 amigos</span>
+          </button>
+          <button type="button" onclick="app.setBookingSpots(4)" id="spotBtn4" class="py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold transition flex flex-col items-center">
+            <span>🎾 4</span>
+            <span class="text-[9px] text-slate-500">Partido</span>
+          </button>
+        </div>
+
+        <!-- Optional Guest Names Input Container -->
+        <div id="bookingGuestsContainer" class="hidden space-y-2 pt-2 border-t border-slate-200/80">
+          <p class="text-[11px] font-bold text-slate-600">Nombres de tus amigos / acompañantes (opcional):</p>
+          <div id="bookingGuestsInputs" class="space-y-1.5"></div>
         </div>
       </div>
 
@@ -1015,31 +1268,97 @@ const app = {
           <span class="font-bold text-slate-800">${cls.start_time}</span>
         </div>
         <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-          <span class="text-slate-400 block font-semibold">Instructor</span>
-          <span class="font-bold text-slate-800">${cls.instructor_name}</span>
+          <span class="text-slate-400 block font-semibold">Instructor / Club</span>
+          <span class="font-bold text-slate-800">${cls.instructor_name || cls.studio_name}</span>
         </div>
       </div>
     `;
 
+    this.updateBookingModalCalculation();
+    modal.classList.remove('hidden');
+    lucide.createIcons();
+  },
+
+  setBookingSpots(spots) {
+    const cls = this.state.selectedClassForBooking;
+    if (!cls) return;
+
+    if (spots > cls.available_spots) {
+      this.showToast(`Solo quedan ${cls.available_spots} cupos disponibles`, "alert-circle");
+      return;
+    }
+
+    this.state.bookingSpots = spots;
+
+    // Update buttons styling
+    for (let i = 1; i <= 4; i++) {
+      const btn = document.getElementById(`spotBtn${i}`);
+      if (btn) {
+        if (i === spots) {
+          btn.className = "py-2.5 rounded-xl border text-xs font-bold transition flex flex-col items-center bg-indigo-600 text-white border-indigo-600 shadow-sm";
+        } else {
+          btn.className = "py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold transition flex flex-col items-center";
+        }
+      }
+    }
+
+    const badge = document.getElementById('bookingSpotsBadge');
+    if (badge) badge.innerText = `${spots} cupo${spots > 1 ? 's' : ''}`;
+
+    // Render guest name inputs
+    const guestsContainer = document.getElementById('bookingGuestsContainer');
+    const inputsContainer = document.getElementById('bookingGuestsInputs');
+    if (guestsContainer && inputsContainer) {
+      if (spots > 1) {
+        guestsContainer.classList.remove('hidden');
+        let html = '';
+        for (let j = 1; j < spots; j++) {
+          html += `
+            <input type="text" id="guestInput${j}" placeholder="Nombre amigo ${j} (ej. Matías)" class="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+          `;
+        }
+        inputsContainer.innerHTML = html;
+      } else {
+        guestsContainer.classList.add('hidden');
+        inputsContainer.innerHTML = '';
+      }
+    }
+
+    this.updateBookingModalCalculation();
+  },
+
+  updateBookingModalCalculation() {
+    const cls = this.state.selectedClassForBooking;
+    const user = this.state.user;
+    if (!cls || !user) return;
+
+    const spots = this.state.bookingSpots || 1;
+    const totalCost = cls.credit_cost * spots;
+    const remaining = user.credits_balance - totalCost;
+
     document.getElementById('modalCurrentBalance').innerText = `${user.credits_balance} créditos`;
-    document.getElementById('modalClassCost').innerText = `-${cls.credit_cost} créditos`;
-    
-    const remaining = user.credits_balance - cls.credit_cost;
+    document.getElementById('modalClassCost').innerText = `-${totalCost} créditos (${spots} cupo${spots > 1 ? 's' : ''} x ${cls.credit_cost} cr)`;
+
     const remEl = document.getElementById('modalRemainingBalance');
+    const confirmBtn = document.getElementById('confirmBookingBtn');
+
     if (remaining >= 0) {
       remEl.innerText = `${remaining} créditos`;
       remEl.className = "font-bold text-teal-700";
-      document.getElementById('confirmBookingBtn').disabled = false;
-      document.getElementById('confirmBookingBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        confirmBtn.innerText = spots > 1 ? `Confirmar ${spots} Cupos (${totalCost} cr)` : `Confirmar Reserva (${totalCost} cr)`;
+      }
     } else {
       remEl.innerText = `Insuficiente (${remaining} créditos)`;
       remEl.className = "font-bold text-rose-600";
-      document.getElementById('confirmBookingBtn').disabled = true;
-      document.getElementById('confirmBookingBtn').classList.add('opacity-50', 'cursor-not-allowed');
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        confirmBtn.innerText = `Créditos insuficientes (faltan ${Math.abs(remaining)} cr)`;
+      }
     }
-
-    modal.classList.remove('hidden');
-    lucide.createIcons();
   },
 
   closeBookingModal() {
@@ -1051,21 +1370,43 @@ const app = {
     const cls = this.state.selectedClassForBooking;
     if (!cls) return;
 
+    const spots = this.state.bookingSpots || 1;
+    const guestNames = [];
+    if (this.state.user) guestNames.push(this.state.user.name);
+    for (let i = 1; i < spots; i++) {
+      const el = document.getElementById(`guestInput${i}`);
+      const val = el ? el.value.trim() : '';
+      guestNames.push(val || `Amigo ${i}`);
+    }
+
     try {
-      const res = await fetch('/api/bookings', {
+      const res = await this.fetchAuth('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ class_id: cls.id })
+        body: JSON.stringify({ 
+          class_id: cls.id,
+          spots_count: spots,
+          guest_names: guestNames,
+          split_mode: 'host_paid'
+        })
       });
 
       const data = await res.json();
       if (data.success) {
         this.closeBookingModal();
-        this.showToast("¡Reserva confirmada con éxito!", "check");
+        this.showToast(data.message || "¡Reserva confirmada con éxito!", "check");
         await this.fetchUser();
         await this.fetchClasses();
-        // Show Digital QR Pass right away
-        this.openQrModal(data.qr_code, cls);
+        
+        // Open QR Modal with multi-player details
+        const bookingDetails = {
+          ...cls,
+          booking_id: data.booking_id,
+          spots_count: data.spots_count,
+          invite_code: data.invite_code,
+          guest_names: guestNames
+        };
+        this.openQrModal(data.qr_code, bookingDetails);
       } else {
         this.showToast(data.error || "Error al realizar la reserva", "alert-circle");
       }
@@ -1079,21 +1420,68 @@ const app = {
     const modal = document.getElementById('qrModal');
     const content = document.getElementById('qrModalContent');
 
+    const spots = classDetails.spots_count || 1;
+    let guests = [];
+    if (classDetails.guest_names) {
+      if (Array.isArray(classDetails.guest_names)) {
+        guests = classDetails.guest_names;
+      } else if (typeof classDetails.guest_names === 'string') {
+        try { guests = JSON.parse(classDetails.guest_names); } catch(e) { guests = [classDetails.guest_names]; }
+      }
+    }
+
     content.innerHTML = `
-      <div class="space-y-1">
-        <span class="text-xs uppercase font-bold text-indigo-400">Pase Digital de Acceso</span>
+      <div class="space-y-1 text-center">
+        <div class="flex items-center justify-center space-x-1.5 mb-1">
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black ${spots > 1 ? 'bg-purple-500 text-white' : 'bg-indigo-500/20 text-indigo-300'}">
+            ${spots > 1 ? `🎾 Pase Grupal (${spots} Jugadores)` : '👤 Pase Individual'}
+          </span>
+        </div>
         <h3 class="text-xl font-black text-white">${classDetails.title || classDetails.class_title}</h3>
-        <p class="text-xs text-slate-300">${classDetails.studio_name} • ${classDetails.studio_address || classDetails.address}</p>
+        <p class="text-xs text-slate-300">${classDetails.studio_name} • ${classDetails.studio_address || classDetails.address || 'Osorno'}</p>
       </div>
 
-      <div class="p-4 bg-white rounded-2xl inline-block shadow-inner mx-auto my-2">
+      <div class="p-4 bg-white rounded-3xl inline-block shadow-inner mx-auto my-2">
         <div id="qrcodeCanvas"></div>
       </div>
 
-      <div class="space-y-1">
-        <p class="font-mono text-xs font-bold text-indigo-300">${qrCodeId}</p>
-        <p class="text-xs text-slate-300 font-semibold">Horario: ${classDetails.start_time}</p>
-        <p class="text-xs text-slate-400">Titular: ${this.state.user.name}</p>
+      <div class="space-y-2 text-center">
+        <p class="font-mono text-xs font-bold text-indigo-300 tracking-wider">${qrCodeId}</p>
+        <p class="text-xs text-slate-300 font-semibold">📅 Horario: ${classDetails.start_time}</p>
+        
+        ${guests.length > 0 ? `
+          <div class="p-3 bg-white/10 rounded-2xl text-left text-xs space-y-1 border border-white/10">
+            <span class="text-[10px] font-black uppercase text-indigo-300 block">Jugadores Autorizados en Recepción:</span>
+            <div class="flex flex-wrap gap-1.5">
+              ${guests.map(g => `<span class="px-2 py-0.5 rounded-lg bg-black/40 text-slate-200 font-semibold text-[11px]">👤 ${g}</span>`).join('')}
+            </div>
+          </div>
+        ` : `
+          <p class="text-xs text-slate-400">Titular: ${this.state.user ? this.state.user.name : 'Alumno'}</p>
+        `}
+
+        <!-- WhatsApp Convocatoria Button -->
+        <button onclick="app.shareMatchWhatsApp(${JSON.stringify(classDetails).replace(/"/g, '&quot;')}, '${qrCodeId}')" class="w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs transition shadow-lg flex items-center justify-center space-x-2 mt-3 active:scale-98">
+          <svg class="w-4 h-4 fill-slate-950" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+          <span>📲 Compartir Partido por WhatsApp</span>
+        </button>
+
+        <!-- Calendar Sync & Email Preview Grid -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button onclick="app.openGoogleCalendar(${JSON.stringify(classDetails).replace(/"/g, '&quot;')}, '${qrCodeId}')" class="py-2.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition flex items-center justify-center space-x-1.5 border border-white/10">
+            <i data-lucide="calendar" class="w-3.5 h-3.5 text-cyan-400"></i>
+            <span>Google Cal</span>
+          </button>
+          <button onclick="app.downloadAppleCalendar(${classDetails.booking_id || classDetails.id || 1})" class="py-2.5 px-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition flex items-center justify-center space-x-1.5 border border-white/10">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-purple-400"></i>
+            <span>Apple iCal</span>
+          </button>
+        </div>
+
+        <button onclick="app.previewConfirmationEmail(${classDetails.booking_id || classDetails.id || 1})" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold text-[11px] transition flex items-center justify-center space-x-1.5 border border-slate-700">
+          <i data-lucide="mail" class="w-3.5 h-3.5 text-teal-400"></i>
+          <span>📧 Ver Correo de Confirmación</span>
+        </button>
       </div>
     `;
 
@@ -1106,7 +1494,7 @@ const app = {
       if (container) {
         container.innerHTML = '';
         new QRCode(container, {
-          text: `MOVECLUB:${qrCodeId}:USER1`,
+          text: `MOVECLUB:${qrCodeId}:SPOTS${spots}`,
           width: 140,
           height: 140,
           colorDark: "#0f172a",
@@ -1117,6 +1505,152 @@ const app = {
     }, 50);
   },
 
+  shareMatchWhatsApp(classDetails, qrCodeId) {
+    const title = classDetails.title || classDetails.class_title;
+    const studio = classDetails.studio_name || 'Club';
+    const time = classDetails.start_time;
+    const spots = classDetails.spots_count || 1;
+
+    const text = `🎾 ¡Hola! Armé un partido en *${studio}* para el *${time}* (${title}) con MoveClub.\n\n` +
+      `🔥 Te guardé un cupo (${spots} jugadores listos).\n` +
+      `🎫 Código de pase para entrar: *${qrCodeId}*\n\n` +
+      `¡Nos vemos en la cancha!`;
+
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+  },
+
+  openGoogleCalendar(classDetails, qrCodeId) {
+    const title = classDetails.title || classDetails.class_title || 'Clase MoveClub';
+    const studio = classDetails.studio_name || 'Estudio';
+    const address = classDetails.studio_address || classDetails.address || 'Osorno, Chile';
+    const timeStr = classDetails.start_time || '';
+    const duration = classDetails.duration_minutes || 50;
+
+    let startIso = new Date().toISOString().replace(/-|:|\.\d+/g, "");
+    try {
+      const parts = timeStr.split(' ');
+      const dateParts = parts[0].split('-');
+      const timeParts = parts[1].split(':');
+      const d = new Date(dateParts[0], dateParts[1] - 1, dateParts[2], timeParts[0], timeParts[1]);
+      const endD = new Date(d.getTime() + duration * 60000);
+      
+      const pad = n => String(n).padStart(2, '0');
+      const fmt = date => `${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+      startIso = `${fmt(d)}/${fmt(endD)}`;
+    } catch(e) {}
+
+    const text = encodeURIComponent(`MoveClub: ${title} @ ${studio}`);
+    const details = encodeURIComponent(`Reserva en MoveClub.\nEstudio: ${studio}\nDirección: ${address}\nPase QR: ${qrCodeId}`);
+    const location = encodeURIComponent(`${studio}, ${address}`);
+
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${startIso}&details=${details}&location=${location}`;
+    window.open(url, '_blank');
+  },
+
+  downloadAppleCalendar(bookingId) {
+    window.open(`/api/bookings/${bookingId}/ical`, '_blank');
+  },
+
+  previewConfirmationEmail(bookingId) {
+    const modal = document.getElementById('emailPreviewModal');
+    const container = document.getElementById('emailPreviewFrameContainer');
+    if (!modal || !container) return;
+
+    container.innerHTML = `
+      <iframe src="/api/bookings/${bookingId}/email-preview" class="w-full h-[65vh] rounded-2xl border border-slate-200 shadow-inner bg-white"></iframe>
+    `;
+    modal.classList.remove('hidden');
+    lucide.createIcons();
+  },
+
+  closeEmailPreviewModal() {
+    const modal = document.getElementById('emailPreviewModal');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  // In-App Notifications
+  async fetchNotifications() {
+    try {
+      const res = await this.fetchAuth('/api/notifications');
+      const data = await res.json();
+      if (data.success) {
+        this.state.notifications = data.notifications || [];
+        this.state.unreadNotifications = data.unread_count || 0;
+
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+          if (data.unread_count > 0) {
+            badge.innerText = data.unread_count;
+            badge.classList.remove('hidden');
+          } else {
+            badge.classList.add('hidden');
+          }
+        }
+        this.renderNotificationsList();
+      }
+    } catch(e) {
+      console.error("Error fetching notifications:", e);
+    }
+  },
+
+  toggleNotificationsDropdown() {
+    const dd = document.getElementById('notificationDropdown');
+    const userDd = document.getElementById('userDropdown');
+    if (userDd) userDd.classList.add('hidden');
+    if (!dd) return;
+    const isHidden = dd.classList.contains('hidden');
+    if (isHidden) {
+      dd.classList.remove('hidden');
+      this.fetchNotifications();
+    } else {
+      dd.classList.add('hidden');
+    }
+  },
+
+  async markNotificationsAsRead() {
+    try {
+      await this.fetchAuth('/api/notifications/mark-read', { method: 'POST' });
+      const badge = document.getElementById('notificationBadge');
+      if (badge) badge.classList.add('hidden');
+      this.state.unreadNotifications = 0;
+      await this.fetchNotifications();
+    } catch(e) {
+      console.error(e);
+    }
+  },
+
+  renderNotificationsList() {
+    const container = document.getElementById('notificationsListContainer');
+    if (!container) return;
+
+    if (!this.state.notifications || this.state.notifications.length === 0) {
+      container.innerHTML = `
+        <div class="py-8 text-center text-slate-400">
+          <i data-lucide="bell-off" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+          <p class="text-xs font-semibold">No tienes notificaciones aún</p>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    container.innerHTML = this.state.notifications.map(n => `
+      <div class="p-3 rounded-2xl hover:bg-slate-50 transition space-y-1 ${n.is_read ? 'opacity-70' : 'bg-indigo-50/40 border border-indigo-100/60'}">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-900 flex items-center space-x-1">
+            <span>${n.type === 'waitlist' ? '🎉' : n.type === 'reminder' ? '⏰' : '✅'}</span>
+            <span>${n.title}</span>
+          </span>
+          <span class="text-[10px] text-slate-400">${n.created_at ? n.created_at.substring(11, 16) : ''}</span>
+        </div>
+        <p class="text-[11px] text-slate-600 leading-snug">${n.message}</p>
+      </div>
+    `).join('');
+
+    lucide.createIcons();
+  },
+
   closeQrModal() {
     document.getElementById('qrModal').classList.add('hidden');
   },
@@ -1124,7 +1658,7 @@ const app = {
   // API: Fetch Bookings
   async fetchBookings() {
     try {
-      const res = await fetch('/api/bookings');
+      const res = await this.fetchAuth('/api/bookings');
       const data = await res.json();
       if (data.success) {
         this.state.bookings = data.bookings;
@@ -1135,17 +1669,93 @@ const app = {
     }
   },
 
+  // API: Fetch Waitlists
+  async fetchWaitlist() {
+    try {
+      const res = await this.fetchAuth('/api/waitlist/my');
+      const data = await res.json();
+      if (data.success) {
+        this.state.waitlists = data.waitlists;
+        const badge = document.getElementById('waitlistCountBadge');
+        if (badge) {
+          if (data.waitlists.length > 0) {
+            badge.innerText = data.waitlists.length;
+            badge.classList.remove('hidden');
+          } else {
+            badge.classList.add('hidden');
+          }
+        }
+        if (this.state.bookingsTab === 'waitlist') {
+          this.renderBookings();
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  async joinWaitlist(classId) {
+    const cls = this.state.classes.find(c => c.id === classId);
+    const clsTitle = cls ? cls.title : 'esta clase';
+    const cost = cls ? cls.credit_cost : 5;
+
+    if (!confirm(`⏳ ¿Deseas unirte a la lista de espera para '${clsTitle}'?\n\n• Si un alumno cancela su reserva, el sistema confirmará tu cupo automáticamente usando tus créditos (${cost} créditos).\n• Puedes salirte de la fila en cualquier momento sin costo alguno.`)) {
+      return;
+    }
+
+    try {
+      const res = await this.fetchAuth('/api/waitlist/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ class_id: classId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        this.showToast(`⏳ ${data.message}`, "check");
+        await this.fetchWaitlist();
+        await this.fetchClasses();
+      } else {
+        this.showToast(data.error || "No se pudo unir a la lista", "alert-circle");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  async leaveWaitlist(waitlistId) {
+    if (!confirm("¿Deseas salir de la lista de espera? Cederás tu lugar en la fila a otros alumnos.")) return;
+
+    try {
+      const res = await this.fetchAuth(`/api/waitlist/${waitlistId}/leave`, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        this.showToast(data.message, "check");
+        await this.fetchWaitlist();
+        await this.fetchClasses();
+      } else {
+        this.showToast(data.error || "No se pudo salir de la lista", "alert-circle");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
   setBookingsTab(tab) {
     this.state.bookingsTab = tab;
     const btnActive = document.getElementById('btnTabActiveBookings');
+    const btnWaitlist = document.getElementById('btnTabWaitlistBookings');
     const btnPast = document.getElementById('btnTabPastBookings');
 
-    if (tab === 'active') {
-      btnActive.className = "px-4 py-2 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-sm transition";
-      btnPast.className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition";
-    } else {
-      btnPast.className = "px-4 py-2 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-sm transition";
-      btnActive.className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition";
+    if (btnActive) btnActive.className = "px-3 sm:px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition whitespace-nowrap";
+    if (btnWaitlist) btnWaitlist.className = "px-3 sm:px-4 py-2 rounded-lg text-xs font-bold text-amber-700 hover:text-amber-900 transition flex items-center space-x-1.5 whitespace-nowrap";
+    if (btnPast) btnPast.className = "px-3 sm:px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition whitespace-nowrap";
+
+    if (tab === 'active' && btnActive) {
+      btnActive.className = "px-3 sm:px-4 py-2 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-sm transition whitespace-nowrap";
+    } else if (tab === 'waitlist' && btnWaitlist) {
+      btnWaitlist.className = "px-3 sm:px-4 py-2 rounded-lg text-xs font-bold bg-white text-amber-950 shadow-sm transition flex items-center space-x-1.5 whitespace-nowrap";
+    } else if (tab === 'past' && btnPast) {
+      btnPast.className = "px-3 sm:px-4 py-2 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-sm transition whitespace-nowrap";
     }
 
     this.renderBookings();
@@ -1153,8 +1763,11 @@ const app = {
 
   renderBookings() {
     const list = document.getElementById('bookingsList');
+    const waitlistEl = document.getElementById('waitlistList');
     const noBookings = document.getElementById('noBookingsState');
     const badge = document.getElementById('activeBookingsBadge');
+    const noBookingsTitle = document.getElementById('noBookingsTitle');
+    const noBookingsText = document.getElementById('noBookingsText');
 
     const activeList = this.state.bookings.filter(b => b.status === 'confirmed');
     const pastList = this.state.bookings.filter(b => b.status !== 'confirmed');
@@ -1168,18 +1781,105 @@ const app = {
       }
     }
 
+    // WAITLIST TAB
+    if (this.state.bookingsTab === 'waitlist') {
+      if (list) list.classList.add('hidden');
+      if (waitlistEl) waitlistEl.classList.remove('hidden');
+
+      if (this.state.waitlists.length === 0) {
+        if (waitlistEl) waitlistEl.innerHTML = '';
+        if (noBookings) {
+          noBookings.classList.remove('hidden');
+          if (noBookingsTitle) noBookingsTitle.innerText = 'No estás en ninguna lista de espera';
+          if (noBookingsText) noBookingsText.innerText = 'Cuando una clase de pilates o pádel esté llena (0 cupos), puedes unirte a la fila y te asignaremos el cupo si alguien cancela.';
+        }
+        return;
+      }
+
+      if (noBookings) noBookings.classList.add('hidden');
+      waitlistEl.innerHTML = this.state.waitlists.map(w => `
+        <div class="bg-white rounded-3xl p-6 border border-amber-200/90 shadow-sm hover:shadow-md transition space-y-4">
+          <div class="flex items-start justify-between">
+            <div class="flex space-x-3.5">
+              <img src="${w.studio_image}" class="w-14 h-14 rounded-2xl object-cover shadow-sm">
+              <div>
+                <div class="flex items-center space-x-1.5">
+                  <span class="text-xs font-bold uppercase text-amber-700 tracking-wider">${w.category}</span>
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-slate-950 shadow-sm">
+                    ⏳ Posición #${w.current_position} en fila
+                  </span>
+                </div>
+                <h4 class="font-extrabold text-base text-slate-900 mt-0.5">${w.class_title}</h4>
+                <p class="text-xs text-slate-500">${w.studio_name} • ${w.neighborhood}</p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-50 text-amber-900 border border-amber-300">
+              En Espera
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-xs bg-amber-50/50 p-3 rounded-2xl border border-amber-100">
+            <div>
+              <span class="text-slate-400 block font-semibold">Horario Clase</span>
+              <span class="font-bold text-slate-800">${w.start_time}</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block font-semibold">Costo al Confirmar</span>
+              <span class="font-bold text-indigo-700">${w.credit_cost} créditos</span>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-950 space-y-1">
+            <div class="flex items-center space-x-1.5 font-bold text-amber-950">
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-600"></i>
+              <span>Auto-Confirmación Activa</span>
+            </div>
+            <p class="text-[11px] text-amber-900 leading-tight">
+              Si un alumno cancela su reserva, el sistema te asignará el cupo de inmediato y emitirá tu Pase QR.
+            </p>
+          </div>
+
+          <div class="flex items-center justify-end pt-1">
+            <button onclick="app.leaveWaitlist(${w.waitlist_id})" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition">
+              Salir de la Lista
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+      return;
+    }
+
+    // ACTIVE OR PAST TAB
+    if (waitlistEl) waitlistEl.classList.add('hidden');
+    if (list) list.classList.remove('hidden');
+
     const currentList = this.state.bookingsTab === 'active' ? activeList : pastList;
 
     if (currentList.length === 0) {
       list.innerHTML = '';
-      noBookings.classList.remove('hidden');
+      if (noBookings) {
+        noBookings.classList.remove('hidden');
+        if (noBookingsTitle) noBookingsTitle.innerText = this.state.bookingsTab === 'active' ? 'Aún no tienes reservas activas' : 'No tienes clases pasadas';
+        if (noBookingsText) noBookingsText.innerText = 'Explora los estudios disponibles y usa tus créditos para reservar tu próxima clase.';
+      }
       return;
     }
 
-    noBookings.classList.add('hidden');
+    if (noBookings) noBookings.classList.add('hidden');
 
     list.innerHTML = currentList.map(b => {
       const isConfirmed = b.status === 'confirmed';
+      const spots = b.spots_count || 1;
+      let guests = [];
+      if (b.guest_names) {
+        if (Array.isArray(b.guest_names)) {
+          guests = b.guest_names;
+        } else if (typeof b.guest_names === 'string') {
+          try { guests = JSON.parse(b.guest_names); } catch(e) { guests = [b.guest_names]; }
+        }
+      }
 
       return `
         <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition space-y-4">
@@ -1187,8 +1887,15 @@ const app = {
             <div class="flex space-x-3.5">
               <img src="${b.studio_image}" class="w-14 h-14 rounded-2xl object-cover shadow-sm">
               <div>
-                <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">${b.category}</span>
-                <h4 class="font-extrabold text-base text-slate-900">${b.class_title}</h4>
+                <div class="flex items-center space-x-1.5">
+                  <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">${b.category}</span>
+                  ${spots > 1 ? `
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-800 border border-purple-200">
+                      🎾 ${spots} Jugadores
+                    </span>
+                  ` : ''}
+                </div>
+                <h4 class="font-extrabold text-base text-slate-900 mt-0.5">${b.class_title}</h4>
                 <p class="text-xs text-slate-500">${b.studio_name} • ${b.neighborhood}</p>
               </div>
             </div>
@@ -1204,18 +1911,30 @@ const app = {
               <span class="font-bold text-slate-800">${b.start_time}</span>
             </div>
             <div>
-              <span class="text-slate-400 block font-semibold">Instructor</span>
-              <span class="font-bold text-slate-800">${b.instructor_name}</span>
+              <span class="text-slate-400 block font-semibold">Instructor / Club</span>
+              <span class="font-bold text-slate-800">${b.instructor_name || b.studio_name}</span>
             </div>
           </div>
+
+          ${guests.length > 0 ? `
+            <div class="px-3.5 py-2 rounded-xl bg-purple-50/70 border border-purple-100 flex items-center space-x-2 text-xs">
+              <span class="font-bold text-purple-900">👥 Jugadores:</span>
+              <span class="text-purple-700 font-medium">${guests.join(', ')}</span>
+            </div>
+          ` : ''}
 
           <!-- Actions -->
           <div class="flex items-center justify-between pt-1">
             ${isConfirmed ? `
-              <button onclick="app.openQrModal('${b.qr_code_id}', ${JSON.stringify(b).replace(/"/g, '&quot;')})" class="px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition flex items-center space-x-1.5 shadow-sm">
-                <i data-lucide="qr-code" class="w-4 h-4"></i>
-                <span>Ver Pase QR</span>
-              </button>
+              <div class="flex items-center space-x-2">
+                <button onclick="app.openQrModal('${b.qr_code_id}', ${JSON.stringify(b).replace(/"/g, '&quot;')})" class="px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition flex items-center space-x-1.5 shadow-sm">
+                  <i data-lucide="qr-code" class="w-4 h-4"></i>
+                  <span>Ver Pase QR</span>
+                </button>
+                <button onclick="app.shareMatchWhatsApp(${JSON.stringify(b).replace(/"/g, '&quot;')}, '${b.qr_code_id}')" class="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition" title="Invitar por WhatsApp">
+                  <svg class="w-4 h-4 fill-emerald-600" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                </button>
+              </div>
               <button onclick="app.cancelBooking(${b.booking_id})" class="px-4 py-2.5 rounded-xl border border-rose-200 text-rose-600 text-xs font-bold hover:bg-rose-50 transition">
                 Cancelar Reserva
               </button>
@@ -1241,15 +1960,31 @@ const app = {
     lucide.createIcons();
   },
 
-  // Cancel Booking
+  // Cancel Booking with ClassPass 12h policy explanation
   async cancelBooking(bookingId) {
-    if (!confirm("¿Estás seguro de cancelar esta reserva? Tus créditos serán reembolsados de inmediato.")) return;
+    const booking = this.state.bookings.find(b => b.booking_id === bookingId);
+    let hoursUntil = 24;
+    if (booking && booking.start_time) {
+      try {
+        const classDate = new Date(booking.start_time.replace(' ', 'T'));
+        hoursUntil = (classDate - new Date()) / (1000 * 60 * 60);
+      } catch(e) {}
+    }
+
+    let confirmMsg = "¿Estás seguro de cancelar tu reserva?\n\n";
+    if (hoursUntil >= 12) {
+      confirmMsg += "🟢 CANCELACIÓN GRATUITA (+12 hrs de anticipación):\nRecibirás el 100% de tus créditos reembolsados de inmediato en tu saldo ($0 multa).\n\n¿Deseas confirmar la cancelación gratuita?";
+    } else {
+      confirmMsg += "⚠️ AVISO DE CANCELACIÓN TARDÍA (< 12 hrs de anticipación):\nAl cancelar con menos de 12 hrs:\n• Los créditos de esta clase no son reembolsables.\n• Se aplica un cargo de $7.000 CLP por cancelación tardía a tu tarjeta registrada para compensar al estudio.\n\n¿Deseas proceder con la cancelación tardía?";
+    }
+
+    if (!confirm(confirmMsg)) return;
 
     try {
-      const res = await fetch(`/api/bookings/${bookingId}/cancel`, { method: 'POST' });
+      const res = await this.fetchAuth(`/api/bookings/${bookingId}/cancel`, { method: 'POST' });
       const data = await res.json();
       if (data.success) {
-        this.showToast(data.message, "check");
+        this.showToast(data.message, data.is_late_cancel ? "alert-triangle" : "check");
         await this.fetchUser();
         await this.fetchBookings();
         await this.fetchClasses();
@@ -1290,7 +2025,7 @@ const app = {
     const comment = document.getElementById('reviewCommentInput').value;
 
     try {
-      const res = await fetch(`/api/bookings/${bookingId}/review`, {
+      const res = await this.fetchAuth(`/api/bookings/${bookingId}/review`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating: this.state.reviewRating, comment })
@@ -1306,7 +2041,7 @@ const app = {
     }
   },
 
-  // Payment Checkout Modal
+  // Payment Checkout Modal (Mercado Pago Oficial)
   openPaymentModal(planName, credits, amountClp) {
     this.state.pendingPayment = {
       planName,
@@ -1314,9 +2049,17 @@ const app = {
       amountClp
     };
 
-    document.getElementById('checkoutPlanName').innerText = planName;
-    document.getElementById('checkoutCreditsNum').innerText = `+${credits} créditos`;
-    document.getElementById('checkoutTotalAmount').innerText = `$${amountClp.toLocaleString('es-CL')} CLP`;
+    const elPlan = document.getElementById('modalPlanName');
+    if (elPlan) elPlan.innerText = planName;
+
+    const elCredits = document.getElementById('modalCredits');
+    if (elCredits) elCredits.innerText = `+${credits} Créditos ⚡`;
+
+    const elAmount = document.getElementById('modalAmount');
+    if (elAmount) elAmount.innerText = `$${amountClp.toLocaleString('es-CL')} CLP`;
+
+    const elBtnText = document.getElementById('payBtnText');
+    if (elBtnText) elBtnText.innerText = `Pagar $${amountClp.toLocaleString('es-CL')} con Mercado Pago`;
 
     document.getElementById('paymentModal').classList.remove('hidden');
     lucide.createIcons();
@@ -1331,60 +2074,312 @@ const app = {
     if (!this.state.pendingPayment) return;
 
     const { planName, credits, amountClp } = this.state.pendingPayment;
-    const selectedRadio = document.querySelector('input[name="payment_method"]:checked');
-    const method = selectedRadio ? selectedRadio.value : 'Transbank Webpay Plus';
-
     const payBtn = document.getElementById('payNowBtn');
     payBtn.disabled = true;
-    payBtn.innerHTML = `<span class="animate-spin mr-2">⏳</span> Conectando con ${method}...`;
+    payBtn.innerHTML = `<span class="animate-spin mr-2">⏳</span> Conectando con Mercado Pago...`;
 
     try {
-      // Step 1: Initiate checkout
-      const checkRes = await fetch('/api/payments/checkout', {
+      const response = await fetch('/api/payments/mercadopago/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           plan_name: planName,
           credits: credits,
-          amount_clp: amountClp,
-          method: method
+          amount_clp: amountClp
         })
       });
-      const checkData = await checkRes.json();
 
-      // Step 2: Simulate secure gateway confirmation
-      await new Promise(r => setTimeout(r, 800));
+      const data = await response.json();
+      if (data.success && data.init_point) {
+        this.closePaymentModal();
+        this.showToast("Redirigiendo a Checkout Oficial de Mercado Pago...", "lock");
+        window.location.href = data.init_point;
+        return;
+      } else {
+        throw new Error(data.error || "No se pudo generar la orden de cobro");
+      }
+    } catch (err) {
+      console.error("Payment error:", err);
+      this.showToast(`Error: ${err.message || "No se pudo conectar con Mercado Pago"}`, "alert-circle");
+    } finally {
+      payBtn.disabled = false;
+      const elBtnText = document.getElementById('payBtnText');
+      if (elBtnText && this.state.pendingPayment) {
+        elBtnText.innerText = `Pagar $${this.state.pendingPayment.amountClp.toLocaleString('es-CL')} con Mercado Pago`;
+      }
+      lucide.createIcons();
+    }
+  },
 
-      const confirmRes = await fetch('/api/payments/confirm', {
+  // ==================== FINTOC MODAL HANDLERS ====================
+  openFintocModal(planName, credits, amountClp) {
+    this.state.pendingPayment = { planName, credits, amountClp, method: 'Fintoc' };
+    
+    document.getElementById('fintocPlanName').innerText = planName;
+    document.getElementById('fintocAmount').innerText = `$${amountClp.toLocaleString('es-CL')} CLP`;
+    
+    const bankList = document.getElementById('fintocBankList');
+    const procState = document.getElementById('fintocProcessingState');
+    if (bankList) bankList.classList.remove('hidden');
+    if (procState) procState.classList.add('hidden');
+
+    document.getElementById('fintocModal').classList.remove('hidden');
+    lucide.createIcons();
+  },
+
+  closeFintocModal() {
+    document.getElementById('fintocModal').classList.add('hidden');
+  },
+
+  async selectFintocBank(bankName) {
+    if (!this.state.pendingPayment) return;
+
+    const { planName, credits, amountClp } = this.state.pendingPayment;
+    const bankList = document.getElementById('fintocBankList');
+    const procState = document.getElementById('fintocProcessingState');
+    const procText = document.getElementById('fintocProcessingText');
+
+    if (bankList) bankList.classList.add('hidden');
+    if (procState) procState.classList.remove('hidden');
+    if (procText) procText.innerText = `Conectando con ${bankName}...`;
+
+    try {
+      // Step 1: Create intent
+      const createRes = await fetch('/api/payments/fintoc/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          order_id: checkData.order_id,
-          auth_code: checkData.auth_code,
+          plan_name: planName,
+          credits: credits,
+          amount_clp: amountClp
+        })
+      });
+      const createData = await createRes.json();
+
+      // Step 2: Simulate bank authorization delay
+      await new Promise(r => setTimeout(r, 1000));
+      if (procText) procText.innerText = `Autorizando transferencia desde ${bankName}...`;
+      await new Promise(r => setTimeout(r, 900));
+
+      // Step 3: Confirm transfer with backend
+      const confirmRes = await fetch('/api/payments/fintoc/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_id: createData.order_id,
+          bank_name: bankName,
           plan_name: planName,
           credits: credits,
           amount_clp: amountClp,
-          method: method
+          transaction_id: `FIN-${Math.floor(100000 + Math.random() * 900000)}`
         })
       });
       const confirmData = await confirmRes.json();
 
       if (confirmData.success) {
-        this.closePaymentModal();
-        this.showToast(`¡Pago exitoso! Se acreditaron +${credits} créditos a tu cuenta`, "sparkles");
+        this.closeFintocModal();
+        this.showPaymentVoucher({
+          provider: 'Fintoc',
+          badgeText: `Transferencia Confirmada • Fintoc (${bankName})`,
+          mainTitle: '¡Transferencia Exitosa!',
+          orderId: confirmData.receipt.order_id,
+          authCode: confirmData.receipt.auth_code,
+          cardType: `Transferencia 1-Click (${bankName})`,
+          cardLast4: 'CUENTA-BANCARIA',
+          planName: planName,
+          amount: amountClp,
+          credits: credits,
+          date: confirmData.receipt.date
+        });
         await this.fetchUser();
         this.renderPlansView();
       } else {
-        this.showToast("Error procesando el pago con la pasarela", "alert-circle");
+        throw new Error(confirmData.error || "No se pudo confirmar la transferencia");
       }
     } catch (err) {
-      console.error("Payment error:", err);
-      this.showToast("Error de conexión con la pasarela de pagos", "alert-circle");
+      console.error(err);
+      this.showToast("Error procesando la transferencia bancaria con Fintoc", "alert-circle");
+      if (bankList) bankList.classList.remove('hidden');
+      if (procState) procState.classList.add('hidden');
+    }
+  },
+
+  // ==================== MERCADO PAGO MODAL HANDLERS ====================
+  openMercadoPagoModal(planName, credits, amountClp) {
+    this.state.pendingPayment = { planName, credits, amountClp, method: 'Mercado Pago' };
+
+    document.getElementById('mpPlanName').innerText = planName;
+    document.getElementById('mpAmount').innerText = `$${amountClp.toLocaleString('es-CL')} CLP`;
+    
+    const installmentAmount = Math.round(amountClp / 3);
+    const installmentText = document.getElementById('mpInstallmentText');
+    if (installmentText) {
+      installmentText.innerText = `3 x $${installmentAmount.toLocaleString('es-CL')} CLP sin interés`;
+    }
+
+    document.getElementById('mercadoPagoModal').classList.remove('hidden');
+    lucide.createIcons();
+  },
+
+  closeMercadoPagoModal() {
+    document.getElementById('mercadoPagoModal').classList.add('hidden');
+  },
+
+  async confirmMercadoPagoPayment() {
+    if (!this.state.pendingPayment) return;
+
+    const { planName, credits, amountClp } = this.state.pendingPayment;
+    const selectedSub = document.querySelector('input[name="mp_sub_method"]:checked');
+    const subMethod = selectedSub ? selectedSub.value : 'Saldo en Cuenta Mercado Pago';
+
+    const confirmBtn = document.getElementById('confirmMpBtn');
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = `<span class="animate-spin mr-2">⏳</span> Procesando con Mercado Pago...`;
+
+    try {
+      // Step 1: Create MP Preference
+      const prefRes = await fetch('/api/payments/mercadopago/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan_name: planName,
+          credits: credits,
+          amount_clp: amountClp
+        })
+      });
+      const prefData = await prefRes.json();
+
+      await new Promise(r => setTimeout(r, 900));
+
+      // Step 2: Confirm via backend MP Return route
+      const returnRes = await fetch('/api/payments/mercadopago/return', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: 'approved',
+          order_id: prefData.order_id,
+          payment_id: `MP-${Math.floor(100000 + Math.random() * 900000)}`,
+          plan_name: planName,
+          credits: credits,
+          amount: amountClp
+        })
+      });
+
+      this.closeMercadoPagoModal();
+      this.showPaymentVoucher({
+        provider: 'Mercado Pago',
+        badgeText: 'Transacción Aprobada • Mercado Pago',
+        mainTitle: '¡Pago Aprobado con Mercado Pago!',
+        orderId: prefData.order_id,
+        authCode: `MP-${Math.floor(100000 + Math.random() * 900000)}`,
+        cardType: subMethod,
+        cardLast4: 'MP-WALLET',
+        planName: planName,
+        amount: amountClp,
+        credits: credits,
+        date: new Date().toLocaleString('es-CL')
+      });
+      await this.fetchUser();
+      this.renderPlansView();
+    } catch (err) {
+      console.error("Mercado Pago error:", err);
+      this.showToast("Error procesando el pago con Mercado Pago", "alert-circle");
     } finally {
-      payBtn.disabled = false;
-      payBtn.innerHTML = `<i data-lucide="lock" class="w-3.5 h-3.5"></i><span>Pagar Ahora de Forma Segura</span>`;
+      confirmBtn.disabled = false;
+      confirmBtn.innerHTML = `<i data-lucide="lock" class="w-3.5 h-3.5"></i><span>Confirmar Pago de Forma Segura</span>`;
       lucide.createIcons();
     }
+  },
+
+  // ==================== UNIVERSAL VOUCHER RENDERER ====================
+  showPaymentVoucher(data) {
+    const elBadge = document.getElementById('voucherBadge');
+    if (elBadge) elBadge.innerText = data.badgeText || 'Transacción Aprobada';
+
+    const elTitle = document.getElementById('voucherMainTitle');
+    if (elTitle) elTitle.innerText = data.mainTitle || '¡Pago Autorizado con Éxito!';
+
+    const elOrder = document.getElementById('voucherBuyOrder');
+    if (elOrder) elOrder.innerText = data.orderId || 'MC-ORD';
+
+    const elAuth = document.getElementById('voucherAuthCode');
+    if (elAuth) elAuth.innerText = data.authCode || '1213';
+
+    const elType = document.getElementById('voucherCardType');
+    if (elType) elType.innerText = data.cardType || 'Webpay Plus (Débito)';
+
+    const elCard = document.getElementById('voucherCardLast4');
+    if (elCard) elCard.innerText = data.cardLast4.startsWith('****') ? data.cardLast4 : `**** ${data.cardLast4}`;
+
+    const elPlan = document.getElementById('voucherPlanName');
+    if (elPlan) elPlan.innerText = data.planName || 'Plan Pro MoveClub';
+
+    const elDate = document.getElementById('voucherDate');
+    if (elDate) elDate.innerText = data.date || new Date().toLocaleString('es-CL');
+
+    const elAmount = document.getElementById('voucherAmount');
+    if (elAmount) elAmount.innerText = `$${Number(data.amount).toLocaleString('es-CL')} CLP`;
+
+    const elCredits = document.getElementById('voucherCredits');
+    if (elCredits) elCredits.innerText = `+${data.credits} Créditos ⚡`;
+
+    const voucherModal = document.getElementById('webpayVoucherModal');
+    if (voucherModal) voucherModal.classList.remove('hidden');
+
+    this.showToast(`¡Pago exitoso vía ${data.provider || 'Pasarela'}! Se sumaron +${data.credits} créditos`, "sparkles");
+    lucide.createIcons();
+  },
+
+  checkPaymentReturnFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    if (!paymentStatus) return;
+
+    if (paymentStatus === 'success') {
+      const provider = urlParams.get('method') || 'Transbank Webpay Plus';
+      const buyOrder = urlParams.get('order_id') || 'MC-ORD';
+      const authCode = urlParams.get('auth_code') || '1213';
+      const amount = parseInt(urlParams.get('amount') || '39900', 10);
+      const credits = urlParams.get('credits') || '50';
+      const planName = urlParams.get('plan_name') || 'Plan Pro MoveClub';
+      const cardLast4 = urlParams.get('card_last4') || '6623';
+      const cardType = urlParams.get('card_type') || 'Webpay Plus (Débito)';
+      const dateStr = urlParams.get('date') || new Date().toLocaleString('es-CL');
+
+      this.showPaymentVoucher({
+        provider: provider,
+        badgeText: `Transacción Aprobada • ${provider}`,
+        mainTitle: '¡Pago Autorizado con Éxito!',
+        orderId: buyOrder,
+        authCode: authCode,
+        cardType: cardType,
+        cardLast4: cardLast4,
+        planName: planName,
+        amount: amount,
+        credits: credits,
+        date: dateStr
+      });
+      this.fetchUser();
+      this.renderPlansView();
+    } else if (paymentStatus === 'rejected') {
+      const respCode = urlParams.get('response_code') || '-1';
+      this.showToast(`La transacción fue rechazada por el banco emisor (Código: ${respCode})`, "alert-circle");
+    } else if (paymentStatus === 'aborted') {
+      this.showToast("Pago cancelado en la pasarela de pagos", "info");
+    } else if (paymentStatus === 'error') {
+      const msg = urlParams.get('msg') || 'Error de procesamiento';
+      this.showToast(`Error: ${msg}`, "alert-circle");
+    }
+
+    // Clean URL parameters smoothly without reloading
+    window.history.replaceState({}, document.title, window.location.pathname);
+    lucide.createIcons();
+  },
+
+  closeWebpayVoucher() {
+    const voucherModal = document.getElementById('webpayVoucherModal');
+    if (voucherModal) voucherModal.classList.add('hidden');
+    this.switchView('explore');
   },
 
   renderPlansView() {
@@ -1414,7 +2409,7 @@ const app = {
   // Favorites View
   async fetchFavorites() {
     try {
-      const res = await fetch('/api/favorites');
+      const res = await this.fetchAuth('/api/favorites');
       const data = await res.json();
       if (data.success) {
         this.state.favorites = data.favorites;
@@ -1468,28 +2463,32 @@ const app = {
   },
 
   // Admin View
-  renderAdminView() {
-    document.getElementById('adminStudiosCount').innerText = this.state.studios.length;
-    document.getElementById('adminClassesCount').innerText = this.state.classes.length;
+  async renderAdminView() {
+    const classCountEl = document.getElementById('adminClassesCount');
+    if (classCountEl) classCountEl.innerText = `${this.state.classes.length} clases`;
 
     const tbody = document.getElementById('adminClassesTableBody');
-    if (!tbody) return;
+    if (tbody && this.state.classes) {
+      tbody.innerHTML = this.state.classes.map(c => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="py-3">
+            <span class="font-bold text-slate-900 block">${c.title}</span>
+            <span class="text-[10px] text-indigo-600 font-semibold">${c.category} • ${c.duration_minutes} min</span>
+          </td>
+          <td class="py-3 text-slate-700 font-semibold">${c.studio_name}</td>
+          <td class="py-3 text-slate-600">${c.instructor_name}</td>
+          <td class="py-3 text-slate-800 font-mono">${c.start_time}</td>
+          <td class="py-3 font-bold text-teal-700">${c.credit_cost} cr</td>
+          <td class="py-3 font-bold ${c.available_spots <= 3 ? 'text-rose-600' : 'text-slate-800'}">
+            ${c.available_spots} / ${c.max_capacity}
+          </td>
+        </tr>
+      `).join('');
+    }
 
-    tbody.innerHTML = this.state.classes.map(c => `
-      <tr class="hover:bg-slate-50 transition">
-        <td class="py-3">
-          <span class="font-bold text-slate-900 block">${c.title}</span>
-          <span class="text-[10px] text-indigo-600 font-semibold">${c.category} • ${c.duration_minutes} min</span>
-        </td>
-        <td class="py-3 text-slate-700 font-semibold">${c.studio_name}</td>
-        <td class="py-3 text-slate-600">${c.instructor_name}</td>
-        <td class="py-3 text-slate-800 font-mono">${c.start_time}</td>
-        <td class="py-3 font-bold text-teal-700">${c.credit_cost} cr</td>
-        <td class="py-3 font-bold ${c.available_spots <= 3 ? 'text-rose-600' : 'text-slate-800'}">
-          ${c.available_spots} / ${c.max_capacity}
-        </td>
-      </tr>
-    `).join('');
+    // Load admin metrics, students & transactions
+    await this.fetchAdminMetrics();
+    lucide.createIcons();
   },
 
   openAdminNewClassModal() {
@@ -1509,7 +2508,7 @@ const app = {
     document.getElementById('adminNewClassModal').classList.remove('hidden');
   },
 
-  closeAdminModal() {
+  closeAdminNewClassModal() {
     document.getElementById('adminNewClassModal').classList.add('hidden');
   },
 
@@ -1538,7 +2537,7 @@ const app = {
       });
       const data = await res.json();
       if (data.success) {
-        this.closeAdminModal();
+        this.closeAdminNewClassModal();
         this.showToast(data.message, "check");
         await this.fetchClasses();
         this.renderAdminView();
@@ -1550,8 +2549,17 @@ const app = {
 
   // Dropdown helper
   toggleUserDropdown() {
-    const menu = document.getElementById('userDropdown');
-    menu.classList.toggle('hidden');
+    const notifDd = document.getElementById('notificationDropdown');
+    if (notifDd) notifDd.classList.add('hidden');
+    if (window.innerWidth < 1024) {
+      // On mobile devices, navigate cleanly to the full Perfil screen
+      const menu = document.getElementById('userDropdown');
+      if (menu) menu.classList.add('hidden');
+      this.switchView('profile');
+    } else {
+      const menu = document.getElementById('userDropdown');
+      if (menu) menu.classList.toggle('hidden');
+    }
   },
 
   // Toast Notification
@@ -1598,6 +2606,268 @@ const app = {
     resultBox.classList.remove('hidden');
     details.innerText = `Pase: ${code} • Alumno: ${this.state.user ? this.state.user.name : 'Ignacio Sánchez'} • Entrada autorizada`;
     this.showToast("¡Pase escaneado y validado con éxito!", "check-circle");
+    lucide.createIcons();
+  },
+
+  // ==================== AUTHENTICATION & MULTI-USER ====================
+  openAuthModal(tab = 'login') {
+    const modal = document.getElementById('authModal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    this.switchAuthTab(tab);
+    lucide.createIcons();
+  },
+
+  closeAuthModal() {
+    const modal = document.getElementById('authModal');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  switchAuthTab(tab) {
+    const loginTab = document.getElementById('authTabLogin');
+    const regTab = document.getElementById('authTabRegister');
+    const loginForm = document.getElementById('authFormLogin');
+    const regForm = document.getElementById('authFormRegister');
+
+    if (tab === 'login') {
+      loginTab.className = "flex-1 py-2 text-xs font-black rounded-lg transition bg-white text-slate-900 shadow-md";
+      regTab.className = "flex-1 py-2 text-xs font-extrabold text-slate-300 hover:text-white rounded-lg transition";
+      loginForm.classList.remove('hidden');
+      regForm.classList.add('hidden');
+    } else {
+      regTab.className = "flex-1 py-2 text-xs font-black rounded-lg transition bg-white text-slate-900 shadow-md";
+      loginTab.className = "flex-1 py-2 text-xs font-extrabold text-slate-300 hover:text-white rounded-lg transition";
+      regForm.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+    }
+  },
+
+  async handleLoginSubmit() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    const btn = document.getElementById('loginSubmitBtn');
+
+    if (!email || !password) {
+      this.showToast("Ingresa tu correo y contraseña", "alert-circle");
+      return;
+    }
+
+    try {
+      btn.disabled = true;
+      btn.innerHTML = `<span>Ingresando...</span>`;
+
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+
+      if (data.success && data.token) {
+        this.setToken(data.token);
+        this.state.user = data.user;
+        this.renderUser();
+        this.closeAuthModal();
+        this.showToast(data.message || `¡Bienvenido de vuelta, ${data.user.name}!`, "check");
+        await Promise.all([this.fetchClasses(), this.fetchStudios()]);
+      } else {
+        this.showToast(data.error || "Credenciales incorrectas", "alert-circle");
+      }
+    } catch(e) {
+      console.error(e);
+      this.showToast("Error de conexión al iniciar sesión", "alert-circle");
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<span>Ingresar a MoveClub</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+      lucide.createIcons();
+    }
+  },
+
+  async handleRegisterSubmit() {
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const city = document.getElementById('regCity').value;
+    const phone = document.getElementById('regPhone').value.trim();
+    const password = document.getElementById('regPassword').value.trim();
+    const btn = document.getElementById('regSubmitBtn');
+
+    if (!name || !email || !password) {
+      this.showToast("Nombre, correo y contraseña son obligatorios", "alert-circle");
+      return;
+    }
+
+    try {
+      btn.disabled = true;
+      btn.innerHTML = `<span>Creando tu cuenta...</span>`;
+
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, city, phone, password })
+      });
+      const data = await res.json();
+
+      if (data.success && data.token) {
+        this.setToken(data.token);
+        this.state.user = data.user;
+        this.renderUser();
+        this.closeAuthModal();
+        this.showToast(`🎉 ¡Cuenta creada! Tienes 10 créditos gratis para entrenar.`, "sparkles");
+        await Promise.all([this.fetchClasses(), this.fetchStudios()]);
+      } else {
+        this.showToast(data.error || "No se pudo crear la cuenta", "alert-circle");
+      }
+    } catch(e) {
+      console.error(e);
+      this.showToast("Error de conexión al registrarse", "alert-circle");
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<span>Crear Cuenta & Recibir 10 Créditos</span><i data-lucide="sparkles" class="w-4 h-4"></i>`;
+      lucide.createIcons();
+    }
+  },
+
+  async quickLoginAdmin() {
+    document.getElementById('loginEmail').value = "sanchezhenriquezmariaignacia99@gmail.com";
+    document.getElementById('loginPassword').value = "moveclub2026";
+    await this.handleLoginSubmit();
+  },
+
+  async handleGoogleLogin() {
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: "María Ignacia Sánchez",
+          email: "sanchezhenriquezmariaignacia99@gmail.com",
+          city: "Osorno"
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.token) {
+        this.setToken(data.token);
+        this.state.user = data.user;
+        this.renderUser();
+        this.closeAuthModal();
+        this.showToast(data.message, "check");
+        await Promise.all([this.fetchClasses(), this.fetchStudios()]);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  async handleLogout() {
+    try {
+      await this.fetchAuth('/api/auth/logout', { method: 'POST' });
+    } catch(e) {}
+    this.setToken('');
+    this.state.user = null;
+    this.renderGuest();
+    this.showToast("👋 Has cerrado sesión correctamente", "check");
+    await this.fetchUser();
+  },
+
+  // ==================== ADMIN DASHBOARD MODAL ====================
+  async openAdminModal() {
+    const modal = document.getElementById('adminModal');
+    if (!modal) {
+      console.error("Modal #adminModal no encontrado");
+      return;
+    }
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+    lucide.createIcons();
+    await this.fetchAdminMetrics();
+  },
+
+  closeAdminModal() {
+    const modal = document.getElementById('adminModal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+    }
+  },
+
+  async fetchAdminMetrics() {
+    try {
+      const res = await this.fetchAuth('/api/admin/metrics');
+      const data = await res.json();
+      if (data.success && data.metrics) {
+        this.renderAdminDashboard(data.metrics);
+      } else {
+        console.warn("fetchAdminMetrics:", data);
+        if (data.error) {
+          this.showToast(data.error, "alert-circle");
+        }
+      }
+    } catch(e) {
+      console.error("Error cargando métricas:", e);
+    }
+  },
+
+  renderAdminDashboard(m) {
+    const userStat = document.getElementById('adminStatUsers');
+    if (userStat) userStat.innerText = m.total_users || 0;
+    const credStat = document.getElementById('adminStatCredits');
+    if (credStat) credStat.innerText = m.total_credits_in_circulation || 0;
+    const bookStat = document.getElementById('adminStatBookings');
+    if (bookStat) bookStat.innerText = m.total_bookings || 0;
+    const countStat = document.getElementById('adminUsersCount');
+    if (countStat) countStat.innerText = `${m.users ? m.users.length : 0} alumnos`;
+
+    // Users Table
+    const tbody = document.getElementById('adminUsersTableBody');
+    if (tbody && m.users) {
+      tbody.innerHTML = m.users.map(u => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="p-3 flex items-center space-x-2.5">
+            <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
+              ${u.name ? u.name.charAt(0).toUpperCase() : 'U'}
+            </div>
+            <div>
+              <p class="font-bold text-slate-900">${u.name}</p>
+              <p class="text-[10px] text-slate-400">${u.email}</p>
+            </div>
+          </td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-700'}">
+              ${u.role === 'admin' ? '👑 Admin' : 'Alumno'}
+            </span>
+          </td>
+          <td class="p-3 font-semibold text-slate-600">📍 ${u.city || 'Osorno'}</td>
+          <td class="p-3">
+            <span class="px-2 py-1 rounded-lg bg-teal-50 text-teal-700 font-black text-xs">
+              ${u.credits_balance} créditos
+            </span>
+          </td>
+          <td class="p-3 text-[11px] font-medium text-slate-600">${u.plan_tier || 'Sin Plan'}</td>
+          <td class="p-3 text-[10px] text-slate-400">${u.created_at ? u.created_at.split(' ')[0] : 'Hoy'}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Recent Transactions
+    const txContainer = document.getElementById('adminTransactionsList');
+    if (txContainer && m.recent_transactions) {
+      txContainer.innerHTML = m.recent_transactions.map(t => `
+        <div class="py-2 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 rounded-full ${t.amount >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} flex items-center justify-center font-bold text-[10px]">
+              ${t.amount >= 0 ? '+' : ''}${t.amount}
+            </div>
+            <div>
+              <p class="font-bold text-slate-800 text-[11px]">${t.description}</p>
+              <p class="text-[10px] text-slate-400">${t.user_name || 'Alumno'} • ${t.created_at}</p>
+            </div>
+          </div>
+          <span class="text-[10px] font-bold ${t.amount >= 0 ? 'text-emerald-600' : 'text-slate-500'}">
+            ${t.amount >= 0 ? `+${t.amount} créditos` : `${t.amount} créditos`}
+          </span>
+        </div>
+      `).join('');
+    }
     lucide.createIcons();
   },
 

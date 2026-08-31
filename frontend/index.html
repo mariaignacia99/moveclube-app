@@ -57,25 +57,25 @@
   <!-- TOP HEADER / NAVBAR -->
   <header class="sticky top-0 z-40 header-glass">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
+      <div class="flex items-center justify-between h-14 sm:h-16">
         
         <!-- Brand & Location -->
-        <div class="flex items-center space-x-6">
-          <div class="flex items-center space-x-2.5 cursor-pointer group" onclick="app.switchView('explore')">
-            <div id="navbarLogoIcon" class="w-10 h-10 rounded-xl overflow-hidden shadow-md shadow-cyan-500/20 border border-slate-800 bg-black flex items-center justify-center p-0.5 group-hover:scale-105 transition">
+        <div class="flex items-center space-x-2 sm:space-x-4 min-w-0">
+          <div class="flex items-center space-x-1.5 sm:space-x-2.5 cursor-pointer group flex-shrink-0" onclick="app.switchView('explore')">
+            <div id="navbarLogoIcon" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-md shadow-cyan-500/20 border border-slate-800 bg-black flex items-center justify-center p-0.5 group-hover:scale-105 transition">
               <img src="/images/app_icon.png" alt="MoveClub Logo" class="w-full h-full object-cover rounded-lg">
             </div>
             <div class="flex items-center">
-              <span id="navbarBrandText" class="text-2xl font-black tracking-tight text-slate-900 leading-none">MOVE<span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">CLUB</span></span>
+              <span id="navbarBrandText" class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 leading-none">MOVE<span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">CLUB</span></span>
             </div>
           </div>
 
           <!-- City Selector Dropdown -->
-          <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-slate-100/90 text-xs font-bold text-slate-700 border border-slate-200 shadow-sm">
-            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-600"></i>
-            <select id="citySelectNavbar" onchange="app.handleCityChange(this.value)" class="bg-transparent font-extrabold text-indigo-950 focus:outline-none cursor-pointer">
-              <option value="Osorno" selected>📍 Osorno</option>
-              <option value="Temuco">📍 Temuco</option>
+          <div class="flex items-center space-x-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-slate-100/90 text-[11px] sm:text-xs font-bold text-slate-700 border border-slate-200 shadow-sm flex-shrink-0">
+            <i data-lucide="map-pin" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-600"></i>
+            <select id="citySelectNavbar" onchange="app.handleCityChange(this.value)" class="bg-transparent font-extrabold text-indigo-950 focus:outline-none cursor-pointer text-[11px] sm:text-xs">
+              <option value="Osorno" selected>Osorno</option>
+              <option value="Temuco">Temuco</option>
             </select>
           </div>
         </div>
@@ -105,48 +105,91 @@
           </button>
         </nav>
 
-        <!-- Right Side: Credits & User Avatar -->
-        <div class="flex items-center space-x-3">
-          <!-- Live Credits Balance Pill -->
-          <button onclick="app.switchView('plans')" class="credits-badge flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-white font-medium text-sm">
-            <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-              <i data-lucide="coins" class="w-3.5 h-3.5 text-teal-100"></i>
-            </div>
-            <span class="font-bold text-sm tracking-wide" id="userCreditsDisplay">-- créditos</span>
-            <span class="bg-white/20 text-teal-50 text-[10px] font-bold px-1.5 py-0.5 rounded-full">+ Recargar</span>
-          </button>
-
-          <!-- User Menu Dropdown Button -->
-          <div class="relative">
-            <button id="userMenuBtn" onclick="app.toggleUserDropdown()" class="flex items-center space-x-2 p-1 rounded-full hover:bg-slate-100 transition border border-transparent hover:border-slate-200">
-              <img id="userAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Usuario" class="w-8 h-8 rounded-full object-cover border border-slate-300 shadow-sm">
+        <!-- Right Side: Auth / Profile Button -->
+        <div class="flex items-center space-x-2">
+          
+          <!-- State 1: Guest (Not logged in) -->
+          <div id="headerGuestNav" class="hidden flex items-center space-x-2">
+            <button onclick="app.openAuthModal('login')" class="px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition shadow-sm">
+              Iniciar Sesión
             </button>
+            <button onclick="app.openAuthModal('register')" class="px-4 py-1.5 rounded-full text-xs font-extrabold text-white bg-gradient-to-r from-teal-500 to-indigo-600 hover:from-teal-600 hover:to-indigo-700 transition shadow-md shadow-teal-500/20 flex items-center space-x-1.5">
+              <span>Registrarme</span>
+              <span class="bg-white/20 text-[10px] px-1.5 py-0.2 rounded-full">+10</span>
+            </button>
+          </div>
+
+          <!-- State 2: Authenticated User (Notification Bell & Clean Avatar Button) -->
+          <div id="headerUserNav" class="flex items-center space-x-2">
             
-            <!-- User Dropdown Menu -->
-            <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50 animate-fadeIn">
-              <div class="px-4 py-3 border-b border-slate-100">
-                <p class="text-sm font-bold text-slate-800" id="dropdownUserName">Ignacio Sánchez</p>
-                <p class="text-xs text-slate-500" id="dropdownUserEmail">ignacio@ejemplo.com</p>
-                <div class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-50 text-indigo-700" id="dropdownUserPlan">
-                  Plan Pro
+            <!-- Notification Bell Icon & Dropdown -->
+            <div class="relative">
+              <button id="notificationBellBtn" onclick="app.toggleNotificationsDropdown()" class="relative p-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition border border-slate-200/80 shadow-sm" title="Notificaciones">
+                <i data-lucide="bell" class="w-4 h-4"></i>
+                <span id="notificationBadge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse">0</span>
+              </button>
+
+              <!-- Notifications Dropdown -->
+              <div id="notificationDropdown" class="hidden absolute -right-12 sm:right-0 mt-2 w-80 sm:w-96 max-w-[calc(100vw-2rem)] bg-white rounded-3xl shadow-2xl border border-slate-200/90 py-3 z-50 animate-fadeIn">
+                <div class="px-4 pb-2.5 border-b border-slate-100 flex items-center justify-between">
+                  <div class="flex items-center space-x-1.5">
+                    <i data-lucide="bell" class="w-4 h-4 text-indigo-600"></i>
+                    <h4 class="font-extrabold text-sm text-slate-900">Notificaciones</h4>
+                  </div>
+                  <button onclick="app.markNotificationsAsRead()" class="text-[11px] font-bold text-indigo-600 hover:underline">
+                    Marcar leídas
+                  </button>
+                </div>
+                
+                <div id="notificationsListContainer" class="max-h-80 overflow-y-auto divide-y divide-slate-100 px-2 py-1">
+                  <!-- Rendered dynamically -->
                 </div>
               </div>
-              <div class="py-1">
-                <a href="#" onclick="app.switchView('profile'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                  <i data-lucide="user" class="w-4 h-4 mr-2 text-slate-400"></i> Mi Perfil & Ajustes
-                </a>
-                <a href="#" onclick="app.switchView('bookings'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                  <i data-lucide="calendar" class="w-4 h-4 mr-2 text-slate-400"></i> Mis Reservas
-                </a>
-                <a href="#" onclick="app.switchView('favorites'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                  <i data-lucide="heart" class="w-4 h-4 mr-2 text-slate-400"></i> Estudios Favoritos
-                </a>
-                <a href="#" onclick="app.switchView('plans'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                  <i data-lucide="credit-card" class="w-4 h-4 mr-2 text-slate-400"></i> Administrar Membresía
-                </a>
-                <a href="#" onclick="app.switchView('admin'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                  <i data-lucide="store" class="w-4 h-4 mr-2 text-slate-400"></i> Portal de Estudios (Partner)
-                </a>
+            </div>
+
+            <!-- User Menu Dropdown Button -->
+            <div class="relative">
+              <button id="userMenuBtn" onclick="app.toggleUserDropdown()" class="flex items-center space-x-2 p-1 rounded-full hover:bg-slate-100 transition border border-transparent hover:border-slate-200">
+                <img id="userAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Usuario" class="w-8 h-8 rounded-full object-cover border border-slate-300 shadow-sm">
+              </button>
+              
+              <!-- User Dropdown Menu -->
+              <div id="userDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50 animate-fadeIn">
+                <div class="px-4 py-3 border-b border-slate-100">
+                  <div class="flex items-center justify-between">
+                    <p class="text-sm font-bold text-slate-800" id="dropdownUserName">María Ignacia Sánchez</p>
+                    <span id="dropdownUserRoleBadge" class="hidden px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-100 text-purple-800 border border-purple-200">👑 Admin</span>
+                  </div>
+                  <p class="text-xs text-slate-500 truncate" id="dropdownUserEmail">sanchezhenriquezmariaignacia99@gmail.com</p>
+                  <div class="mt-2 flex items-center justify-between">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-50 text-indigo-700" id="dropdownUserPlan">
+                      Plan Básico
+                    </span>
+                    <span class="text-[11px] font-bold text-teal-700" id="dropdownUserCity">📍 Osorno</span>
+                  </div>
+                </div>
+                <div class="py-1">
+                  <!-- Admin metrics item -->
+                  <a href="#" id="dropdownAdminLink" onclick="app.openAdminModal(); app.toggleUserDropdown();" class="hidden flex items-center px-4 py-2 text-xs font-bold text-purple-700 bg-purple-50/70 hover:bg-purple-100/80 transition">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 mr-2 text-purple-600"></i> 👑 Panel Administrador MoveClub
+                  </a>
+                  <a href="#" onclick="app.switchView('profile'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="user" class="w-4 h-4 mr-2 text-slate-400"></i> Mi Perfil & Ajustes
+                  </a>
+                  <a href="#" onclick="app.switchView('bookings'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="calendar" class="w-4 h-4 mr-2 text-slate-400"></i> Mis Reservas
+                  </a>
+                  <a href="#" onclick="app.switchView('favorites'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="heart" class="w-4 h-4 mr-2 text-slate-400"></i> Estudios Favoritos
+                  </a>
+                  <a href="#" onclick="app.switchView('plans'); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="credit-card" class="w-4 h-4 mr-2 text-slate-400"></i> Comprar Créditos & Membresías
+                  </a>
+                  <div class="border-t border-slate-100 my-1"></div>
+                  <a href="#" onclick="app.handleLogout(); app.toggleUserDropdown();" class="flex items-center px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 transition">
+                    <i data-lucide="log-out" class="w-4 h-4 mr-2 text-rose-500"></i> Cerrar Sesión
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -513,11 +556,16 @@
         </div>
         
         <!-- Filter Tabs for Bookings -->
-        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-          <button onclick="app.setBookingsTab('active')" id="btnTabActiveBookings" class="px-4 py-2 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-sm transition">
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 overflow-x-auto max-w-full">
+          <button onclick="app.setBookingsTab('active')" id="btnTabActiveBookings" class="px-3 sm:px-4 py-2 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-sm transition whitespace-nowrap">
             Próximas Clases
           </button>
-          <button onclick="app.setBookingsTab('past')" id="btnTabPastBookings" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+          <button onclick="app.setBookingsTab('waitlist')" id="btnTabWaitlistBookings" class="px-3 sm:px-4 py-2 rounded-lg text-xs font-bold text-amber-700 hover:text-amber-900 transition flex items-center space-x-1.5 whitespace-nowrap">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+            <span>⏳ En Espera</span>
+            <span id="waitlistCountBadge" class="hidden px-1.5 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black">0</span>
+          </button>
+          <button onclick="app.setBookingsTab('past')" id="btnTabPastBookings" class="px-3 sm:px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition whitespace-nowrap">
             Historial / Pasadas
           </button>
         </div>
@@ -528,13 +576,18 @@
         <!-- Bookings rendered dynamically -->
       </div>
 
+      <!-- Waitlist Container -->
+      <div id="waitlistList" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Waitlists rendered dynamically -->
+      </div>
+
       <!-- Empty Bookings State -->
       <div id="noBookingsState" class="hidden text-center py-16 px-4 bg-white rounded-3xl border border-slate-200/80 shadow-sm">
         <div class="w-16 h-16 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-4">
           <i data-lucide="ticket" class="w-8 h-8"></i>
         </div>
-        <h3 class="text-lg font-bold text-slate-800">Aún no tienes reservas activas</h3>
-        <p class="text-sm text-slate-500 max-w-md mx-auto mt-1 mb-4">Explora los estudios disponibles y usa tus créditos para reservar tu próxima clase de fitness.</p>
+        <h3 id="noBookingsTitle" class="text-lg font-bold text-slate-800">Aún no tienes reservas activas</h3>
+        <p id="noBookingsText" class="text-sm text-slate-500 max-w-md mx-auto mt-1 mb-4">Explora los estudios disponibles y usa tus créditos para reservar tu próxima clase de fitness.</p>
         <button onclick="app.switchView('explore')" class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition shadow-md shadow-indigo-200">
           Explorar clases disponibles
         </button>
@@ -808,46 +861,108 @@
       </div>
     </section>
 
-    <!-- ==================== VIEW 5: PORTAL ESTUDIO (ADMIN) ==================== -->
-    <section id="view-admin" class="hidden space-y-6">
-      <div class="border-b border-slate-200 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold mb-1">
-            <i data-lucide="building" class="w-3.5 h-3.5"></i>
-            <span>Portal de Partners & Estudios</span>
+    <!-- ==================== VIEW 5: PANEL ADMINISTRADOR & ESTUDIOS ==================== -->
+    <section id="view-admin" class="hidden space-y-6 animate-fade-in pb-24">
+      
+      <!-- Top Bar: Back to profile & Title -->
+      <div class="flex items-center justify-between">
+        <button onclick="app.switchView('profile')" class="px-3.5 py-1.5 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-800 font-bold text-xs flex items-center space-x-1.5 transition">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>← Volver a Mi Perfil</span>
+        </button>
+        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-100 text-purple-800 border border-purple-200">👑 Administradora</span>
+      </div>
+
+      <!-- Admin Header Banner -->
+      <div class="bg-gradient-to-br from-purple-950 via-slate-900 to-indigo-950 rounded-3xl p-6 text-white shadow-xl border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-black uppercase tracking-wider text-purple-300">ADMINISTRACIÓN MOVECLUB</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
           </div>
-          <h2 class="text-2xl font-black text-slate-900">Panel de Administración de Clases</h2>
-          <p class="text-sm text-slate-500">Publica nuevas clases, asigna cupos y gestiona la oferta de tu estudio.</p>
+          <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">Panel de Control General</h2>
+          <p class="text-xs text-slate-300">Supervisión en tiempo real de alumnos registrados, recaudación de Mercado Pago y reservas.</p>
         </div>
 
-        <button onclick="app.openAdminNewClassModal()" class="px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition flex items-center space-x-1.5 shadow-md shadow-indigo-200 shrink-0">
-          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+        <button onclick="app.openAdminNewClassModal()" class="px-4 py-3 rounded-2xl bg-gradient-to-r from-teal-400 to-indigo-500 text-slate-950 font-black text-xs hover:brightness-110 transition shadow-lg flex items-center space-x-2 shrink-0 self-start sm:self-auto">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-slate-950"></i>
           <span>Publicar Nueva Clase</span>
         </button>
       </div>
 
-      <!-- Quick Metrics -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-bold text-slate-400 uppercase">Estudios Registrados</span>
-          <div class="text-2xl font-black text-slate-900 mt-1" id="adminStudiosCount">8</div>
+      <!-- Live Metrics Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Alumnos</span>
+          <h4 class="text-2xl font-black text-indigo-600 mt-1" id="adminStatUsers">--</h4>
+          <p class="text-[10px] text-slate-500 mt-0.5">Alumnos registrados</p>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-bold text-slate-400 uppercase">Total Clases en Horario</span>
-          <div class="text-2xl font-black text-indigo-600 mt-1" id="adminClassesCount">--</div>
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Créditos Activos</span>
+          <h4 class="text-2xl font-black text-teal-600 mt-1" id="adminStatCredits">--</h4>
+          <p class="text-[10px] text-slate-500 mt-0.5">En circulación</p>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-bold text-slate-400 uppercase">Estado Red MoveClub</span>
-          <div class="text-sm font-bold text-emerald-600 mt-2 flex items-center">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
-            Operacional al 100%
-          </div>
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Reservas Activas</span>
+          <h4 class="text-2xl font-black text-slate-900 mt-1" id="adminStatBookings">--</h4>
+          <p class="text-[10px] text-slate-500 mt-0.5">Clases confirmadas</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mercado Pago</span>
+          <h4 class="text-2xl font-black text-emerald-600 mt-1" id="adminStatGateway">100% Live</h4>
+          <p class="text-[10px] text-emerald-600 mt-0.5">Pasarela oficial conectada</p>
+        </div>
+      </div>
+
+      <!-- Registered Students Table -->
+      <div class="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-sm space-y-3 p-5">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+          <h3 class="font-black text-sm text-slate-900 flex items-center space-x-2">
+            <i data-lucide="users" class="w-4 h-4 text-indigo-600"></i>
+            <span>Alumnos Registrados en MoveClub</span>
+          </h3>
+          <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full" id="adminUsersCount">0 alumnos</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+              <tr>
+                <th class="p-3">Alumno</th>
+                <th class="p-3">Rol</th>
+                <th class="p-3">Ciudad</th>
+                <th class="p-3">Saldo</th>
+                <th class="p-3">Plan Activo</th>
+                <th class="p-3">Registro</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTableBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
+              <tr><td colspan="6" class="p-4 text-center text-slate-400">Cargando lista de alumnos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Transactions Log -->
+      <div class="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-sm p-5 space-y-3">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+          <h3 class="font-black text-sm text-slate-900 flex items-center space-x-2">
+            <i data-lucide="activity" class="w-4 h-4 text-teal-600"></i>
+            <span>Últimos Pagos y Movimientos de Créditos</span>
+          </h3>
+          <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-full">En Vivo</span>
+        </div>
+        <div id="adminTransactionsList" class="divide-y divide-slate-100 text-xs max-h-56 overflow-y-auto">
+          <p class="text-slate-400 text-center py-4">Cargando transacciones...</p>
         </div>
       </div>
 
       <!-- Classes Schedule Table in Admin Mode -->
-      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-        <h3 class="text-base font-bold text-slate-900">Horarios y Disponibilidad de Clases</h3>
+      <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-slate-900">Horarios y Disponibilidad de Clases</h3>
+          <span class="text-xs font-semibold text-slate-500" id="adminClassesCount">-- clases</span>
+        </div>
         <div class="overflow-x-auto">
           <table class="w-full text-xs text-left">
             <thead>
@@ -865,6 +980,7 @@
             </tbody>
           </table>
         </div>
+      </div>
       <!-- Partner Earnings Calculator & Reception QR Scanner Simulation -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
@@ -944,55 +1060,144 @@
       </div>
     </section>
 
-    <!-- ==================== VIEW 6: PERFIL DE USUARIO (Plantilla Exacta) ==================== -->
-    <section id="view-profile" class="space-y-6 max-w-md mx-auto hidden animate-fade-in pb-16 pt-2">
+    <!-- ==================== VIEW 6: PERFIL DE USUARIO ==================== -->
+    <section id="view-profile" class="space-y-5 max-w-md mx-auto hidden animate-fade-in pb-28 pt-2">
       
       <!-- User Avatar & Header -->
-      <div class="text-center space-y-4">
+      <div class="text-center space-y-3">
         
         <!-- Circular Camera Avatar -->
-        <div onclick="app.showToast('Actualizar foto de perfil')" class="w-24 h-24 rounded-full bg-slate-200/90 mx-auto flex items-center justify-center relative cursor-pointer group shadow-sm">
-          <i data-lucide="camera" class="w-10 h-10 text-slate-500 group-hover:scale-105 transition"></i>
-          <div class="absolute bottom-1 right-1 w-6 h-6 bg-white rounded-full border border-slate-300 flex items-center justify-center text-slate-700 shadow-sm">
+        <div onclick="app.showToast('Actualizar foto de perfil')" class="w-20 h-20 rounded-full bg-slate-200/90 mx-auto flex items-center justify-center relative cursor-pointer group shadow-sm">
+          <i data-lucide="camera" class="w-8 h-8 text-slate-500 group-hover:scale-105 transition"></i>
+          <div class="absolute bottom-0 right-0 w-6 h-6 bg-white rounded-full border border-slate-300 flex items-center justify-center text-slate-700 shadow-sm">
             <i data-lucide="plus" class="w-3.5 h-3.5 stroke-[3]"></i>
           </div>
         </div>
 
         <div>
-          <h2 class="text-2xl font-black text-slate-900 tracking-tight" id="profilePageUserName">María Ignacia Sánchez</h2>
+          <div class="flex items-center justify-center space-x-2">
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight" id="profilePageUserName">María Ignacia Sánchez</h2>
+            <span id="profileRoleBadge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-100 text-purple-800 border border-purple-200">👑 Admin</span>
+          </div>
+          <p class="text-xs text-slate-500 font-medium mt-0.5" id="profilePageUserEmail">sanchezhenriquezmariaignacia99@gmail.com</p>
         </div>
 
         <!-- 2 Metrics: Restantes / Renovación del ciclo -->
-        <div class="flex items-center justify-center text-center pt-1">
-          <div class="px-8">
-            <div class="text-base font-extrabold text-slate-900" id="profileCreditsRestantes">10 créditos</div>
-            <span class="text-xs text-slate-500 font-medium">Restantes</span>
+        <div class="flex items-center justify-center text-center pt-1 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div class="flex-1">
+            <div class="text-base font-black text-teal-700" id="profileCreditsRestantes">303 créditos</div>
+            <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Saldo Disponible</span>
           </div>
-          <div class="w-px h-8 bg-slate-300"></div>
-          <div class="px-8">
-            <div class="text-base font-extrabold text-slate-900" id="profileVigenciaText">7 días</div>
-            <span class="text-xs text-slate-500 font-medium">Renovación del ciclo</span>
+          <div class="w-px h-8 bg-slate-200"></div>
+          <div class="flex-1">
+            <div class="text-base font-black text-slate-900" id="profileVigenciaText">7 días</div>
+            <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Ciclo Activo</span>
           </div>
         </div>
       </div>
 
+      <!-- 💳 TARJETA MI CUENTA: PLAN CONTRATADO & CRÉDITOS DISPONIBLES -->
+      <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm space-y-4 text-left">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-cyan-50 text-cyan-700 flex items-center justify-center font-bold">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Mi Cuenta & Membresía</span>
+              <h4 class="font-extrabold text-sm text-slate-900 leading-tight" id="profileAccountPlanTitle">Plan Active (20 créditos/mes)</h4>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center space-x-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1"></span>
+            <span>Activo</span>
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+            <span class="text-[11px] font-bold text-slate-500 block">Créditos Disponibles</span>
+            <span class="text-xl font-black text-cyan-600 font-mono" id="profileAccountCredits">50 cr</span>
+          </div>
+          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+            <span class="text-[11px] font-bold text-slate-500 block">Acumulados (Rollover)</span>
+            <span class="text-xl font-black text-purple-600 font-mono" id="profileAccountRollover">Protegidos</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
+          <span class="flex items-center space-x-1 font-semibold">
+            <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>Renovación automática:</span>
+          </span>
+          <span class="font-bold text-slate-800" id="profileAccountRenewal">Próximo ciclo mensual</span>
+        </div>
+
+        <div class="flex items-center space-x-2 pt-1">
+          <button onclick="app.switchView('plans')" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white font-black text-xs shadow-md shadow-cyan-500/20 hover:shadow-lg transition flex items-center justify-center space-x-1.5">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Gestionar o Mejorar Plan</span>
+          </button>
+          <button onclick="app.cancelSubscription()" class="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 text-xs font-bold transition">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <!-- 👑 TARJETA DESTACADA: PANEL DE ADMINISTRADORA -->
+      <div id="profileAdminCard" class="bg-gradient-to-br from-purple-950 via-slate-900 to-indigo-950 rounded-3xl p-5 text-white shadow-xl border-2 border-purple-500/40 text-left space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-purple-500/30 text-purple-300 border border-purple-400/40 flex items-center justify-center shadow-sm">
+              <i data-lucide="crown" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-black uppercase tracking-wider text-purple-300">ADMINISTRACIÓN MOVECLUB</span>
+              <h3 class="text-base font-black text-white leading-tight">Panel de Control</h3>
+            </div>
+          </div>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-500 text-white shadow-sm">100% Live</span>
+        </div>
+        <p class="text-xs text-slate-300">Consulta en vivo: lista de alumnos registrados, cobros de Mercado Pago y reservas de clases.</p>
+        <button onclick="app.switchView('admin')" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-purple-500 via-indigo-500 to-teal-400 hover:brightness-110 text-slate-950 font-black text-xs transition shadow-lg shadow-purple-900/50 flex items-center justify-center space-x-2 active:scale-98">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-950"></i>
+          <span>👑 ENTRAR AL PANEL ADMINISTRADOR AQUÍ</span>
+          <i data-lucide="arrow-right" class="w-4 h-4 text-slate-950"></i>
+        </button>
+      </div>
+
       <!-- Menu List (Clean Rows with Line Dividers) -->
-      <div class="bg-white rounded-2xl border border-slate-200/90 divide-y divide-slate-100 shadow-sm overflow-hidden text-[15px]">
+      <div class="bg-white rounded-2xl border border-slate-200/90 divide-y divide-slate-100 shadow-sm overflow-hidden text-[14px]">
         
+        <!-- 0. Panel Admin Row -->
+        <div onclick="app.switchView('admin')" class="px-5 py-3.5 flex items-center justify-between cursor-pointer bg-purple-50/50 hover:bg-purple-100/70 transition">
+          <div class="flex items-center space-x-3.5 text-purple-900 font-extrabold">
+            <i data-lucide="crown" class="w-5 h-5 text-purple-600"></i>
+            <span>👑 Panel Administrador MoveClub</span>
+          </div>
+          <span class="text-xs font-black text-purple-700 flex items-center space-x-1">
+            <span>Abrir</span>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-purple-500"></i>
+          </span>
+        </div>
+
         <!-- 1. Cuenta -->
-        <div onclick="app.switchView('plans')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+        <div onclick="app.switchView('plans')" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
-            <i data-lucide="credit-card" class="w-5 h-5 text-slate-900"></i>
-            <span>Cuenta</span>
+            <i data-lucide="credit-card" class="w-5 h-5 text-indigo-600"></i>
+            <div>
+              <span class="block leading-tight">Mi Cuenta (Plan & Créditos)</span>
+              <span class="text-[11px] text-slate-400 font-normal block">Revisar plan contratado y recargas</span>
+            </div>
           </div>
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
         </div>
 
         <!-- 2. Reservas -->
-        <div onclick="app.switchView('bookings')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+        <div onclick="app.switchView('bookings')" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
-            <i data-lucide="calendar" class="w-5 h-5 text-slate-900"></i>
-            <span>Reservas</span>
+            <i data-lucide="calendar" class="w-5 h-5 text-slate-700"></i>
+            <span>Mis Reservas</span>
           </div>
           <div class="flex items-center space-x-2.5">
             <span class="text-sm font-semibold text-slate-500" id="profileBookingsCount">0</span>
@@ -1001,10 +1206,10 @@
         </div>
 
         <!-- 3. Sitios guardados -->
-        <div onclick="app.switchView('favorites')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+        <div onclick="app.switchView('favorites')" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
-            <i data-lucide="heart" class="w-5 h-5 text-slate-900"></i>
-            <span>Sitios guardados</span>
+            <i data-lucide="heart" class="w-5 h-5 text-slate-700"></i>
+            <span>Estudios Favoritos</span>
           </div>
           <div class="flex items-center space-x-2.5">
             <span class="text-sm font-semibold text-slate-500" id="profileFavoritesCount">2</span>
@@ -1013,49 +1218,16 @@
         </div>
 
         <!-- 4. Tráete a tu gente -->
-        <div onclick="app.openReferralModal()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+        <div onclick="app.openReferralModal()" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
           <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
-            <i data-lucide="gift" class="w-5 h-5 text-slate-900"></i>
+            <i data-lucide="gift" class="w-5 h-5 text-slate-700"></i>
             <span>Tráete a tu gente y llévate 100 créditos 🎁</span>
           </div>
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
         </div>
 
-        <!-- 5. Mensajes -->
-        <div onclick="app.showToast('No tienes mensajes nuevos')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
-          <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
-            <i data-lucide="message-circle" class="w-5 h-5 text-slate-900"></i>
-            <span>Mensajes</span>
-          </div>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
-        </div>
-
-        <!-- 6. Amigos -->
-        <div onclick="app.openReferralModal()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
-          <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
-            <i data-lucide="users" class="w-5 h-5 text-slate-900"></i>
-            <span>Amigos</span>
-          </div>
-          <div class="flex items-center space-x-2.5">
-            <span class="text-sm font-semibold text-slate-500">0</span>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
-          </div>
-        </div>
-
-        <!-- 7. Tus logros -->
-        <div onclick="app.showToast('🏆 Has completado 5 entrenamientos en MoveClub')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
-          <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
-            <i data-lucide="award" class="w-5 h-5 text-slate-900"></i>
-            <span>Tus logros</span>
-          </div>
-          <div class="flex items-center space-x-2.5">
-            <span class="text-sm font-semibold text-slate-500">5</span>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
-          </div>
-        </div>
-
-        <!-- 8. Ver Propuestas de Logotipo -->
-        <div onclick="app.openBrandLogosModal()" class="px-5 py-4 flex items-center justify-between cursor-pointer bg-gradient-to-r from-blue-50/90 to-indigo-50/90 hover:from-blue-100 hover:to-indigo-100 transition">
+        <!-- 5. Ver Propuestas de Logotipo -->
+        <div onclick="app.openBrandLogosModal()" class="px-5 py-3.5 flex items-center justify-between cursor-pointer bg-blue-50/50 hover:bg-blue-100/70 transition">
           <div class="flex items-center space-x-3.5 text-blue-900 font-black">
             <i data-lucide="palette" class="w-5 h-5 text-blue-600"></i>
             <span>🎨 Ver las 3 Propuestas de Logotipo</span>
@@ -1066,22 +1238,22 @@
           </div>
         </div>
 
-        <!-- 9. Modo Estudio Partner -->
-        <div onclick="app.switchView('admin')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
-          <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
-            <i data-lucide="store" class="w-5 h-5 text-slate-900"></i>
-            <span>Portal Estudios & Partners</span>
+        <!-- 6. Iniciar Sesión / Registrar Nuevo Alumno -->
+        <div onclick="app.openAuthModal('login')" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div class="flex items-center space-x-3.5 text-indigo-900 font-bold">
+            <i data-lucide="user-plus" class="w-5 h-5 text-indigo-600"></i>
+            <span>Cambiar de Usuario / Registrar Alumno</span>
           </div>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          <span class="text-xs font-bold text-indigo-600">Acceder</span>
         </div>
 
-        <!-- 10. Ajustes -->
-        <div onclick="app.showToast('Configuración de cuenta guardada')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
-          <div class="flex items-center space-x-3.5 text-slate-900 font-bold">
-            <i data-lucide="settings" class="w-5 h-5 text-slate-900"></i>
-            <span>Ajustes</span>
+        <!-- 7. Cerrar Sesión -->
+        <div onclick="app.handleLogout()" class="px-5 py-3.5 flex items-center justify-between cursor-pointer hover:bg-rose-50/80 transition text-rose-600">
+          <div class="flex items-center space-x-3.5 font-bold">
+            <i data-lucide="log-out" class="w-5 h-5 text-rose-500"></i>
+            <span>Cerrar Sesión</span>
           </div>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-rose-300"></i>
         </div>
 
       </div>
@@ -1121,7 +1293,7 @@
             <span>Tu saldo actual:</span>
             <span class="font-bold" id="modalCurrentBalance">-- créditos</span>
           </div>
-          <div class="flex justify-between text-slate-900 font-bold">
+            <div class="flex justify-between text-slate-900 font-bold">
             <span>Costo de esta clase:</span>
             <span class="text-indigo-600" id="modalClassCost">-0 créditos</span>
           </div>
@@ -1130,6 +1302,18 @@
             <span>Saldo restante tras reserva:</span>
             <span id="modalRemainingBalance">-- créditos</span>
           </div>
+        </div>
+
+        <!-- MoveClub Official Cancellation Policy Notice -->
+        <div class="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/90 text-xs text-amber-950 space-y-1.5 shadow-sm">
+          <div class="flex items-center space-x-1.5 font-black text-amber-950">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600"></i>
+            <span class="text-[11px] uppercase tracking-wider font-extrabold">Política Oficial de Cancelación MoveClub</span>
+          </div>
+          <p class="text-[11px] text-amber-900 leading-snug">
+            • 🟢 <strong>Cancelación gratuita:</strong> Más de 12 hrs antes (100% devolución de créditos).<br>
+            • ⚠️ <strong>Cancelación tardía (&lt; 12 hrs):</strong> Créditos no reembolsables + cargo de <strong>$7.000 CLP</strong> por liberar el cupo a última hora.
+          </p>
         </div>
 
         <div class="flex space-x-3">
@@ -1221,6 +1405,29 @@
         <button onclick="app.submitReview()" class="w-full py-3 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition">
           Enviar Calificación
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.1 Email Confirmation Preview Modal -->
+  <div id="emailPreviewModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" onclick="app.closeEmailPreviewModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
+        <div class="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-900 text-white">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="mail" class="w-4 h-4 text-teal-400"></i>
+            <span class="font-extrabold text-sm">Vista Previa: Correo de Confirmación</span>
+          </div>
+          <button onclick="app.closeEmailPreviewModal()" class="text-slate-400 hover:text-white">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div id="emailPreviewFrameContainer" class="p-4 bg-slate-100 max-h-[75vh] overflow-y-auto">
+          <!-- iframe injected dynamically -->
+        </div>
       </div>
     </div>
   </div>
@@ -1349,53 +1556,353 @@
           </div>
         </div>
 
-        <!-- Payment Method Selection -->
+        <!-- Plan Summary Card -->
+        <div class="p-4 bg-gradient-to-br from-slate-50 to-sky-50/50 rounded-2xl border border-sky-100/80 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500">Plan Seleccionado:</span>
+            <span id="modalPlanName" class="text-xs font-extrabold text-slate-900">Plan Pro MoveClub</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500">Créditos a Acreditar:</span>
+            <span id="modalCredits" class="text-xs font-extrabold text-sky-700 bg-sky-100/80 px-2 py-0.5 rounded-md">+50 Créditos ⚡</span>
+          </div>
+          <div class="border-t border-slate-200/60 pt-2 flex items-center justify-between">
+            <span class="text-sm font-bold text-slate-800">Total a Pagar:</span>
+            <span id="modalAmount" class="text-xl font-black text-slate-900">$39.900 CLP</span>
+          </div>
+        </div>
+
+        <!-- Mercado Pago Official Gateway Box -->
+        <div class="p-4 rounded-2xl border-2 border-sky-400/80 bg-gradient-to-b from-sky-50/60 to-white space-y-3 relative shadow-sm">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <div class="w-8 h-8 rounded-xl bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-sky-500/20">
+                <i data-lucide="wallet" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <span class="font-extrabold text-xs text-slate-900 block">Mercado Pago Chile</span>
+                <span class="text-[10px] text-sky-700 font-semibold">Pasarela de Pago Oficial</span>
+              </div>
+            </div>
+            <span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center space-x-1">
+              <i data-lucide="check" class="w-3 h-3"></i>
+              <span>Activo</span>
+            </span>
+          </div>
+
+          <div class="pt-1 space-y-1.5 text-[11px] text-slate-600">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
+              <span><strong>Débito y Redcompra</strong> (BancoEstado CuentaRUT, Santander, Banco de Chile, BCI, etc.)</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
+              <span><strong>Tarjetas de Crédito</strong> (Visa, Mastercard en hasta 3 cuotas sin interés)</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
+              <span><strong>Saldo en cuenta Mercado Pago</strong> y prepago (Mach, Tenpo)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button id="payNowBtn" onclick="app.processPayment()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-extrabold text-xs transition shadow-lg shadow-sky-200 flex items-center justify-center space-x-2">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+            <span id="payBtnText">Pagar con Mercado Pago</span>
+          </button>
+          <div class="flex items-center justify-center space-x-1 text-[10px] text-slate-400 mt-2">
+            <i data-lucide="shield-check" class="w-3 h-3 text-emerald-500"></i>
+            <span id="paySecurityText">Cobro oficial certificado por Mercado Pago • Encriptación SSL 256-bit</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 6.2 FINTOC BANK SELECTOR MODAL ==================== -->
+  <div id="fintocModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity" onclick="app.closeFintocModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-6 sm:p-8 space-y-5 animate-fade-in border border-teal-100">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white flex items-center justify-center shadow-md shadow-teal-500/20 font-black text-sm">
+              ⚡
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900">Transferencia Fintoc</h3>
+              <span class="text-[10px] text-teal-600 font-bold uppercase tracking-wider block">Conexión Bancaria Directa 1-Click</span>
+            </div>
+          </div>
+          <button onclick="app.closeFintocModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <!-- Transfer summary -->
+        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-semibold">Plan MoveClub:</span>
+            <span class="font-extrabold text-slate-900" id="fintocPlanName">Plan Pro (50 créditos)</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-semibold">Monto a Transferir:</span>
+            <span class="font-black text-teal-600 text-sm" id="fintocAmount">$39.900 CLP</span>
+          </div>
+        </div>
+
+        <!-- Bank list -->
+        <div class="space-y-2" id="fintocBankList">
+          <label class="block text-xs font-bold text-slate-700">Selecciona tu Banco en Chile:</label>
+          <div class="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto pr-1">
+            
+            <button onclick="app.selectFintocBank('BancoEstado (CuentaRUT)')" class="flex items-center justify-between p-3 rounded-2xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50/40 transition text-left group">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl bg-amber-500 text-white font-black text-xs flex items-center justify-center shadow-sm">BE</div>
+                <div>
+                  <span class="text-xs font-bold text-slate-900 block group-hover:text-amber-800">BancoEstado / CuentaRUT</span>
+                  <span class="text-[10px] text-slate-400">Transferencia instantánea sin comisión</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-amber-500"></i>
+            </button>
+
+            <button onclick="app.selectFintocBank('Banco de Chile / Edwards')" class="flex items-center justify-between p-3 rounded-2xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/40 transition text-left group">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl bg-blue-900 text-white font-black text-xs flex items-center justify-center shadow-sm">BCH</div>
+                <div>
+                  <span class="text-xs font-bold text-slate-900 block group-hover:text-blue-900">Banco de Chile / Edwards</span>
+                  <span class="text-[10px] text-slate-400">Cuenta Corriente / FAN</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-blue-600"></i>
+            </button>
+
+            <button onclick="app.selectFintocBank('Banco Santander')" class="flex items-center justify-between p-3 rounded-2xl border border-slate-200 hover:border-red-400 hover:bg-red-50/40 transition text-left group">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl bg-red-600 text-white font-black text-xs flex items-center justify-center shadow-sm">SAN</div>
+                <div>
+                  <span class="text-xs font-bold text-slate-900 block group-hover:text-red-700">Banco Santander</span>
+                  <span class="text-[10px] text-slate-400">Santander Life / Corriente</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-red-500"></i>
+            </button>
+
+            <button onclick="app.selectFintocBank('BCI / Mach')" class="flex items-center justify-between p-3 rounded-2xl border border-slate-200 hover:border-sky-400 hover:bg-sky-50/40 transition text-left group">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl bg-sky-600 text-white font-black text-xs flex items-center justify-center shadow-sm">BCI</div>
+                <div>
+                  <span class="text-xs font-bold text-slate-900 block group-hover:text-sky-800">BCI / Mach</span>
+                  <span class="text-[10px] text-slate-400">Cuenta Corriente y Saldo Mach</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-sky-600"></i>
+            </button>
+
+            <button onclick="app.selectFintocBank('Scotiabank Chile')" class="flex items-center justify-between p-3 rounded-2xl border border-slate-200 hover:border-rose-400 hover:bg-rose-50/40 transition text-left group">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl bg-rose-600 text-white font-black text-xs flex items-center justify-center shadow-sm">SCO</div>
+                <div>
+                  <span class="text-xs font-bold text-slate-900 block group-hover:text-rose-700">Scotiabank Chile</span>
+                  <span class="text-[10px] text-slate-400">Cuenta Corriente / Digital</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-rose-500"></i>
+            </button>
+
+            <button onclick="app.selectFintocBank('Banco Itaú')" class="flex items-center justify-between p-3 rounded-2xl border border-slate-200 hover:border-orange-400 hover:bg-orange-50/40 transition text-left group">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-xl bg-orange-500 text-white font-black text-xs flex items-center justify-center shadow-sm">ITAU</div>
+                <div>
+                  <span class="text-xs font-bold text-slate-900 block group-hover:text-orange-700">Banco Itaú</span>
+                  <span class="text-[10px] text-slate-400">Itaú Personal Bank / Corriente</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
+            </button>
+
+          </div>
+        </div>
+
+        <div id="fintocProcessingState" class="hidden p-5 rounded-2xl bg-teal-50 border border-teal-200 text-center space-y-2.5">
+          <div class="w-9 h-9 rounded-full border-3 border-teal-600 border-t-transparent animate-spin mx-auto"></div>
+          <p class="text-xs font-extrabold text-teal-950" id="fintocProcessingText">Conectando con el Banco...</p>
+          <span class="text-[10px] text-teal-700 block">Autorizando débito bancario directo para MoveClub SpA</span>
+        </div>
+
+        <div class="flex items-center justify-center space-x-1.5 text-[10px] text-slate-400">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-teal-600"></i>
+          <span>Supervisado por CMF Chile • Encriptación Bancaria SHA-256</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 6.3 MERCADO PAGO CHECKOUT MODAL ==================== -->
+  <div id="mercadoPagoModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity" onclick="app.closeMercadoPagoModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-6 sm:p-8 space-y-5 animate-fade-in border border-sky-100">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-sky-500 text-white flex items-center justify-center shadow-md shadow-sky-500/20 font-black text-base">
+              💙
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900">Checkout Mercado Pago</h3>
+              <span class="text-[10px] text-sky-600 font-bold uppercase tracking-wider block">Paga con Saldo o Tarjetas en Cuotas</span>
+            </div>
+          </div>
+          <button onclick="app.closeMercadoPagoModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5 text-xs">
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-semibold">Producto:</span>
+            <span class="font-extrabold text-slate-900" id="mpPlanName">Plan Pro (50 créditos)</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-semibold">Total a Pagar:</span>
+            <span class="font-black text-sky-600 text-sm" id="mpAmount">$39.900 CLP</span>
+          </div>
+        </div>
+
+        <!-- MP Payment Options -->
         <div class="space-y-2.5">
-          <label class="block text-xs font-bold text-slate-700">Elige tu método de pago:</label>
-          
-          <label class="flex items-center justify-between p-3.5 rounded-2xl border border-indigo-200 bg-indigo-50/40 cursor-pointer hover:bg-indigo-50 transition">
+          <label class="block text-xs font-bold text-slate-700">Elige tu forma de pago en Mercado Pago:</label>
+
+          <label class="flex items-center justify-between p-3.5 rounded-2xl border-2 border-sky-400 bg-sky-50/60 cursor-pointer transition">
             <div class="flex items-center space-x-3">
-              <input type="radio" name="payment_method" value="Transbank Webpay Plus" checked class="accent-indigo-600">
+              <input type="radio" name="mp_sub_method" value="Saldo en Cuenta Mercado Pago" checked class="accent-sky-600">
               <div>
-                <span class="font-bold text-xs text-slate-900 block">Webpay Plus / Débito & Crédito</span>
-                <span class="text-[10px] text-slate-500">Tarjetas chilenas (Visa, Mastercard, Redcompra)</span>
+                <span class="font-bold text-xs text-slate-900 block">Saldo en Cuenta Mercado Pago</span>
+                <span class="text-[10px] text-sky-700 font-semibold">Disponible: $120.000 CLP (Pago en 1-Click)</span>
               </div>
             </div>
-            <span class="text-xs font-bold text-indigo-600 bg-white px-2 py-0.5 rounded-lg border border-indigo-100">Transbank</span>
+            <span class="text-[10px] font-extrabold text-white bg-sky-500 px-2 py-0.5 rounded-full">Recomendado</span>
           </label>
 
-          <label class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 hover:border-teal-400 hover:bg-teal-50/30 cursor-pointer transition">
+          <label class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 hover:border-sky-300 hover:bg-sky-50/20 cursor-pointer transition">
             <div class="flex items-center space-x-3">
-              <input type="radio" name="payment_method" value="Fintoc Transferencia Bancaria" class="accent-teal-600">
+              <input type="radio" name="mp_sub_method" value="Tarjeta en 3 Cuotas sin interés" class="accent-sky-600">
               <div>
-                <span class="font-bold text-xs text-slate-900 block">Fintoc (Transferencia Directa)</span>
-                <span class="text-[10px] text-slate-500">Banco de Chile, Santander, BCI, BancoEstado</span>
+                <span class="font-bold text-xs text-slate-900 block">Tarjeta en 3 Cuotas sin interés</span>
+                <span class="text-[10px] text-slate-500" id="mpInstallmentText">3 x $13.300 CLP sin interés</span>
               </div>
             </div>
-            <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-lg border border-teal-200">Fintoc</span>
-          </label>
-
-          <label class="flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 hover:border-sky-400 hover:bg-sky-50/30 cursor-pointer transition">
-            <div class="flex items-center space-x-3">
-              <input type="radio" name="payment_method" value="Mercado Pago" class="accent-sky-600">
-              <div>
-                <span class="font-bold text-xs text-slate-900 block">Mercado Pago</span>
-                <span class="text-[10px] text-slate-500">Saldo Mercado Pago o Tarjetas en cuotas</span>
-              </div>
-            </div>
-            <span class="text-xs font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-lg border border-sky-200">Mercado Pago</span>
+            <span class="text-xs font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-lg border border-sky-200">3x Cuotas</span>
           </label>
         </div>
 
         <div class="pt-2">
-          <button id="payNowBtn" onclick="app.processPayment()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-extrabold text-xs hover:from-indigo-700 hover:to-indigo-800 transition shadow-lg shadow-indigo-200 flex items-center justify-center space-x-2">
+          <button id="confirmMpBtn" onclick="app.confirmMercadoPagoPayment()" class="w-full py-3.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-extrabold text-xs transition shadow-lg shadow-sky-200 flex items-center justify-center space-x-2">
             <i data-lucide="lock" class="w-3.5 h-3.5"></i>
-            <span>Pagar Ahora de Forma Segura</span>
+            <span>Confirmar Pago de Forma Segura</span>
           </button>
           <div class="flex items-center justify-center space-x-1 text-[10px] text-slate-400 mt-2">
             <i data-lucide="shield-check" class="w-3 h-3 text-emerald-500"></i>
-            <span>Transacción encriptada con certificado SSL de 256 bits</span>
+            <span>Protección al Comprador Mercado Pago</span>
           </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 6.1 WEBPAY OFFICIAL VOUCHER MODAL ==================== -->
+  <div id="webpayVoucherModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity" onclick="app.closeWebpayVoucher()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-6 sm:p-8 space-y-5 animate-fade-in border border-emerald-100">
+        
+        <!-- Header -->
+        <div class="text-center space-y-2">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
+            <i data-lucide="check-circle-2" class="w-10 h-10"></i>
+          </div>
+          <span id="voucherBadge" class="inline-block px-3 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold tracking-wider uppercase border border-emerald-200">
+            Transacción Aprobada • Transbank Webpay Plus
+          </span>
+          <h3 class="text-xl font-black text-slate-900" id="voucherMainTitle">¡Pago Autorizado con Éxito!</h3>
+          <p class="text-xs text-slate-500">Se han acreditado los créditos a tu cuenta de MoveClub.</p>
+        </div>
+
+        <!-- Official Voucher Receipt Card -->
+        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-2.5 text-xs font-mono">
+          <div class="flex justify-between items-center pb-2 border-b border-dashed border-slate-300 font-sans">
+            <span class="font-bold text-slate-700">Comercio:</span>
+            <span class="font-extrabold text-slate-900">MoveClub SpA</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-sans">Orden de Compra:</span>
+            <span class="font-bold text-slate-900" id="voucherBuyOrder">MC-123456</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-sans">Código Autorización:</span>
+            <span class="font-bold text-emerald-600" id="voucherAuthCode">1213</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-sans">Tipo de Pago:</span>
+            <span class="font-bold text-slate-900" id="voucherCardType">Webpay Plus (Débito)</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-sans">Tarjeta:</span>
+            <span class="font-bold text-slate-900" id="voucherCardLast4">**** 6623</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-sans">Plan / Recarga:</span>
+            <span class="font-bold text-slate-900" id="voucherPlanName">Plan Pro MoveClub</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-slate-500 font-sans">Fecha y Hora:</span>
+            <span class="font-bold text-slate-700" id="voucherDate">2026-08-30 20:30</span>
+          </div>
+
+          <div class="pt-2 border-t border-dashed border-slate-300 flex justify-between items-center text-sm font-sans">
+            <span class="font-bold text-slate-800">Monto Total Pagado:</span>
+            <span class="font-black text-slate-900" id="voucherAmount">$39.900 CLP</span>
+          </div>
+
+          <div class="flex justify-between items-center bg-teal-50 p-2.5 rounded-xl border border-teal-100 font-sans">
+            <span class="text-xs font-bold text-teal-800">Créditos Añadidos:</span>
+            <span class="text-sm font-black text-teal-600" id="voucherCredits">+50 Créditos ⚡</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-2 pt-2">
+          <button onclick="app.closeWebpayVoucher()" class="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs transition shadow-lg flex items-center justify-center space-x-2">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
+            <span>¡Ir a Explorar y Reservar Clases!</span>
+          </button>
+          
+          <button onclick="window.print()" class="w-full py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-600 font-bold text-xs border border-slate-200 transition flex items-center justify-center space-x-2">
+            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+            <span>Guardar / Imprimir Voucher</span>
+          </button>
         </div>
 
       </div>
@@ -1666,9 +2173,226 @@
             </button>
           </div>
 
+  <!-- ==================== MODAL DE AUTENTICACIÓN (LOGIN / REGISTRO) ==================== -->
+  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
+    <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-fadeIn">
+      
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-6 text-white text-center relative">
+        <button onclick="app.closeAuthModal()" class="absolute top-4 right-4 text-white/70 hover:text-white p-1 rounded-full bg-white/10 hover:bg-white/20 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <div class="w-12 h-12 rounded-2xl bg-black border border-slate-700 shadow-lg mx-auto flex items-center justify-center mb-3 p-1">
+          <img src="/images/app_icon.png" alt="MoveClub" class="w-full h-full object-cover rounded-xl">
+        </div>
+        <h3 class="text-xl font-black tracking-tight text-white">MOVE<span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-400 bg-clip-text text-transparent">CLUB</span></h3>
+        <p class="text-xs text-slate-300 mt-1">Tu pase único para entrenar en los mejores estudios</p>
+
+        <!-- Auth Tabs Switcher -->
+        <div class="flex items-center bg-black/40 p-1 rounded-xl mt-4 border border-white/10">
+          <button id="authTabLogin" onclick="app.switchAuthTab('login')" class="flex-1 py-2 text-xs font-black rounded-lg transition bg-white text-slate-900 shadow-md">
+            Iniciar Sesión
+          </button>
+          <button id="authTabRegister" onclick="app.switchAuthTab('register')" class="flex-1 py-2 text-xs font-extrabold text-slate-300 hover:text-white rounded-lg transition">
+            Crear Cuenta <span class="text-teal-300 text-[10px] ml-0.5 font-black">(+10 Gratis)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6">
+
+        <!-- TAB 1: INICIAR SESIÓN -->
+        <div id="authFormLogin" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Correo Electrónico</label>
+            <div class="relative">
+              <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+              <input type="email" id="loginEmail" placeholder="tu@correo.cl" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Contraseña</label>
+            <div class="relative">
+              <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+              <input type="password" id="loginPassword" placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
+            </div>
+          </div>
+
+          <button onclick="app.handleLoginSubmit()" id="loginSubmitBtn" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-extrabold text-sm shadow-lg shadow-indigo-500/25 transition flex items-center justify-center space-x-2">
+            <span>Ingresar a MoveClub</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Quick Login shortcuts -->
+          <div class="pt-2">
+            <p class="text-[11px] text-center text-slate-400 font-semibold mb-2">Accesos rápidos:</p>
+            <button onclick="app.quickLoginAdmin()" class="w-full py-2 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 font-bold text-xs transition flex items-center justify-center space-x-2">
+              <span>👑 Ingresar como Administradora (María Ignacia)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 2: CREAR CUENTA NUEVA -->
+        <div id="authFormRegister" class="hidden space-y-3.5">
+          <!-- Welcome Perk Badge -->
+          <div class="p-2.5 rounded-xl bg-gradient-to-r from-teal-50 to-indigo-50 border border-teal-200 flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-teal-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+              <i data-lucide="gift" class="w-4 h-4"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-xs font-black text-slate-900">🎁 ¡10 Créditos de Bienvenida Gratis!</p>
+              <p class="text-[10px] text-slate-600">Equivalente a 2 clases de prueba en cualquier estudio.</p>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nombre Completo</label>
+            <input type="text" id="regName" placeholder="Ej: Valentina Gómez" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Correo Electrónico</label>
+            <input type="email" id="regEmail" placeholder="valentina@correo.cl" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
+          </div>
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Ciudad</label>
+              <select id="regCity" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-slate-50">
+                <option value="Osorno" selected>📍 Osorno</option>
+                <option value="Temuco">📍 Temuco</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Teléfono</label>
+              <input type="tel" id="regPhone" placeholder="+56 9 8765 4321" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-500">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña</label>
+            <input type="password" id="regPassword" placeholder="Crea una contraseña segura" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium">
+          </div>
+
+          <button onclick="app.handleRegisterSubmit()" id="regSubmitBtn" class="w-full py-3 rounded-xl bg-gradient-to-r from-teal-500 via-teal-600 to-indigo-600 hover:from-teal-600 hover:to-indigo-700 text-white font-extrabold text-sm shadow-lg shadow-teal-500/25 transition flex items-center justify-center space-x-2">
+            <span>Crear Cuenta & Recibir 10 Créditos</span>
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- 1-Click Google Login -->
+        <div class="mt-4 pt-4 border-t border-slate-100">
+          <button onclick="app.handleGoogleLogin()" class="w-full py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition flex items-center justify-center space-x-2.5 shadow-sm">
+            <svg class="w-4 h-4" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span>Continuar con Google (1-Click)</span>
+          </button>
         </div>
 
       </div>
+    </div>
+  </div>
+
+  <!-- ==================== PANEL DE CONTROL ADMINISTRADOR ==================== -->
+  <div id="adminModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md">
+    <div class="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[90vh] animate-fadeIn">
+      
+      <!-- Admin Header -->
+      <div class="bg-slate-900 p-5 text-white flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center">
+            <i data-lucide="crown" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-white">Panel de Administración MoveClub</h3>
+            <p class="text-xs text-slate-400">Métricas en tiempo real, gestión de alumnos e ingresos de Mercado Pago</p>
+          </div>
+        </div>
+        <button onclick="app.closeAdminModal()" class="text-slate-400 hover:text-white p-1 rounded-full bg-slate-800 hover:bg-slate-700 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Admin Body Content -->
+      <div class="p-6 overflow-y-auto space-y-6">
+        
+        <!-- Live Metrics Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+          <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100">
+            <span class="text-[11px] font-bold text-indigo-700 uppercase tracking-wider">Total Alumnos</span>
+            <h4 class="text-2xl font-black text-indigo-950 mt-1" id="adminStatUsers">--</h4>
+            <p class="text-[10px] text-indigo-600 mt-0.5">Alumnos registrados</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-teal-50/70 border border-teal-100">
+            <span class="text-[11px] font-bold text-teal-700 uppercase tracking-wider">Créditos Activos</span>
+            <h4 class="text-2xl font-black text-teal-950 mt-1" id="adminStatCredits">--</h4>
+            <p class="text-[10px] text-teal-600 mt-0.5">En circulación</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-100">
+            <span class="text-[11px] font-bold text-blue-700 uppercase tracking-wider">Reservas Activas</span>
+            <h4 class="text-2xl font-black text-blue-950 mt-1" id="adminStatBookings">--</h4>
+            <p class="text-[10px] text-blue-600 mt-0.5">Clases confirmadas</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100">
+            <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Mercado Pago</span>
+            <h4 class="text-2xl font-black text-emerald-950 mt-1" id="adminStatGateway">100% Live</h4>
+            <p class="text-[10px] text-emerald-600 mt-0.5">Pasarela oficial conectada</p>
+          </div>
+        </div>
+
+        <!-- Registered Students Table -->
+        <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+            <h4 class="font-black text-xs text-slate-800 uppercase tracking-wider flex items-center space-x-2">
+              <i data-lucide="users" class="w-4 h-4 text-indigo-600"></i>
+              <span>Alumnos Registrados en MoveClub</span>
+            </h4>
+            <span class="text-[11px] font-bold text-slate-500" id="adminUsersCount">0 alumnos</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3">Alumno</th>
+                  <th class="p-3">Rol</th>
+                  <th class="p-3">Ciudad</th>
+                  <th class="p-3">Saldo Créditos</th>
+                  <th class="p-3">Plan Activo</th>
+                  <th class="p-3">Fecha Registro</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTableBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
+                <tr><td colspan="6" class="p-4 text-center text-slate-400">Cargando lista de alumnos...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Recent Activity Logs -->
+        <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <div class="bg-slate-50 px-4 py-3 border-b border-slate-200">
+            <h4 class="font-black text-xs text-slate-800 uppercase tracking-wider flex items-center space-x-2">
+              <i data-lucide="activity" class="w-4 h-4 text-teal-600"></i>
+              <span>Últimos Movimientos & Transacciones</span>
+            </h4>
+          </div>
+          <div id="adminTransactionsList" class="p-3 space-y-2 max-h-48 overflow-y-auto divide-y divide-slate-50 text-xs">
+            <p class="text-slate-400 text-center py-2">Cargando transacciones...</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Admin Footer -->
+      <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-between items-center text-xs">
+        <span class="text-slate-500">Sesión de Administradora: <strong class="text-slate-800">María Ignacia Sánchez</strong></span>
+        <button onclick="app.closeAdminModal()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs transition">
+          Cerrar Panel
+        </button>
+      </div>
+
     </div>
   </div>
 
