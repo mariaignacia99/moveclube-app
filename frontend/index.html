@@ -62,18 +62,18 @@
         <!-- Brand & Location -->
         <div class="flex items-center space-x-2 sm:space-x-4 min-w-0">
           <div class="flex items-center space-x-1.5 sm:space-x-2.5 cursor-pointer group flex-shrink-0" onclick="app.switchView('explore')">
-            <div id="navbarLogoIcon" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-md shadow-cyan-500/20 border border-slate-200 bg-white flex items-center justify-center p-0.5 shadow-sm group-hover:scale-105 transition">
+            <div id="navbarLogoIcon" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-md shadow-purple-500/30 border border-purple-500/40 bg-black flex items-center justify-center p-0.5 group-hover:scale-105 transition">
               <img src="/images/app_icon.png" alt="MoveClub Logo" class="w-full h-full object-cover rounded-lg">
             </div>
             <div class="flex items-center">
-              <span id="navbarBrandText" class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 leading-none">MOVE<span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">CLUB</span></span>
+              <span id="navbarBrandText" class="text-xl sm:text-2xl font-black tracking-tight leading-none flex items-center"><span class="text-[#00F2FE] drop-shadow-[0_0_10px_rgba(0,242,254,0.7)]">MOVE</span><span class="text-[#C084FC] drop-shadow-[0_0_10px_rgba(192,132,252,0.7)]">CLUB</span></span>
             </div>
           </div>
 
           <!-- City Selector Dropdown -->
-          <div class="flex items-center space-x-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-slate-100/90 text-[11px] sm:text-xs font-bold text-slate-700 border border-slate-200 shadow-sm flex-shrink-0">
-            <i data-lucide="map-pin" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-600"></i>
-            <select id="citySelectNavbar" onchange="app.handleCityChange(this.value)" class="bg-transparent font-extrabold text-indigo-950 focus:outline-none cursor-pointer text-[11px] sm:text-xs">
+          <div class="flex items-center space-x-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-[#0D0F1A] text-[11px] sm:text-xs font-bold text-purple-200 border border-purple-500/35 shadow-md flex-shrink-0">
+            <i data-lucide="map-pin" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-cyan-400"></i>
+            <select id="citySelectNavbar" onchange="app.handleCityChange(this.value)" class="bg-transparent font-extrabold text-purple-300 focus:outline-none cursor-pointer text-[11px] sm:text-xs">
               <option value="all" selected>🌎 Todas las ciudades</option>
               <option value="Santiago">🇨🇱 Santiago</option>
               <option value="Miami">🇺🇸 Miami</option>
@@ -252,11 +252,11 @@
       <!-- Top Title & Search -->
       <div class="space-y-3 pt-1">
         <div class="flex items-center justify-between">
-          <h1 class="text-3xl font-black text-slate-900 tracking-tight">Buscar</h1>
+          <h1 class="text-3xl font-black tracking-tight text-purple-300 drop-shadow-[0_0_12px_rgba(192,132,252,0.4)]">Buscar</h1>
           <!-- City Switcher Pill -->
-          <div class="flex items-center space-x-1.5 bg-slate-100/90 rounded-full px-3 py-1.5 text-xs font-bold text-slate-700 border border-slate-200/80 shadow-sm">
-            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-indigo-600"></i>
-            <select id="citySelect" onchange="app.handleCityChange(this.value)" class="bg-transparent text-xs font-bold text-indigo-600 focus:outline-none cursor-pointer">
+          <div class="flex items-center space-x-1.5 bg-[#0D0F1A] rounded-full px-3 py-1.5 text-xs font-bold text-purple-200 border border-purple-500/35 shadow-md">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-cyan-400"></i>
+            <select id="citySelect" onchange="app.handleCityChange(this.value)" class="bg-transparent text-xs font-bold text-purple-300 focus:outline-none cursor-pointer">
               <option value="all" selected>🌎 Red Global</option>
               <option value="Santiago">🇨🇱 Santiago</option>
               <option value="Miami">🇺🇸 Miami</option>
@@ -3166,6 +3166,6 @@
   </div>
 
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_1925"></script>
+  <script src="js/app.js?v=20260831_1930"></script>
 </body>
 </html>
