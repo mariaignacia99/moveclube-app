@@ -915,15 +915,21 @@ const app = {
     this.state.filters.search = q;
 
     const discoveryEl = document.getElementById('homeDiscoverySections');
+    const catEl = document.getElementById('categoryFilterSection');
+    const dateEl = document.getElementById('dateCarouselSection');
     const bannerEl = document.getElementById('searchResultsBanner');
     const bannerText = document.getElementById('searchResultsText');
 
     if (q.length > 0) {
       if (discoveryEl) discoveryEl.classList.add('hidden');
+      if (catEl) catEl.classList.add('hidden');
+      if (dateEl) dateEl.classList.add('hidden');
       if (bannerEl) bannerEl.classList.remove('hidden');
       if (bannerText) bannerText.innerText = `Resultados para "${q}"`;
     } else {
       if (discoveryEl) discoveryEl.classList.remove('hidden');
+      if (catEl) catEl.classList.remove('hidden');
+      if (dateEl) dateEl.classList.remove('hidden');
       if (bannerEl) bannerEl.classList.add('hidden');
     }
 
@@ -950,8 +956,12 @@ const app = {
     if (searchInput) searchInput.value = '';
     
     const discoveryEl = document.getElementById('homeDiscoverySections');
+    const catEl = document.getElementById('categoryFilterSection');
+    const dateEl = document.getElementById('dateCarouselSection');
     const bannerEl = document.getElementById('searchResultsBanner');
     if (discoveryEl) discoveryEl.classList.remove('hidden');
+    if (catEl) catEl.classList.remove('hidden');
+    if (dateEl) dateEl.classList.remove('hidden');
     if (bannerEl) bannerEl.classList.add('hidden');
 
     const timeF = document.getElementById('timeFilter');
