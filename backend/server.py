@@ -1751,8 +1751,8 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
 
             # 5. POST /api/user/register_trial (Registro de Cliente + Enlace de Tarjeta para Prueba Gratuita 7 Días)
             elif path == "/api/user/register_trial":
-                name = body.get("name", "María Ignacia Sánchez")
-                email = body.get("email", "sanchezhenriquezmariaignacia99@gmail.com")
+                name = body.get("name", "Usuario MoveClub")
+                email = body.get("email", "demo@moveclub.cl")
                 phone = body.get("phone", "+56 9 8765 4321")
                 city = body.get("city", "Osorno")
                 card_number = body.get("card_number", "4532 8912 3456 7890")
@@ -1834,8 +1834,8 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                 cursor = conn.cursor()
                 cursor.execute('''
                     UPDATE users 
-                    SET name = 'María Ignacia Sánchez',
-                        email = 'sanchezhenriquezmariaignacia99@gmail.com',
+                    SET name = 'Usuario MoveClub',
+                        email = 'demo@moveclub.cl',
                         credits_balance = 10, 
                         plan_tier = 'Prueba Gratuita (10 créditos / 7 días)'
                     WHERE id = 1

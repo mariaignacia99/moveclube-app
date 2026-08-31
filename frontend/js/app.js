@@ -269,7 +269,7 @@ const app = {
     if (userDropdown) userDropdown.classList.add('hidden');
 
     // Hide all view sections
-    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings'];
+    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings', 'profile-edit'];
     sections.forEach(s => {
       const el = document.getElementById(`view-${s}`);
       const navEl = document.getElementById(`nav-${s}`);
@@ -284,7 +284,7 @@ const app = {
 
     // Show target section
     const targetSection = document.getElementById(`view-${viewName}`);
-    const isProfileSubView = ['account', 'settings'].includes(viewName);
+    const isProfileSubView = ['account', 'settings', 'profile-edit'].includes(viewName);
     const targetNav = document.getElementById(`nav-${isProfileSubView ? 'profile' : viewName}`);
     const targetMobNav = document.getElementById(`mobile-nav-${isProfileSubView ? 'profile' : viewName}`);
     if (targetSection) targetSection.classList.remove('hidden');
@@ -310,6 +310,8 @@ const app = {
       this.renderAccountView();
     } else if (viewName === 'settings') {
       this.renderSettingsView();
+    } else if (viewName === 'profile-edit') {
+      this.renderProfileEditView();
     } else if (viewName === 'explore' && this.state.viewMode === 'map') {
       setTimeout(() => this.initOrUpdateMap(), 100);
     }
@@ -320,20 +322,62 @@ const app = {
 
   renderSettingsView() {
     const u = this.state.user;
-    if (!u) {
-      this.openAuthModal('login');
-      return;
-    }
     const nameEl = document.getElementById('settingsUserName');
-    if (nameEl) nameEl.innerText = u.name;
+    if (nameEl) nameEl.innerText = u && u.name ? u.name : 'Nombre y Apellido';
 
     const emailEl = document.getElementById('settingsUserEmail');
-    if (emailEl) emailEl.innerText = u.email;
+    if (emailEl) emailEl.innerText = u && u.email ? u.email : 'correo@ejemplo.com';
 
     const handleEl = document.getElementById('settingsUserHandle');
-    if (handleEl) handleEl.innerText = u.email ? u.email.split('@')[0] : 'usuario';
+    if (handleEl) handleEl.innerText = u && u.email ? u.email.split('@')[0] : '@usuario';
 
     lucide.createIcons();
+  },
+
+  renderProfileEditView() {
+    const u = this.state.user || {};
+    const nameParts = (u.name || '').split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+    const username = u.email ? u.email.split('@')[0] : '';
+
+    const fnEl = document.getElementById('editProfileFirstName');
+    if (fnEl) fnEl.value = firstName;
+
+    const lnEl = document.getElementById('editProfileLastName');
+    if (lnEl) lnEl.value = lastName;
+
+    const unEl = document.getElementById('editProfileUsername');
+    if (unEl) unEl.value = username;
+
+    const emEl = document.getElementById('editProfileEmail');
+    if (emEl) emEl.value = u.email || '';
+
+    const secEmEl = document.getElementById('editProfileSecondaryEmail');
+    if (secEmEl) secEmEl.value = u.secondary_email || '';
+
+    const phEl = document.getElementById('editProfilePhone');
+    if (phEl) phEl.value = u.phone ? u.phone.replace('+56', '').trim() : '';
+
+    lucide.createIcons();
+  },
+
+  async saveProfileEdit() {
+    const firstName = (document.getElementById('editProfileFirstName')?.value || '').trim();
+    const lastName = (document.getElementById('editProfileLastName')?.value || '').trim();
+    const email = (document.getElementById('editProfileEmail')?.value || '').trim();
+    const phone = (document.getElementById('editProfilePhone')?.value || '').trim();
+    const fullName = `${firstName} ${lastName}`.trim() || 'Usuario MoveClub';
+
+    if (this.state.user) {
+      this.state.user.name = fullName;
+      if (email) this.state.user.email = email;
+      if (phone) this.state.user.phone = `+56 ${phone}`;
+    }
+
+    this.showToast('✅ Información actualizada con éxito', 'check');
+    this.renderUser();
+    this.switchView('settings');
   },
 
   renderAccountView() {
@@ -2774,7 +2818,7 @@ const app = {
   },
 
   async quickLoginAdmin() {
-    document.getElementById('loginEmail').value = "sanchezhenriquezmariaignacia99@gmail.com";
+    document.getElementById('loginEmail').value = "admin@moveclub.cl";
     document.getElementById('loginPassword').value = "moveclub2026";
     await this.handleLoginSubmit();
   },
@@ -2785,8 +2829,8 @@ const app = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: "María Ignacia Sánchez",
-          email: "sanchezhenriquezmariaignacia99@gmail.com",
+          name: "Usuario Google",
+          email: "usuario.google@moveclub.cl",
           city: "Osorno"
         })
       });

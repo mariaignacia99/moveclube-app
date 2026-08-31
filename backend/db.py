@@ -231,7 +231,8 @@ def init_db(force_reseed=False):
     # Ensure admin user has role and default password
     try:
         admin_hash = hash_password("moveclub2026")
-        cursor.execute("UPDATE users SET role = 'admin', password_hash = ? WHERE email = 'sanchezhenriquezmariaignacia99@gmail.com' AND (password_hash IS NULL OR password_hash = '')", (admin_hash,))
+        cursor.execute("UPDATE users SET role = 'admin', password_hash = ? WHERE email = 'admin@moveclub.cl' AND (password_hash IS NULL OR password_hash = '')", (admin_hash,))
+        cursor.execute("UPDATE users SET name = 'Usuario MoveClub', email = 'socio@moveclub.cl' WHERE email = 'sanchezhenriquezmariaignacia99@gmail.com'")
         cursor.execute("UPDATE users SET role = 'admin' WHERE id = 1")
         conn.commit()
     except Exception:
@@ -248,13 +249,13 @@ def seed_data(conn):
     cursor = conn.cursor()
     print("Sembrando red integral de MoveClub: Osorno, Temuco, Santiago y Puerto Varas...")
 
-    # 1. Default Admin User (María Ignacia)
+    # 1. Default Admin User
     cursor.execute('''
         INSERT INTO users (name, email, password_hash, role, credits_balance, plan_tier, avatar_url, city)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
-        "María Ignacia Sánchez",
-        "sanchezhenriquezmariaignacia99@gmail.com",
+        "Usuario MoveClub",
+        "demo@moveclub.cl",
         hash_password("moveclub2026"),
         "admin",
         10,
