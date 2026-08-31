@@ -917,6 +917,7 @@ const app = {
     const discoveryEl = document.getElementById('homeDiscoverySections');
     const catEl = document.getElementById('categoryFilterSection');
     const dateEl = document.getElementById('dateCarouselSection');
+    const filterControlsEl = document.getElementById('filterControlsSection');
     const bannerEl = document.getElementById('searchResultsBanner');
     const bannerText = document.getElementById('searchResultsText');
 
@@ -924,12 +925,14 @@ const app = {
       if (discoveryEl) discoveryEl.classList.add('hidden');
       if (catEl) catEl.classList.add('hidden');
       if (dateEl) dateEl.classList.add('hidden');
+      if (filterControlsEl) filterControlsEl.classList.add('hidden');
       if (bannerEl) bannerEl.classList.remove('hidden');
       if (bannerText) bannerText.innerText = `Resultados para "${q}"`;
     } else {
       if (discoveryEl) discoveryEl.classList.remove('hidden');
       if (catEl) catEl.classList.remove('hidden');
       if (dateEl) dateEl.classList.remove('hidden');
+      if (filterControlsEl) filterControlsEl.classList.remove('hidden');
       if (bannerEl) bannerEl.classList.add('hidden');
     }
 
@@ -939,7 +942,7 @@ const app = {
       if (q.length > 0 && typeof lucide !== 'undefined') {
         lucide.createIcons();
       }
-    }, 150);
+    }, 100);
   },
 
   resetFilters() {
@@ -958,10 +961,12 @@ const app = {
     const discoveryEl = document.getElementById('homeDiscoverySections');
     const catEl = document.getElementById('categoryFilterSection');
     const dateEl = document.getElementById('dateCarouselSection');
+    const filterControlsEl = document.getElementById('filterControlsSection');
     const bannerEl = document.getElementById('searchResultsBanner');
     if (discoveryEl) discoveryEl.classList.remove('hidden');
     if (catEl) catEl.classList.remove('hidden');
     if (dateEl) dateEl.classList.remove('hidden');
+    if (filterControlsEl) filterControlsEl.classList.remove('hidden');
     if (bannerEl) bannerEl.classList.add('hidden');
 
     const timeF = document.getElementById('timeFilter');

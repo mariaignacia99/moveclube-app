@@ -275,7 +275,7 @@
         <!-- Search Bar -->
         <div class="relative">
           <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          <input type="text" id="searchInput" oninput="app.handleSearch(this.value)" placeholder="Yoga, pilates, pádel, crossfit, masajes..." class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white border border-slate-200/90 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm shadow-sm transition">
+          <input type="text" id="searchInput" oninput="app.handleSearch(this.value)" onkeydown="if(event.key==='Enter') this.blur()" placeholder="Yoga, pilates, pádel, crossfit, masajes..." class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white border border-slate-200/90 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm shadow-sm transition">
         </div>
 
         <!-- Dynamic Search Results Indicator Banner -->
@@ -544,7 +544,7 @@
       </div>
 
       <!-- Classes & Studios Grid Container -->
-      <div id="classesGridContainer">
+      <div id="classesGridContainer" class="pb-36">
         <div id="classesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Class cards rendered dynamically -->
         </div>
@@ -3126,6 +3126,6 @@
   </div>
 
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_1858"></script>
+  <script src="js/app.js?v=20260831_1900"></script>
 </body>
 </html>
