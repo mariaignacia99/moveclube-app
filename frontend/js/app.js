@@ -1109,16 +1109,16 @@ const app = {
       const topRated = [...this.state.studios].sort((a, b) => (b.rating || 0) - (a.rating || 0));
       topRatedContainer.innerHTML = topRated.map((s, idx) => `
         <div onclick="app.filterByStudio(${s.id})" class="flex flex-col shrink-0 w-44 group cursor-pointer text-left">
-          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition relative bg-slate-100">
+          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-md group-hover:shadow-cyan-500/10 transition relative bg-[#0E1422] border border-slate-800/80">
             <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-            ${s.is_favorite ? '<div class="absolute top-2 right-2 w-6 h-6 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-rose-500 shadow-sm"><i data-lucide="heart" class="w-3.5 h-3.5 fill-rose-500"></i></div>' : ''}
+            ${s.is_favorite ? '<div class="absolute top-2 right-2 w-6 h-6 bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center text-rose-400 shadow-sm"><i data-lucide="heart" class="w-3.5 h-3.5 fill-rose-500"></i></div>' : ''}
           </div>
-          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-blue-600 transition">${s.name}</span>
+          <span class="text-xs font-black text-white mt-2 truncate group-hover:text-cyan-400 transition">${s.name}</span>
           <span class="text-[11px] text-slate-400 font-medium">${(0.4 + idx * 0.3).toFixed(1)} km</span>
-          <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-800">
-            <span>⭐ ${s.rating || 4.9}</span>
-            <span class="text-slate-400 font-normal">(${s.review_count || 100}+)</span>
-            <span class="text-blue-600 font-bold ml-1">Genial</span>
+          <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-300">
+            <span class="text-amber-400">⭐ ${s.rating || 4.9}</span>
+            <span class="text-slate-500 font-normal">(${s.review_count || 100}+)</span>
+            <span class="text-cyan-400 font-bold ml-1">Genial</span>
           </div>
         </div>
       `).join('');
@@ -1129,16 +1129,16 @@ const app = {
       const fitness = this.state.studios.filter(s => s.category !== 'Spa & Bienestar');
       fitnessContainer.innerHTML = (fitness.length > 0 ? fitness : this.state.studios).map((s, idx) => `
         <div onclick="app.filterByStudio(${s.id})" class="flex flex-col shrink-0 w-44 group cursor-pointer text-left">
-          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition relative bg-slate-100">
+          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-md group-hover:shadow-cyan-500/10 transition relative bg-[#0E1422] border border-slate-800/80">
             <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
           </div>
-          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-blue-600 transition">${s.name}</span>
+          <span class="text-xs font-black text-white mt-2 truncate group-hover:text-cyan-400 transition">${s.name}</span>
           <span class="text-[11px] text-slate-400 font-medium">${(0.2 + idx * 0.4).toFixed(1)} km</span>
-          <span class="text-[10px] text-slate-500 truncate">${s.category} • ${s.neighborhood || s.city}</span>
-          <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-800">
-            <span>⭐ ${s.rating || 4.9}</span>
-            <span class="text-slate-400 font-normal">(${s.review_count || 120}+)</span>
-            <span class="text-emerald-600 font-bold ml-1">Excelente</span>
+          <span class="text-[10px] text-cyan-400/80 truncate">${s.category} • ${s.neighborhood || s.city}</span>
+          <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-300">
+            <span class="text-amber-400">⭐ ${s.rating || 4.9}</span>
+            <span class="text-slate-500 font-normal">(${s.review_count || 120}+)</span>
+            <span class="text-emerald-400 font-bold ml-1">Excelente</span>
           </div>
         </div>
       `).join('');
@@ -1149,16 +1149,16 @@ const app = {
       const spas = this.state.studios.filter(s => s.category.includes('Spa') || s.category.includes('Yoga') || s.category.includes('Pilates'));
       spasContainer.innerHTML = (spas.length > 0 ? spas : this.state.studios.slice(0, 4)).map((s, idx) => `
         <div onclick="app.filterByStudio(${s.id})" class="flex flex-col shrink-0 w-44 group cursor-pointer text-left">
-          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition relative bg-slate-100">
+          <div class="w-44 h-28 rounded-2xl overflow-hidden shadow-md group-hover:shadow-cyan-500/10 transition relative bg-[#0E1422] border border-slate-800/80">
             <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
           </div>
-          <span class="text-xs font-black text-slate-900 mt-2 truncate group-hover:text-blue-600 transition">${s.name}</span>
+          <span class="text-xs font-black text-white mt-2 truncate group-hover:text-cyan-400 transition">${s.name}</span>
           <span class="text-[11px] text-slate-400 font-medium">${(0.5 + idx * 0.3).toFixed(1)} km</span>
-          <span class="text-[10px] text-slate-500 truncate">Saunas, Masajes & Spas</span>
-          <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-800">
-            <span>⭐ 5.0</span>
-            <span class="text-slate-400 font-normal">(90+)</span>
-            <span class="text-teal-600 font-bold ml-1">Oferta</span>
+          <span class="text-[10px] text-cyan-400/80 truncate">Saunas, Masajes & Spas</span>
+          <div class="flex items-center space-x-1 text-[11px] font-bold text-slate-300">
+            <span class="text-amber-400">⭐ 5.0</span>
+            <span class="text-slate-500 font-normal">(90+)</span>
+            <span class="text-cyan-400 font-bold ml-1">Oferta</span>
           </div>
         </div>
       `).join('');
@@ -1190,12 +1190,12 @@ const app = {
       html += `
         <div onclick="app.filterByStudio(${s.id})" class="flex flex-col items-center space-y-1 cursor-pointer shrink-0 w-20 group text-center">
           <div class="relative">
-            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-slate-200 group-hover:border-indigo-600 transition shadow-sm p-0.5 bg-white">
+            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-cyan-500/30 group-hover:border-cyan-400 transition shadow-md p-0.5 bg-[#0E1422]">
               <img src="${s.image_url}" alt="${s.name}" class="w-full h-full object-cover rounded-full">
             </div>
             ${s.is_favorite ? '<div class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-rose-500 rounded-full flex items-center justify-center text-white text-[9px] shadow-sm"><i data-lucide="heart" class="w-2.5 h-2.5 fill-white"></i></div>' : ''}
           </div>
-          <span class="text-[11px] font-bold text-slate-800 truncate w-full group-hover:text-indigo-600 transition">${s.name}</span>
+          <span class="text-[11px] font-bold text-slate-200 truncate w-full group-hover:text-cyan-400 transition">${s.name}</span>
           <span class="text-[9px] text-slate-400 truncate w-full">${s.neighborhood || s.city}</span>
         </div>
       `;
@@ -1204,7 +1204,7 @@ const app = {
     for (let i = 0; i < 3; i++) {
       html += `
         <div onclick="app.switchView('favorites')" class="flex flex-col items-center space-y-1 cursor-pointer shrink-0 w-16 group text-center">
-          <div class="w-14 h-14 rounded-full border-2 border-dashed border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-400 hover:text-slate-600 transition bg-slate-50/50">
+          <div class="w-14 h-14 rounded-full border-2 border-dashed border-slate-700 hover:border-cyan-400 flex items-center justify-center text-slate-400 hover:text-cyan-300 transition bg-[#0E1422]/50">
             <i data-lucide="plus" class="w-5 h-5"></i>
           </div>
           <span class="text-[10px] font-semibold text-slate-400">Guardar</span>
@@ -1276,26 +1276,26 @@ const app = {
       const isUrgent = !isFull && c.available_spots <= 3;
 
       return `
-        <div class="fitpass-card bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="fitpass-card bg-[#0E1422] rounded-3xl overflow-hidden border border-slate-800/90 hover:border-cyan-400/50 shadow-xl flex flex-col justify-between transition-all duration-300">
           <!-- Studio Photo & Category Badge -->
           <div class="relative h-44 overflow-hidden group">
             <img src="${c.studio_image}" alt="${c.studio_name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0E1422] via-slate-950/30 to-transparent"></div>
             
             <!-- Category & Coming Soon Tag -->
             <div class="absolute top-3 left-3 flex flex-col space-y-1">
-              <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/95 text-slate-900 backdrop-blur-md shadow-sm">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-black/85 text-cyan-300 border border-cyan-500/30 backdrop-blur-md shadow-sm">
                 ${c.category}
               </span>
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-400 text-slate-950 shadow-sm">
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 shadow-md">
                 ✨ Fase de Convenio
               </span>
             </div>
 
             <!-- Credits Pill Overlay with Dynamic Peak / Valley / Surge Indicator -->
             <div class="absolute top-3 right-3 flex flex-col items-end space-y-1">
-              <span class="px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 flex items-center space-x-1">
-                <i data-lucide="coins" class="w-3.5 h-3.5 mr-1"></i>
+              <span class="px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white shadow-lg shadow-cyan-500/30 flex items-center space-x-1">
+                <i data-lucide="coins" class="w-3.5 h-3.5 mr-1 text-cyan-200"></i>
                 ${c.credit_cost} créditos
               </span>
               ${c.is_surge ? `
@@ -1307,7 +1307,7 @@ const app = {
                   <span>🔥 Horario Punta</span>
                 </span>
               ` : `
-                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-600/90 text-white backdrop-blur-md shadow-sm flex items-center space-x-0.5">
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/90 text-slate-950 backdrop-blur-md shadow-sm flex items-center space-x-0.5 font-black">
                   <span>🟢 Tarifa Valle</span>
                 </span>
               `}
@@ -1316,12 +1316,12 @@ const app = {
             <!-- Studio Name & Rating on bottom of image -->
             <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
               <div>
-                <span class="text-xs text-cyan-300 font-semibold block">${c.neighborhood || c.city || 'Osorno'}</span>
-                <h4 class="font-bold text-sm leading-tight text-white drop-shadow-sm cursor-pointer hover:underline" onclick="app.openStudioModal(${c.studio_id})">
+                <span class="text-xs text-cyan-400 font-bold block">📍 ${c.neighborhood || c.city || 'Osorno'}</span>
+                <h4 class="font-extrabold text-sm leading-tight text-white drop-shadow-md cursor-pointer hover:text-cyan-300 transition" onclick="app.openStudioModal(${c.studio_id})">
                   ${c.studio_name}
                 </h4>
               </div>
-              <div class="flex items-center space-x-1 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-lg text-xs font-bold text-amber-300 border border-white/10">
+              <div class="flex items-center space-x-1 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-lg text-xs font-black text-amber-400 border border-amber-500/20">
                 <span>★</span>
                 <span>${c.studio_rating || '4.9'}</span>
               </div>
@@ -1331,30 +1331,30 @@ const app = {
           <!-- Class Details Body -->
           <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
             <div class="space-y-2">
-              <div class="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                <span class="flex items-center text-cyan-600 font-bold">
-                  <i data-lucide="clock" class="w-3.5 h-3.5 mr-1"></i>
+              <div class="flex items-center justify-between text-xs font-semibold">
+                <span class="flex items-center text-cyan-400 font-bold">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 mr-1 text-cyan-400"></i>
                   ${hourStr} hrs (${c.duration_minutes} min)
                 </span>
-                <span class="bg-slate-100 px-2 py-0.5 rounded-md text-[11px] text-slate-600">${c.level}</span>
+                <span class="bg-slate-800/80 px-2 py-0.5 rounded-md text-[11px] text-slate-300 border border-slate-700/60">${c.level}</span>
               </div>
 
-              <h3 class="font-extrabold text-base text-slate-900 line-clamp-1">${c.title}</h3>
-              <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${c.description || 'Entrenamiento enfocado en tonificación, resistencia y movilidad guiado por instructores profesionales.'}</p>
+              <h3 class="font-black text-base text-white line-clamp-1">${c.title}</h3>
+              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${c.description || 'Entrenamiento enfocado en tonificación, resistencia y movilidad guiado por instructores profesionales.'}</p>
             </div>
 
             <!-- Instructor & Spots status -->
-            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
               <div class="flex items-center space-x-2.5">
-                <img src="${c.instructor_avatar}" alt="${c.instructor_name}" class="w-7 h-7 rounded-full object-cover border border-slate-200">
+                <img src="${c.instructor_avatar}" alt="${c.instructor_name}" class="w-7 h-7 rounded-full object-cover border border-cyan-500/30">
                 <div>
-                  <span class="block text-xs font-bold text-slate-800 leading-tight">${c.instructor_name}</span>
+                  <span class="block text-xs font-bold text-slate-200 leading-tight">${c.instructor_name}</span>
                   <span class="block text-[10px] text-slate-400">Instructor Lead</span>
                 </div>
               </div>
 
               <div>
-                <span class="inline-flex items-center text-[11px] font-extrabold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-100">
+                <span class="inline-flex items-center text-[11px] font-extrabold text-amber-400 bg-amber-950/40 px-2.5 py-1 rounded-full border border-amber-500/30">
                   🔥 ${c.votes_count || 24} interesados
                 </span>
               </div>
@@ -1362,10 +1362,10 @@ const app = {
 
             <!-- Action Buttons (Option 2: Coming Soon & Voting) -->
             <div class="pt-1 flex space-x-2">
-              <button onclick="app.openStudioModal(${c.studio_id})" class="w-1/2 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
+              <button onclick="app.openStudioModal(${c.studio_id})" class="w-1/2 py-2.5 rounded-xl border border-slate-700/80 text-slate-300 text-xs font-bold hover:bg-slate-800 hover:text-white transition">
                 Ver Estudio
               </button>
-              <button onclick="app.voteForStudio(${c.studio_id})" id="btnVoteCard-${c.studio_id}" class="w-1/2 py-2.5 rounded-xl ${c.has_voted ? 'bg-emerald-600 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'} text-xs font-bold transition shadow-sm flex items-center justify-center space-x-1">
+              <button onclick="app.voteForStudio(${c.studio_id})" id="btnVoteCard-${c.studio_id}" class="w-1/2 py-2.5 rounded-xl ${c.has_voted ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-md shadow-cyan-500/25'} text-xs font-black transition flex items-center justify-center space-x-1">
                 <i data-lucide="${c.has_voted ? 'check' : 'thumbs-up'}" class="w-3.5 h-3.5"></i>
                 <span>${c.has_voted ? 'Votado ✓' : 'Pedir Apertura'}</span>
               </button>
