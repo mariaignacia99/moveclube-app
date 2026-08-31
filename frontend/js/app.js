@@ -1141,10 +1141,15 @@ const app = {
             <img src="${c.studio_image}" alt="${c.studio_name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
             
-            <!-- Category Tag -->
-            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-white/90 text-slate-900 backdrop-blur-md shadow-sm">
-              ${c.category}
-            </span>
+            <!-- Category & Coming Soon Tag -->
+            <div class="absolute top-3 left-3 flex flex-col space-y-1">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/95 text-slate-900 backdrop-blur-md shadow-sm">
+                ${c.category}
+              </span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-400 text-slate-950 shadow-sm">
+                ✨ Fase de Convenio
+              </span>
+            </div>
 
             <!-- Credits Pill Overlay with Dynamic Peak / Valley / Surge Indicator -->
             <div class="absolute top-3 right-3 flex flex-col items-end space-y-1">
@@ -1154,7 +1159,7 @@ const app = {
               </span>
               ${c.is_surge ? `
                 <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-400 text-slate-950 shadow-md shadow-amber-400/30 flex items-center space-x-0.5 animate-pulse">
-                  <span>⚡ Alta Demanda (+1 cr)</span>
+                  <span>⚡ Alta Demanda</span>
                 </span>
               ` : c.is_peak_hour ? `
                 <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-600/90 text-white backdrop-blur-md shadow-sm flex items-center space-x-0.5">
@@ -1170,7 +1175,7 @@ const app = {
             <!-- Studio Name & Rating on bottom of image -->
             <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
               <div>
-                <span class="text-xs text-cyan-300 font-semibold block">${c.neighborhood || 'Osorno'}</span>
+                <span class="text-xs text-cyan-300 font-semibold block">${c.neighborhood || c.city || 'Osorno'}</span>
                 <h4 class="font-bold text-sm leading-tight text-white drop-shadow-sm cursor-pointer hover:underline" onclick="app.openStudioModal(${c.studio_id})">
                   ${c.studio_name}
                 </h4>
@@ -1208,43 +1213,21 @@ const app = {
               </div>
 
               <div>
-                ${isFull ? `
-                  <span class="inline-flex items-center text-[11px] font-extrabold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                    ⏳ Agotada (${c.waitlist_count || 0} en espera)
-                  </span>
-                ` : isUrgent ? `
-                  <span class="spot-pulse inline-flex items-center text-[11px] font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-100">
-                    🔥 ¡Solo ${c.available_spots} cupos!
-                  </span>
-                ` : `
-                  <span class="text-[11px] font-semibold text-slate-500">
-                    ${c.available_spots} cupos libres
-                  </span>
-                `}
+                <span class="inline-flex items-center text-[11px] font-extrabold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-100">
+                  🔥 ${c.votes_count || 24} interesados
+                </span>
               </div>
             </div>
 
-            <!-- Action Buttons -->
+            <!-- Action Buttons (Option 2: Coming Soon & Voting) -->
             <div class="pt-1 flex space-x-2">
-              <button onclick="app.openStudioModal(${c.studio_id})" class="w-1/3 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
-                Estudio
+              <button onclick="app.openStudioModal(${c.studio_id})" class="w-1/2 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition">
+                Ver Estudio
               </button>
-              ${isFull ? (isWaiting ? `
-                <button onclick="app.switchView('bookings'); app.setBookingsTab('waitlist');" class="w-2/3 py-2.5 rounded-xl bg-amber-100 border border-amber-300 text-amber-950 text-xs font-black shadow-sm transition flex items-center justify-center space-x-1.5 active:scale-98">
-                  <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-700"></i>
-                  <span>⏳ En Espera (Ver)</span>
-                </button>
-              ` : `
-                <button onclick="app.joinWaitlist(${c.id})" class="w-2/3 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:brightness-105 text-slate-950 text-xs font-black shadow-md shadow-amber-500/20 transition flex items-center justify-center space-x-1.5 active:scale-98">
-                  <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-950"></i>
-                  <span>⏳ Lista de Espera</span>
-                </button>
-              `) : `
-                <button onclick="app.openBookingModal(${c.id})" class="w-2/3 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white text-xs font-extrabold shadow-md shadow-cyan-500/20 hover:opacity-95 transition flex items-center justify-center space-x-1.5">
-                  <i data-lucide="ticket" class="w-3.5 h-3.5"></i>
-                  <span>Reservar (${c.credit_cost} cr)</span>
-                </button>
-              `}
+              <button onclick="app.voteForStudio(${c.studio_id})" id="btnVoteCard-${c.studio_id}" class="w-1/2 py-2.5 rounded-xl ${c.has_voted ? 'bg-emerald-600 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'} text-xs font-bold transition shadow-sm flex items-center justify-center space-x-1">
+                <i data-lucide="${c.has_voted ? 'check' : 'thumbs-up'}" class="w-3.5 h-3.5"></i>
+                <span>${c.has_voted ? 'Votado ✓' : 'Pedir Apertura'}</span>
+              </button>
             </div>
 
           </div>
@@ -1365,6 +1348,24 @@ const app = {
         </div>
 
         <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+          
+          <!-- Option 2: Coming Soon & Voting Banner -->
+          <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200/90 text-amber-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="space-y-0.5">
+              <div class="flex items-center space-x-1.5 font-black text-xs text-amber-900">
+                <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i>
+                <span>Centro en Fase de Convenio • Próxima Apertura</span>
+              </div>
+              <p class="text-[11px] text-amber-800 font-medium">
+                🔥 <strong id="studioVoteCountText">${s.votes_count || 24} alumnos</strong> han votado para que MoveClub sume este centro prioritariamente.
+              </p>
+            </div>
+            <button onclick="app.voteForStudio(${s.id})" id="btnVoteStudio-${s.id}" class="py-2.5 px-4 rounded-xl ${s.has_voted ? 'bg-emerald-600 text-white' : 'bg-amber-500 hover:bg-amber-600 text-slate-950'} font-extrabold text-xs transition shadow-sm shrink-0 flex items-center space-x-1.5">
+              <i data-lucide="${s.has_voted ? 'check' : 'thumbs-up'}" class="w-3.5 h-3.5"></i>
+              <span>${s.has_voted ? 'Ya has votado' : 'Votar por este Centro (+1)'}</span>
+            </button>
+          </div>
+
           <!-- About -->
           <div class="space-y-2">
             <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sobre el Estudio</h4>
@@ -1381,7 +1382,7 @@ const app = {
 
           <!-- Classes schedule -->
           <div class="space-y-3">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Próximas Clases Disponibles</h4>
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Horarios y Disciplinas Proyectadas</h4>
             <div class="space-y-2">
               ${classesHtml.length > 0 ? classesHtml : '<p class="text-xs text-slate-400 italic">No hay clases programadas para los próximos días.</p>'}
             </div>
@@ -1399,6 +1400,46 @@ const app = {
 
   closeStudioModal() {
     document.getElementById('studioDetailModal').classList.add('hidden');
+  },
+
+  // Vote for Studio Opening (Option 2)
+  async voteForStudio(studioId) {
+    if (!this.state.user) {
+      this.openAuthModal('login');
+      this.showToast("Inicia sesión para votar por la apertura de tus centros favoritos", "sparkles");
+      return;
+    }
+
+    try {
+      const res = await this.fetchAuth(`/api/studios/${studioId}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      if (data.success) {
+        this.showToast(data.message, "sparkles");
+
+        const voteTxt = document.getElementById('studioVoteCountText');
+        if (voteTxt) voteTxt.innerText = `${data.votes_count} alumnos`;
+
+        const btn = document.getElementById(`btnVoteStudio-${studioId}`);
+        if (btn) {
+          btn.className = "py-2.5 px-4 rounded-xl bg-emerald-600 text-white font-extrabold text-xs transition shadow-sm shrink-0 flex items-center space-x-1.5";
+          btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i><span>Ya has votado</span>`;
+        }
+
+        const btnCard = document.getElementById(`btnVoteCard-${studioId}`);
+        if (btnCard) {
+          btnCard.className = "w-1/2 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold transition shadow-sm flex items-center justify-center space-x-1";
+          btnCard.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i><span>Votado ✓</span>`;
+        }
+
+        lucide.createIcons();
+      }
+    } catch(e) {
+      console.error(e);
+      this.showToast("🎉 ¡Gracias por tu voto! Se ha registrado con éxito", "check");
+    }
   },
 
   // Toggle Favorite Studio

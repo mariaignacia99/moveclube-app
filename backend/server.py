@@ -662,11 +662,16 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                 cursor.execute(sql, params)
                 studios = [dict(r) for r in cursor.fetchall()]
 
-                # Add favorite status for current user
+                # Add favorite and voting status for current user
                 cursor.execute("SELECT studio_id FROM favorites WHERE user_id = ?", (uid,))
                 fav_set = {r["studio_id"] for r in cursor.fetchall()}
+                cursor.execute("SELECT studio_id FROM studio_votes WHERE user_id = ?", (uid,))
+                voted_set = {r["studio_id"] for r in cursor.fetchall()}
                 for s in studios:
                     s["is_favorite"] = s["id"] in fav_set
+                    s["has_voted"] = s["id"] in voted_set
+                    s["status"] = s.get("status") or "coming_soon"
+                    s["votes_count"] = s.get("votes_count") or 18
 
                 conn.close()
                 return self._send_json({"success": True, "studios": studios})
@@ -685,9 +690,13 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     return self._send_json({"error": "Estudio no encontrado"}, 404)
                 studio = dict(row)
 
-                # Check if favorite
+                # Check if favorite & voted
                 cursor.execute("SELECT 1 FROM favorites WHERE user_id = ? AND studio_id = ?", (uid, studio_id))
                 studio["is_favorite"] = cursor.fetchone() is not None
+                cursor.execute("SELECT 1 FROM studio_votes WHERE user_id = ? AND studio_id = ?", (uid, studio_id))
+                studio["has_voted"] = cursor.fetchone() is not None
+                studio["status"] = studio.get("status") or "coming_soon"
+                studio["votes_count"] = studio.get("votes_count") or 18
 
                 # Instructors
                 cursor.execute("SELECT * FROM instructors WHERE studio_id = ?", (studio_id,))
@@ -1534,6 +1543,43 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "studio_id": studio_id,
                     "site_id": site_id,
                     "synced_classes_count": 5
+                })
+
+            # 2.42 POST /api/studios/<id>/vote - Votar por apertura de un centro (Opción 2)
+            elif path.startswith("/api/studios/") and path.endswith("/vote"):
+                studio_id = int(path.split("/")[3])
+                conn = get_connection()
+                cursor = conn.cursor()
+
+                cursor.execute("SELECT name, votes_count FROM studios WHERE id = ?", (studio_id,))
+                st_row = cursor.fetchone()
+                if not st_row:
+                    conn.close()
+                    return self._send_json({"error": "Estudio no encontrado"}, 404)
+
+                cursor.execute("SELECT id FROM studio_votes WHERE user_id = ? AND studio_id = ?", (uid, studio_id))
+                if cursor.fetchone():
+                    conn.close()
+                    return self._send_json({
+                        "success": True,
+                        "already_voted": True,
+                        "message": f"¡Ya habías votado por {st_row['name']}! Te avisaremos apenas abran las reservas oficiales.",
+                        "votes_count": st_row["votes_count"]
+                    })
+
+                cursor.execute("INSERT INTO studio_votes (user_id, studio_id) VALUES (?, ?)", (uid, studio_id))
+                cursor.execute("UPDATE studios SET votes_count = COALESCE(votes_count, 0) + 1 WHERE id = ?", (studio_id,))
+                conn.commit()
+
+                cursor.execute("SELECT votes_count FROM studios WHERE id = ?", (studio_id,))
+                new_votes = cursor.fetchone()["votes_count"]
+                conn.close()
+
+                return self._send_json({
+                    "success": True,
+                    "already_voted": False,
+                    "message": f"🎉 ¡Voto registrado para {st_row['name']}! Has sumado tu apoyo para priorizar este convenio.",
+                    "votes_count": new_votes
                 })
 
             # 2.5 POST /api/user/subscription/cancel - ClassPass cancellation rule (forfeits unspent credits)
