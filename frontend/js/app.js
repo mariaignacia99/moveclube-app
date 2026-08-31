@@ -911,11 +911,29 @@ const app = {
   },
 
   handleSearch(query) {
-    this.state.filters.search = query.trim();
+    const q = query.trim();
+    this.state.filters.search = q;
+
+    const discoveryEl = document.getElementById('homeDiscoverySections');
+    const bannerEl = document.getElementById('searchResultsBanner');
+    const bannerText = document.getElementById('searchResultsText');
+
+    if (q.length > 0) {
+      if (discoveryEl) discoveryEl.classList.add('hidden');
+      if (bannerEl) bannerEl.classList.remove('hidden');
+      if (bannerText) bannerText.innerText = `Resultados para "${q}"`;
+    } else {
+      if (discoveryEl) discoveryEl.classList.remove('hidden');
+      if (bannerEl) bannerEl.classList.add('hidden');
+    }
+
     clearTimeout(this._searchTimeout);
     this._searchTimeout = setTimeout(() => {
       this.fetchClasses();
-    }, 250);
+      if (q.length > 0 && typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    }, 150);
   },
 
   resetFilters() {
@@ -927,13 +945,26 @@ const app = {
       max_credits: '',
       search: ''
     };
-    document.getElementById('searchInput').value = '';
-    document.getElementById('timeFilter').value = 'all';
-    document.getElementById('creditsFilter').value = '';
+    
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    
+    const discoveryEl = document.getElementById('homeDiscoverySections');
+    const bannerEl = document.getElementById('searchResultsBanner');
+    if (discoveryEl) discoveryEl.classList.remove('hidden');
+    if (bannerEl) bannerEl.classList.add('hidden');
+
+    const timeF = document.getElementById('timeFilter');
+    if (timeF) timeF.value = 'all';
+    
+    const credF = document.getElementById('creditsFilter');
+    if (credF) credF.value = '';
+
     document.querySelectorAll('.category-pill').forEach((b, idx) => {
       if (idx === 0) b.classList.add('active');
       else b.classList.remove('active');
     });
+
     this.fetchClasses();
   },
 

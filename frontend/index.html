@@ -277,10 +277,24 @@
           <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
           <input type="text" id="searchInput" oninput="app.handleSearch(this.value)" placeholder="Yoga, pilates, pádel, crossfit, masajes..." class="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white border border-slate-200/90 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 text-sm shadow-sm transition">
         </div>
+
+        <!-- Dynamic Search Results Indicator Banner -->
+        <div id="searchResultsBanner" class="hidden p-3.5 bg-indigo-50/90 border border-indigo-100 rounded-2xl flex items-center justify-between text-xs font-bold text-indigo-950 shadow-sm animate-fade-in">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="search" class="w-4 h-4 text-indigo-600"></i>
+            <span id="searchResultsText">Resultados de búsqueda</span>
+          </div>
+          <button onclick="app.resetFilters()" class="text-indigo-600 font-extrabold hover:underline text-xs bg-white px-2.5 py-1 rounded-xl border border-indigo-200 shadow-sm">
+            ✕ Borrar búsqueda
+          </button>
+        </div>
       </div>
 
-      <!-- 1. Lugares guardados (Saved Places / Favorites Row) -->
-      <div class="space-y-2.5">
+      <!-- Discovery Carousels Wrapper (Auto-hides during active text search) -->
+      <div id="homeDiscoverySections" class="space-y-6">
+
+        <!-- 1. Lugares guardados (Saved Places / Favorites Row) -->
+        <div class="space-y-2.5">
         <div class="flex items-center justify-between">
           <h3 class="text-base font-extrabold text-slate-900">Lugares guardados</h3>
           <button onclick="app.switchView('favorites')" class="text-xs font-bold text-slate-700 hover:text-slate-900 flex items-center space-x-0.5">
@@ -456,6 +470,7 @@
           <!-- Dynamic Spas Studios Cards -->
         </div>
       </div>
+      <!-- End of Discovery Carousels Wrapper -->
 
       <!-- 8. Categorías Principales & Horarios -->
       <div class="space-y-3 pt-4 border-t border-slate-100">
