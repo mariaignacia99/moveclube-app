@@ -3495,25 +3495,27 @@ const app = {
   },
 
   sendAiQuickPrompt(promptText) {
-    const input = document.getElementById('aiViewInput') || document.getElementById('aiChatInput');
-    if (input) {
-      input.value = promptText;
-      this.handleAiSendMessage();
-    }
+    const input = document.getElementById('aiViewInput');
+    if (input) input.value = promptText;
+    this.handleAiSendMessage(promptText);
   },
 
-  async handleAiSendMessage() {
-    const input = document.getElementById('aiViewInput') || document.getElementById('aiChatInput');
-    const container = document.getElementById('aiViewMessages') || document.getElementById('aiChatMessages');
-    const typing = document.getElementById('aiViewTypingIndicator') || document.getElementById('aiTypingIndicator');
-    const suggestionsContainer = document.getElementById('aiViewSuggestions') || document.getElementById('aiQuickSuggestions');
+  async handleAiSendMessage(explicitText = null) {
+    const input = document.getElementById('aiViewInput');
+    const container = document.getElementById('aiViewMessages');
+    const typing = document.getElementById('aiViewTypingIndicator');
+    const suggestionsContainer = document.getElementById('aiViewSuggestions');
 
-    if (!input || !container) return;
-    const msg = input.value.trim();
-    if (!msg) return;
+    let msg = explicitText;
+    if (!msg && input) {
+      msg = input.value;
+    }
+    msg = (msg || '').trim();
+    if (!msg || !container) return;
+
+    if (input) input.value = '';
 
     // 1. Append User Message
-    input.value = '';
     const userBubble = document.createElement('div');
     userBubble.className = 'flex items-start justify-end space-x-2 text-right animate-fadeIn';
     userBubble.innerHTML = `

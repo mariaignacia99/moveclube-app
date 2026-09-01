@@ -1,5 +1,5 @@
 // MoveClub Service Worker - Dynamic Cache Busting
-const CACHE_NAME = 'moveclub-v120';
+const CACHE_NAME = 'moveclub-v121';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
