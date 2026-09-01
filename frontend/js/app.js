@@ -295,6 +295,16 @@ const app = {
       targetMobNav.classList.remove('text-slate-500');
     }
 
+    // Toggle AI floating bubble visibility
+    const floatingAiBtn = document.getElementById('aiChatFloatingBtn');
+    if (floatingAiBtn) {
+      if (viewName === 'ai-chat') {
+        floatingAiBtn.classList.add('hidden');
+      } else {
+        floatingAiBtn.classList.remove('hidden');
+      }
+    }
+
     // Trigger specific view loaders
     if (viewName === 'bookings') {
       this.fetchBookings();
@@ -3362,16 +3372,15 @@ const app = {
 
     let isDragging = false;
     let startX = 0, startY = 0;
-    let initialLeft = 0, initialTop = 0;
+    let startLeft = 0, startTop = 0;
     let hasMoved = false;
 
-    // Load saved position if any
+    // Default position: bottom right above navbar
     const savedPos = localStorage.getItem('mc_ai_btn_pos');
     if (savedPos) {
       try {
         const { left, top } = JSON.parse(savedPos);
-        // Ensure saved position is still visible on current screen size
-        if (left >= 0 && left < window.innerWidth - 60 && top >= 0 && top < window.innerHeight - 60) {
+        if (left >= 10 && left < window.innerWidth - 65 && top >= 10 && top < window.innerHeight - 65) {
           el.style.left = `${left}px`;
           el.style.top = `${top}px`;
           el.style.right = 'auto';
@@ -3383,44 +3392,37 @@ const app = {
     const onStart = (e) => {
       isDragging = true;
       hasMoved = false;
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      startX = clientX;
-      startY = clientY;
-
+      const point = e.touches ? e.touches[0] : e;
+      startX = point.clientX;
+      startY = point.clientY;
       const rect = el.getBoundingClientRect();
-      initialLeft = rect.left;
-      initialTop = rect.top;
+      startLeft = rect.left;
+      startTop = rect.top;
       el.style.transition = 'none';
     };
 
     const onMove = (e) => {
       if (!isDragging) return;
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const point = e.touches ? e.touches[0] : e;
+      const dx = point.clientX - startX;
+      const dy = point.clientY - startY;
 
-      const deltaX = clientX - startX;
-      const deltaY = clientY - startY;
-
-      if (Math.hypot(deltaX, deltaY) > 6) {
+      if (Math.hypot(dx, dy) > 5) {
         hasMoved = true;
-      }
-
-      if (hasMoved) {
         if (e.cancelable && e.touches) e.preventDefault();
-        let newLeft = initialLeft + deltaX;
-        let newTop = initialTop + deltaY;
+        let nextLeft = startLeft + dx;
+        let nextTop = startTop + dy;
 
-        // Keep inside window bounds
-        const pad = 10;
-        const maxLeft = window.innerWidth - el.offsetWidth - pad;
-        const maxTop = window.innerHeight - el.offsetHeight - pad;
+        // Clamp to screen bounds
+        const pad = 12;
+        const maxW = window.innerWidth - el.offsetWidth - pad;
+        const maxH = window.innerHeight - el.offsetHeight - pad;
 
-        newLeft = Math.max(pad, Math.min(newLeft, maxLeft));
-        newTop = Math.max(pad, Math.min(newTop, maxTop));
+        nextLeft = Math.max(pad, Math.min(nextLeft, maxW));
+        nextTop = Math.max(pad, Math.min(nextTop, maxH));
 
-        el.style.left = `${newLeft}px`;
-        el.style.top = `${newTop}px`;
+        el.style.left = `${nextLeft}px`;
+        el.style.top = `${nextTop}px`;
         el.style.right = 'auto';
         el.style.bottom = 'auto';
       }
@@ -3429,24 +3431,22 @@ const app = {
     const onEnd = () => {
       if (!isDragging) return;
       isDragging = false;
-      el.style.transition = 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
+      el.style.transition = 'transform 0.15s ease-out';
 
       if (!hasMoved) {
-        // Tap / Click -> Toggle AI Chat!
-        app.toggleAiChat();
+        app.switchView('ai-chat');
       } else {
-        // Save dragged position
         const rect = el.getBoundingClientRect();
         localStorage.setItem('mc_ai_btn_pos', JSON.stringify({ left: rect.left, top: rect.top }));
       }
     };
 
-    // Touch events (mobile)
+    // Mobile Touch
     el.addEventListener('touchstart', onStart, { passive: true });
     window.addEventListener('touchmove', onMove, { passive: false });
     window.addEventListener('touchend', onEnd, { passive: true });
 
-    // Mouse events (desktop)
+    // Desktop Mouse
     el.addEventListener('mousedown', onStart);
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onEnd);
