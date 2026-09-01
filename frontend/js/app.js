@@ -3352,6 +3352,127 @@ const app = {
     }
   },
 
+  // ==================== MOVECLUB AI CHAT & CONCIERGE ====================
+  openAiChat() {
+    const modal = document.getElementById('aiChatModal');
+    if (modal) modal.classList.remove('hidden');
+    const input = document.getElementById('aiChatInput');
+    if (input) setTimeout(() => input.focus(), 150);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  },
+
+  closeAiChat() {
+    const modal = document.getElementById('aiChatModal');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  toggleAiChat() {
+    const modal = document.getElementById('aiChatModal');
+    if (modal) {
+      if (modal.classList.contains('hidden')) {
+        this.openAiChat();
+      } else {
+        this.closeAiChat();
+      }
+    }
+  },
+
+  sendAiQuickPrompt(promptText) {
+    const input = document.getElementById('aiChatInput');
+    if (input) {
+      input.value = promptText;
+      this.handleAiSendMessage();
+    }
+  },
+
+  async handleAiSendMessage() {
+    const input = document.getElementById('aiChatInput');
+    const container = document.getElementById('aiChatMessages');
+    const typing = document.getElementById('aiTypingIndicator');
+    const suggestionsContainer = document.getElementById('aiQuickSuggestions');
+
+    if (!input || !container) return;
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    // 1. Append User Message
+    input.value = '';
+    const userBubble = document.createElement('div');
+    userBubble.className = 'flex items-start justify-end space-x-2 text-right animate-fadeIn';
+    userBubble.innerHTML = `
+      <div class="bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white p-3.5 rounded-2xl rounded-tr-none shadow-md max-w-[85%] text-xs sm:text-sm font-medium">
+        <p>${this.escapeHtml(msg)}</p>
+      </div>
+    `;
+    container.appendChild(userBubble);
+    container.scrollTop = container.scrollHeight;
+
+    // 2. Show Typing indicator
+    if (typing) typing.classList.remove('hidden');
+    container.scrollTop = container.scrollHeight;
+
+    try {
+      const resp = await fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': this.state.token ? `Bearer ${this.state.token}` : ''
+        },
+        body: JSON.stringify({ message: msg })
+      });
+
+      const data = await resp.json();
+      if (typing) typing.classList.add('hidden');
+
+      if (data && data.reply) {
+        // Format reply text with simple markdown converter
+        let formattedReply = data.reply
+          .replace(/\\n/g, '<br>')
+          .replace(/\n/g, '<br>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+        const botBubble = document.createElement('div');
+        botBubble.className = 'flex items-start space-x-2.5 text-left animate-fadeIn';
+        botBubble.innerHTML = `
+          <div class="w-7 h-7 rounded-full bg-slate-950 text-cyan-300 text-xs font-bold flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
+            ⚡
+          </div>
+          <div class="bg-white p-3.5 rounded-2xl rounded-tl-none border border-slate-200/90 shadow-sm max-w-[88%] text-xs sm:text-sm text-slate-800 space-y-1.5 leading-relaxed">
+            <div>${formattedReply}</div>
+          </div>
+        `;
+        container.appendChild(botBubble);
+        container.scrollTop = container.scrollHeight;
+
+        // Render new suggestion chips if available
+        if (data.suggestions && data.suggestions.length > 0 && suggestionsContainer) {
+          suggestionsContainer.innerHTML = data.suggestions.map(s => `
+            <button onclick="app.sendAiQuickPrompt('${s.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200 shadow-sm transition active:scale-95">
+              ${s}
+            </button>
+          `).join('');
+        }
+      }
+    } catch (err) {
+      if (typing) typing.classList.add('hidden');
+      const errBubble = document.createElement('div');
+      errBubble.className = 'flex items-start space-x-2.5 text-left animate-fadeIn';
+      errBubble.innerHTML = `
+        <div class="w-7 h-7 rounded-full bg-rose-500 text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-sm">
+          ⚠️
+        </div>
+        <div class="bg-rose-50 p-3.5 rounded-2xl rounded-tl-none border border-rose-200 text-xs sm:text-sm text-rose-900 leading-relaxed">
+          <p>Disculpa, hubo un breve error de conexión. Por favor reintenta o escríbenos a <a href="mailto:soporte@moveclub.cl" class="font-bold underline">soporte@moveclub.cl</a>.</p>
+        </div>
+      `;
+      container.appendChild(errBubble);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  },
+
   setupEventListeners() {
     // Close dropdowns on outside click
     document.addEventListener('click', (e) => {

@@ -1526,12 +1526,22 @@
       <div class="space-y-2">
         <h3 class="text-lg font-black text-slate-900 tracking-tight">Ayuda</h3>
         <div class="bg-white rounded-2xl border border-slate-200/90 divide-y divide-slate-100 shadow-sm overflow-hidden text-[14px]">
-          <div onclick="window.open('https://wa.me/56953341729?text=Hola%20MoveClub%2C%20necesito%20ayuda%20con%20mi%20cuenta', '_blank')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
-            <span class="font-bold text-slate-900">Contacta con nosotros</span>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+          <div onclick="app.openAiChat()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-blue-50/70 transition group bg-gradient-to-r from-blue-50/40 to-cyan-50/40">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-xl bg-gradient-to-r from-[#00F2FE] via-[#38BDF8] to-[#C084FC] p-0.5 flex items-center justify-center shrink-0 shadow-sm">
+                <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-white text-xs">
+                  ⚡
+                </div>
+              </div>
+              <div>
+                <span class="block font-black text-slate-900 group-hover:text-blue-600">Coach & Soporte IA MoveClub</span>
+                <span class="block text-[11px] text-slate-500">Asistencia inteligente 24/7 para dudas y reservas</span>
+              </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-blue-600"></i>
           </div>
-          <div onclick="app.showToast('Centro de ayuda en línea disponible 24/7')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
-            <span class="font-bold text-slate-900">Centro de ayuda</span>
+          <div onclick="window.open('https://wa.me/56953341729?text=Hola%20MoveClub%2C%20necesito%20ayuda%20con%20mi%20cuenta', '_blank')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+            <span class="font-bold text-slate-900">WhatsApp de Soporte Humano</span>
             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
           </div>
           <div onclick="app.openLegalModal('terms')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
@@ -3271,7 +3281,97 @@
     </div>
   </div>
 
+
+  <!-- ==================== FLOATING AI COACH & SUPPORT BUTTON ==================== -->
+  <button onclick="app.toggleAiChat()" id="aiChatFloatingBtn" class="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-40 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-full bg-slate-950 text-white shadow-2xl border border-slate-700/80 flex items-center space-x-2.5 hover:scale-105 hover:border-cyan-400 transition-all duration-300 group active:scale-95" title="Abrir Chat con Coach IA MoveClub">
+    <div class="w-7 h-7 rounded-full bg-gradient-to-r from-[#00F2FE] via-[#38BDF8] to-[#C084FC] p-0.5 flex items-center justify-center shrink-0">
+      <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-xs">
+        ⚡
+      </div>
+    </div>
+    <span class="text-xs font-black tracking-wide hidden sm:inline">Coach IA 24/7</span>
+    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+  </button>
+
+  <!-- ==================== AI COACH & SUPPORT MODAL ==================== -->
+  <div id="aiChatModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-950/80 backdrop-blur-sm hidden animate-fadeIn">
+    <div class="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[85vh] sm:h-[620px] max-h-[90vh]">
+      
+      <!-- Chat Header -->
+      <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-950 text-white">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-r from-[#00F2FE] via-[#38BDF8] to-[#C084FC] p-0.5 flex items-center justify-center shrink-0 shadow-sm">
+            <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-white text-sm">
+              ⚡
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <h3 class="text-sm font-black tracking-wide text-white">Coach IA MoveClub</h3>
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </div>
+            <p class="text-[10px] text-cyan-300 font-bold">Asistente Oficial & Soporte 24/7</p>
+          </div>
+        </div>
+        
+        <button onclick="app.closeAiChat()" class="p-2 rounded-full hover:bg-white/10 text-slate-300 hover:text-white transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Quick Suggestion Chips Carousel -->
+      <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center space-x-2 overflow-x-auto scrollbar-none" id="aiQuickSuggestions">
+        <button onclick="app.sendAiQuickPrompt('🎾 ¿Qué canchas de pádel hay disponibles?')" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200 shadow-sm transition active:scale-95">
+          🎾 Pádel & Clínicas
+        </button>
+        <button onclick="app.sendAiQuickPrompt('⚡ ¿Cómo funcionan los créditos y el rollover?')" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200 shadow-sm transition active:scale-95">
+          ⚡ Créditos & Rollover
+        </button>
+        <button onclick="app.sendAiQuickPrompt('🧘‍♀️ Recomiéndame clases de Pilates o Yoga')" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200 shadow-sm transition active:scale-95">
+          🧘‍♀️ Pilates & Yoga
+        </button>
+        <button onclick="app.sendAiQuickPrompt('🎟️ ¿Cómo cancelar una reserva sin penalización?')" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200 shadow-sm transition active:scale-95">
+          🎟️ Cancelaciones
+        </button>
+      </div>
+
+      <!-- Messages Stream -->
+      <div id="aiChatMessages" class="flex-1 p-4 overflow-y-auto space-y-3.5 bg-slate-50/50">
+        <!-- Initial bot greeting -->
+        <div class="flex items-start space-x-2.5 text-left animate-fadeIn">
+          <div class="w-7 h-7 rounded-full bg-slate-950 text-cyan-300 text-xs font-bold flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
+            ⚡
+          </div>
+          <div class="bg-white p-3.5 rounded-2xl rounded-tl-none border border-slate-200/90 shadow-sm max-w-[85%] text-xs sm:text-sm text-slate-800 space-y-1.5">
+            <p>¡Hola! ⚡ Soy tu <strong>Coach IA de MoveClub</strong>.</p>
+            <p class="text-slate-600">Puedo responder al instante cualquier duda sobre <strong>canchas de pádel, créditos, reservas, planes o estudios afiliados</strong>. ¿En qué te puedo asesorar?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div id="aiTypingIndicator" class="hidden px-5 py-2 text-xs font-bold text-slate-500 flex items-center space-x-2 bg-slate-50">
+        <span class="w-2 h-2 rounded-full bg-blue-600 animate-bounce"></span>
+        <span class="w-2 h-2 rounded-full bg-cyan-500 animate-bounce [animation-delay:0.2s]"></span>
+        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.4s]"></span>
+        <span class="text-[11px] text-slate-400">Coach IA escribiendo respuesta...</span>
+      </div>
+
+      <!-- Chat Input Footer -->
+      <div class="p-3 bg-white border-t border-slate-200">
+        <form onsubmit="event.preventDefault(); app.handleAiSendMessage();" class="flex items-center space-x-2">
+          <input type="text" id="aiChatInput" placeholder="Escribe tu consulta sobre MoveClub..." class="flex-1 px-4 py-3 rounded-2xl bg-slate-100 border border-slate-200/80 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition font-medium">
+          <button type="submit" id="aiChatSendBtn" class="p-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-md shadow-blue-500/25 transition flex items-center justify-center shrink-0 active:scale-95">
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </form>
+        <p class="text-[10px] text-slate-400 text-center mt-1.5">MoveClub AI Assistant • Respuestas instantáneas oficiales 24/7</p>
+      </div>
+
+    </div>
+  </div>
+
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_2130"></script>
+  <script src="js/app.js?v=20260831_2135"></script>
 </body>
 </html>
