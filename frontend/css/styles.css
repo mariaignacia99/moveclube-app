@@ -286,15 +286,16 @@ header, section, article {
   }
 }
 
-/* MoveClub Movable Floating AI Coach Widget */
+/* MoveClub Ultra-Visible Floating AI Coach Widget */
 #aiChatFloatingBtn {
   position: fixed !important;
-  bottom: 80px !important;
-  right: 16px !important;
-  z-index: 99999 !important;
+  bottom: 85px !important;
+  right: 18px !important;
+  z-index: 999999 !important;
   display: flex !important;
   cursor: pointer;
   touch-action: none;
+  filter: drop-shadow(0 0 14px rgba(6, 182, 212, 0.75));
 }
 #aiChatFloatingBtn.hidden {
   display: none !important;
