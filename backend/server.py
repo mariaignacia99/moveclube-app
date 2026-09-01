@@ -17,104 +17,137 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from db import get_connection, init_db, hash_password, verify_password
 
 def process_ai_support_chat(user_msg, uid=None):
-    """MoveClub Intelligent AI Support & Fitness Concierge Assistant"""
+    """MoveClub Decagon-Style AI Support & Fitness Concierge Assistant (ClassPass CX Architecture)"""
     msg = user_msg.lower().strip()
     conn = get_connection()
     cursor = conn.cursor()
     
     user_info = None
     if uid:
-        cursor.execute("SELECT name, credits_balance, plan_tier, city FROM users WHERE id = ?", (uid,))
+        cursor.execute("SELECT id, name, credits_balance, plan_tier, city FROM users WHERE id = ?", (uid,))
+        row = cursor.fetchone()
+        if row:
+            user_info = dict(row)
+    else:
+        cursor.execute("SELECT id, name, credits_balance, plan_tier, city FROM users LIMIT 1")
         row = cursor.fetchone()
         if row:
             user_info = dict(row)
 
-    # 1. Greetings
-    if any(w in msg for w in ["hola", "buenos dias", "buenas tardes", "buenas noches", "hey", "saludos"]):
-        name_str = f", {user_info['name'].split()[0]}" if user_info and user_info.get("name") else ""
+    user_first_name = user_info["name"].split()[0] if user_info and user_info.get("name") else "Deportista"
+    user_credits = user_info["credits_balance"] if user_info else 10
+    user_plan = user_info["plan_tier"] if user_info and user_info.get("plan_tier") else "Pro"
+    user_city = user_info["city"] if user_info and user_info.get("city") else "Osorno"
+
+    # 1. Action: Check Active Bookings & Classes
+    if any(w in msg for w in ["mi reserva", "mis reservas", "mi clase", "mis clases", "tengo clase", "cuando me toca", "proximas clases", "horario de mi clase"]):
+        cursor.execute("""
+            SELECT b.id, b.status, b.booked_at, c.title, c.start_time, c.duration_minutes, s.name as studio_name, s.neighborhood, s.city
+            FROM bookings b
+            JOIN classes c ON b.class_id = c.id
+            JOIN studios s ON c.studio_id = s.id
+            WHERE b.user_id = ? AND b.status = 'confirmed'
+            ORDER BY c.start_time ASC LIMIT 3
+        """, (user_info["id"] if user_info else 1,))
+        bookings = cursor.fetchall()
         conn.close()
+
+        if bookings:
+            reply = f"🎟️ **Tus Próximas Clases Confirmadas ({user_first_name}):**\n\n"
+            for b in bookings:
+                loc = b['neighborhood'] if b['neighborhood'] else b['city']
+                time_str = b['start_time'] if b['start_time'] else '18:00'
+                reply += f"• **{b['title']}** en **{b['studio_name']}**\n  ⏰ Horario: {time_str} hrs ({b['duration_minutes']} min) • (📍 {loc})\n"
+            reply += "\n💡 *Recuerda presentar tu Pase Digital QR en recepción al llegar.*"
+            return {
+                "reply": reply,
+                "suggestions": ["¿Cómo cancelar una reserva?", "Ver código QR de acceso", "Buscar más clases"]
+            }
+        else:
+            return {
+                "reply": f"🎟️ Hola {user_first_name}, no tienes reservas activas en este momento.\n\nTienes **{user_credits} créditos disponibles** para reservar clases hoy en canchas de pádel, pilates, crossfit o gimnasios.",
+                "suggestions": ["🎾 Ver clínicas de Pádel", "🧘‍♀️ Clases de Pilates", "🏋️‍♂️ Ver Gimnasios disponibles"]
+            }
+
+    # 2. Action: Credits, Rollover & Plans
+    elif any(w in msg for w in ["credito", "crédito", "creditos", "créditos", "saldo", "rollover", "acumular", "cuanto cuesta", "precio", "plan", "planes", "membresia"]):
+        conn.close()
+        reply = "⚡ **Estado de tus Créditos & Membresías MoveClub:**\n\n"
+        reply += f"• **Tu saldo actual:** **{user_credits} créditos**\n"
+        reply += f"• **Plan actual:** **Plan {user_plan}**\n\n"
+        reply += "🔄 **Política de Rollover (Acumulación):**\n"
+        reply += "Tus créditos no consumidos al final del ciclo pasan automáticamente al mes siguiente (hasta 10 créditos) siempre que tu suscripción permanezca activa.\n\n"
+        reply += "💳 **Planes Oficiales:**\n"
+        reply += "• **Plan Básico:** 25 créditos ($29.900 CLP/mes)\n"
+        reply += "• **Plan Pro:** 45 créditos ($49.900 CLP/mes) — *El más elegido*\n"
+        reply += "• **Plan Élite:** 80 créditos ($79.900 CLP/mes)"
         return {
-            "reply": f"¡Hola{name_str}! ⚡ Soy el **Coach IA de MoveClub**. Estoy aquí para ayudarte 24/7 con tus reservas, créditos, horarios o dudas sobre los estudios y canchas de pádel.\n\n¿En qué te puedo asesorar hoy?",
-            "suggestions": ["🎾 ¿Qué estudios de pádel hay?", "⚡ ¿Cómo funcionan los créditos?", "🧘‍♀️ Clases de Pilates y Yoga", "🎟️ ¿Cómo cancelar una reserva?"]
+            "reply": reply,
+            "suggestions": ["Comprar créditos adicionales", "Ver Mis Reservas", "Cambiar de plan"]
         }
 
-    # 2. Padel Questions
-    elif any(w in msg for w in ["padel", "pádel", "cancha", "canchas", "partido", "raqueta"]):
+    # 3. Action: Padel Courts & Clinics
+    elif any(w in msg for w in ["padel", "pádel", "cancha", "canchas", "partido", "raqueta", "ruta padel"]):
         cursor.execute("SELECT name, neighborhood, city, rating FROM studios WHERE category LIKE '%Pádel%' OR name LIKE '%Padel%' OR name LIKE '%Ruta%' LIMIT 4")
         padel_studios = cursor.fetchall()
         conn.close()
         
-        reply = "🎾 **Canchas y Clínicas de Pádel en MoveClub:**\n\nPuedes reservar turnos y clases de pádel en centros destacados como:\n"
+        reply = "🎾 **Canchas y Clínicas de Pádel Disponibles en MoveClub:**\n\n"
         for s in padel_studios:
-            reply += f"• **{s['name']}** (📍 {s['neighborhood'] or s['city']} • ⭐ {s['rating'] or '4.9'})\n"
-        reply += "\n💡 *Tip Pro:* Puedes filtrar directamente por *🎾 Pádel* en el buscador para ver todas las clínicas de bandeja, revés y partidos disponibles."
+            loc = s['neighborhood'] if s['neighborhood'] else s['city']
+            rat = s['rating'] if s['rating'] else '4.9'
+            reply += f"• **{s['name']}** (📍 {loc} • ⭐ {rat})\n"
+        reply += "\n💡 *Tip MoveClub:* Puedes reservar clínicas de técnica o turnos libres usando tus créditos."
         return {
             "reply": reply,
-            "suggestions": ["Ver horarios de pádel", "¿Cuántos créditos cuesta el pádel?", "Reservar clínica de pádel"]
+            "suggestions": ["¿Cuántos créditos cuesta el pádel?", "Ver horarios disponibles", "Mis reservas"]
         }
 
-    # 3. Credits, Rollover & Plans
-    elif any(w in msg for w in ["credito", "crédito", "creditos", "créditos", "saldo", "rollover", "acumular", "cuanto cuesta", "precio", "plan", "planes", "membresia"]):
-        credits_str = f"Tu saldo actual es de **{user_info['credits_balance']} créditos**." if user_info else "Al registrarte recibes **10 créditos de bienvenida gratis**."
-        conn.close()
-        reply = f"⚡ **Sistema de Créditos & Membresías MoveClub:**\n\n{credits_str}\n\n"
-        reply += "• **Plan Básico:** 25 créditos ($29.900 CLP/mes) — Ideal para 1-2 veces por semana.\n"
-        reply += "• **Plan Pro:** 45 créditos ($49.900 CLP/mes) — *El más popular*, acceso flexible multiciudad.\n"
-        reply += "• **Plan Élite:** 80 créditos ($79.900 CLP/mes) — Para deportistas frecuentes.\n\n"
-        reply += "🔄 **Rollover:** Tus créditos no consumidos pasan automáticamente al mes siguiente (hasta 10 créditos) siempre que tu membresía se renueve."
-        return {
-            "reply": reply,
-            "suggestions": ["Ver Planes y Precios", "Comprar créditos flexibles", "¿Cómo cancelar suscripción?"]
-        }
-
-    # 4. Cancellation & No-Show Policy
+    # 4. Action: Cancellation & No-Show Guarantee
     elif any(w in msg for w in ["cancelar", "cancelacion", "cancelación", "devolucion", "reembolso", "inasistencia", "no show", "tarde"]):
         conn.close()
-        reply = "🎟️ **Política de Cancelaciones MoveClub:**\n\n"
-        reply += "• **Cancelación Gratuita:** Puedes cancelar cualquier clase reservada hasta **12 horas antes** de su inicio desde la pestaña *Mis Reservas*. Tus créditos se reembolsarán de inmediato a tu balance.\n"
-        reply += "• **Cancelación Tardía o Inasistencia:** Si cancelas con menos de 12 horas de anticipación o no asistes, los créditos correspondientes a esa sesión se descuentan para resguardar el cupo del centro deportivo."
+        reply = "🎟️ **Política de Cancelaciones & Garantía MoveClub (Estilo ClassPass):**\n\n"
+        reply += "• **Cancelación Anticipada (Gratis):** Si cancelas con más de **12 horas de anticipación**, tus créditos se devuelven al 100% de forma instantánea a tu cuenta.\n"
+        reply += "• **Cancelación Tardía o No-Show:** Si cancelas con menos de 12 horas o no te presentas, los créditos se descuentan para asegurar la compensación del centro y el profesor."
         return {
             "reply": reply,
-            "suggestions": ["Ir a Mis Reservas", "¿Cómo funciona el pase QR?", "Contactar a un humano"]
+            "suggestions": ["Ir a Mis Reservas", "¿Cómo funciona el pase QR?", "Hablar con soporte humano"]
         }
 
-    # 5. QR Digital Pass & Access
-    elif any(w in msg for w in ["qr", "pase", "entrar", "ingreso", "acceso", "recepcion", "recepción"]):
+    # 5. Action: Human Agent Handoff (Omnichannel Escalation / Zendesk & WhatsApp)
+    elif any(w in msg for w in ["humano", "persona", "agente", "hablar con alguien", "whatsapp", "telefono", "teléfono", "correo", "email", "soporte", "problema", "reclamo"]):
         conn.close()
-        reply = "📱 **Cómo ingresar a tu clase con el Pase Digital QR:**\n\n"
-        reply += "1. Ve a la pestaña **Mis Reservas** en el menú inferior o superior.\n"
-        reply += "2. Toca el botón **Ver Pase QR** en tu clase confirmada.\n"
-        reply += "3. Muestra el código en la recepción del gimnasio o club de pádel para hacer check-in instantáneo."
+        reply = "🧑‍💼 **Transferencia a Soporte Humano MoveClub (Omnicanal 24/7):**\n\n"
+        reply += "Si necesitas que un asesor humano revise un cobro o te ayude con un caso especial:\n\n"
+        reply += "• 🟢 **WhatsApp Directo:** [+56 9 5334 1729](https://wa.me/56953341729?text=Hola,%20necesito%20asistencia%20con%20mi%20cuenta%20MoveClub)\n"
+        reply += "• ✉️ **Correo Oficial:** [soporte@moveclub.cl](mailto:soporte@moveclub.cl)\n"
+        reply += "• ⏱️ **Tiempo de respuesta promedio:** Menos de 5 minutos."
         return {
             "reply": reply,
-            "suggestions": ["Ir a Mis Reservas", "Explorar clases hoy", "¿Qué pasa si llego tarde?"]
+            "suggestions": ["Abrir WhatsApp de soporte", "Términos y condiciones", "Volver al Coach IA"]
         }
 
-    # 6. Pilates, Yoga & Wellness
+    # 6. Action: Pilates, Yoga & Wellness
     elif any(w in msg for w in ["pilates", "yoga", "reformer", "estiramiento", "relajacion", "masaje", "spa"]):
         cursor.execute("SELECT name, neighborhood, city FROM studios WHERE category LIKE '%Pilates%' OR category LIKE '%Yoga%' OR category LIKE '%Spa%' LIMIT 4")
         studios = cursor.fetchall()
         conn.close()
-        reply = "🧘‍♀️ **Estudios de Pilates, Yoga & Bienestar en MoveClub:**\n\n"
+        reply = "🧘‍♀️ **Estudios de Pilates & Yoga Asociados:**\n\n"
         for s in studios:
-            reply += f"• **{s['name']}** (📍 {s['neighborhood'] or s['city']})\n"
-        reply += "\n🌿 Ideales para mejorar flexibilidad, postura y desconectar del estrés. Puedes filtrar tocando *🧘‍♀️ Pilates Reformer* en el buscador."
+            loc = s['neighborhood'] if s['neighborhood'] else s['city']
+            reply += f"• **{s['name']}** (📍 {loc})\n"
+        reply += "\n🌿 *Clases recomendadas para tonificar, flexibilidad y salud postural.*"
         return {
             "reply": reply,
-            "suggestions": ["Ver clases de Pilates", "Ver clases de Yoga", "¿Cuántos créditos cuesta?"]
+            "suggestions": ["Ver horarios de Pilates", "¿Cuántos créditos cuesta?", "Ver Mis Reservas"]
         }
 
-    # 7. Human Support & Contact
-    elif any(w in msg for w in ["humano", "persona", "telefono", "teléfono", "whatsapp", "correo", "email", "hablar con alguien", "soporte"]):
+    # 7. Greetings
+    elif any(w in msg for w in ["hola", "buenos dias", "buenas tardes", "buenas noches", "hey", "saludos"]):
         conn.close()
-        reply = "💬 **Atención Directa & Canales de Soporte:**\n\n"
-        reply += "Si necesitas ayuda personalizada con pagos o convenios:\n"
-        reply += "• 📱 **WhatsApp Oficial:** [+56 9 5334 1729](https://wa.me/56953341729)\n"
-        reply += "• ✉️ **Correo de Soporte:** [soporte@moveclub.cl](mailto:soporte@moveclub.cl)\n"
-        reply += "• ⏰ **Horario de atención humana:** Lunes a Domingo de 08:00 a 22:00 hrs."
         return {
-            "reply": reply,
-            "suggestions": ["Abrir WhatsApp de soporte", "Términos y Condiciones", "¿Cómo cancelar plan?"]
+            "reply": f"¡Hola, {user_first_name}! ⚡ Soy el **Coach IA de MoveClub** (asistente inteligente integrado con tu cuenta).\n\nTienes **{user_credits} créditos disponibles** ({user_plan}). ¿En qué te puedo ayudar hoy?",
+            "suggestions": ["🎟️ Ver mis reservas", "🎾 ¿Qué estudios de pádel hay?", "⚡ ¿Cómo funcionan los créditos?", "💬 Hablar con soporte humano"]
         }
 
     # 8. General / Fallback with smart recommendation
@@ -123,10 +156,10 @@ def process_ai_support_chat(user_msg, uid=None):
         total_studios = cursor.fetchone()["count"]
         conn.close()
         
-        reply = f"🤖 Como tu **Coach IA de MoveClub**, puedo ayudarte a encontrar clases entre los más de **{total_studios} centros y canchas asociadas**, explicarte tus créditos, o gestionar reservas.\n\n¿Te gustaría que te recomiende actividades según tu objetivo de hoy?"
+        reply = f"🤖 Como tu **Coach IA de MoveClub**, estoy conectado a tu cuenta con **{user_credits} créditos activos** y a la red de **{total_studios} centros y canchas**.\n\nPuedo revisar tus reservas, explicarte el rollover o recomendarte canchas de pádel y pilates en {user_city}. ¿Qué te gustaría consultar?"
         return {
             "reply": reply,
-            "suggestions": ["🎾 Ver clínicas de Pádel", "⚡ ¿Cómo funcionan los créditos?", "🎟️ Ver Mis Reservas", "💬 Hablar con soporte"]
+            "suggestions": ["🎟️ Ver mis reservas", "🎾 Canchas de Pádel", "⚡ Créditos y Rollover", "💬 Hablar con un Humano"]
         }
 
 from notifications import build_google_calendar_url, build_ical_content, generate_booking_confirmation_email_html, generate_reminder_email_html
