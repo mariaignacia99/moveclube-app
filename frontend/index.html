@@ -606,9 +606,14 @@
     <!-- ==================== VIEW 2: MIS RESERVAS ==================== -->
     <section id="view-bookings" class="hidden space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
-        <div>
-          <h2 class="text-2xl font-black text-slate-900">Mis Reservas y Clases</h2>
-          <p class="text-sm text-slate-500">Gestiona tus pases digitales QR, cancelaciones y calificaciones.</p>
+        <div class="flex items-center space-x-3">
+          <button onclick="app.switchView('explore')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-700 hover:text-blue-600 hover:border-blue-300 transition active:scale-95 shrink-0" title="Volver a Inicio">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+          </button>
+          <div>
+            <h2 class="text-2xl font-black text-slate-900">Mis Reservas y Clases</h2>
+            <p class="text-sm text-slate-500">Gestiona tus pases digitales QR, cancelaciones y calificaciones.</p>
+          </div>
         </div>
         
         <!-- Filter Tabs for Bookings -->
@@ -651,7 +656,16 @@
     </section>
 
     <!-- ==================== VIEW 3: PLANES Y CRÉDITOS ==================== -->
-    <section id="view-plans" class="hidden space-y-8">
+    <section id="view-plans" class="hidden space-y-6">
+      <div class="flex items-center space-x-3 pb-1">
+        <button onclick="app.switchView('explore')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-700 hover:text-blue-600 hover:border-blue-300 transition active:scale-95 shrink-0" title="Volver a Inicio">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </button>
+        <div>
+          <h2 class="text-2xl font-black text-slate-900">Planes y Membresías</h2>
+          <p class="text-sm text-slate-500">Recarga créditos o selecciona tu suscripción mensual.</p>
+        </div>
+      </div>
       
       <!-- Current Balance Dashboard Banner -->
       <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
@@ -896,9 +910,14 @@
 
     <!-- ==================== VIEW 4: FAVORITOS ==================== -->
     <section id="view-favorites" class="hidden space-y-6">
-      <div class="border-b border-slate-200 pb-5">
-        <h2 class="text-2xl font-black text-slate-900">Tus Estudios Favoritos</h2>
-        <p class="text-sm text-slate-500">Accede rápidamente a los horarios de tus centros de entrenamiento preferidos.</p>
+      <div class="flex items-center space-x-3 border-b border-slate-200 pb-5">
+        <button onclick="app.switchView('explore')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-700 hover:text-blue-600 hover:border-blue-300 transition active:scale-95 shrink-0" title="Volver a Inicio">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </button>
+        <div>
+          <h2 class="text-2xl font-black text-slate-900">Tus Estudios Favoritos</h2>
+          <p class="text-sm text-slate-500">Accede rápidamente a los horarios de tus centros preferidos.</p>
+        </div>
       </div>
 
       <div id="favoritesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -920,11 +939,10 @@
     <!-- ==================== VIEW 5: PANEL ADMINISTRADOR & ESTUDIOS ==================== -->
     <section id="view-admin" class="hidden space-y-6 animate-fade-in pb-24">
       
-      <!-- Top Bar: Back to profile & Title -->
+      <!-- Top Bar: Back to explore & Title -->
       <div class="flex items-center justify-between">
-        <button onclick="app.switchView('profile')" class="px-3.5 py-1.5 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-800 font-bold text-xs flex items-center space-x-1.5 transition">
-          <i data-lucide="arrow-left" class="w-4 h-4"></i>
-          <span>← Volver a Mi Perfil</span>
+        <button onclick="app.switchView('explore')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-700 hover:text-blue-600 hover:border-blue-300 transition active:scale-95 shrink-0" title="Volver a Inicio">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
         </button>
         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-100 text-purple-800 border border-purple-200">👑 Administradora</span>
       </div>
@@ -1189,6 +1207,13 @@
 
     <!-- ==================== VIEW 6: PERFIL DE USUARIO ==================== -->
     <section id="view-profile" class="space-y-5 max-w-md mx-auto hidden animate-fade-in pb-28 pt-2">
+      <div class="flex items-center justify-between pb-1">
+        <button onclick="app.switchView('explore')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-700 hover:text-blue-600 hover:border-blue-300 transition active:scale-95 shrink-0" title="Volver a Inicio">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </button>
+        <span class="text-sm font-bold text-slate-600">Mi Perfil</span>
+        <div class="w-10"></div>
+      </div>
       
       <!-- User Avatar & Header -->
       <div class="text-center space-y-3">
@@ -3149,6 +3174,6 @@
   </div>
 
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_2115"></script>
+  <script src="js/app.js?v=20260831_2120"></script>
 </body>
 </html>
