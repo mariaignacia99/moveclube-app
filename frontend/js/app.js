@@ -3375,19 +3375,11 @@ const app = {
     let startLeft = 0, startTop = 0;
     let hasMoved = false;
 
-    // Default position: bottom right above navbar
-    const savedPos = localStorage.getItem('mc_ai_btn_pos');
-    if (savedPos) {
-      try {
-        const { left, top } = JSON.parse(savedPos);
-        if (left >= 10 && left < window.innerWidth - 65 && top >= 10 && top < window.innerHeight - 65) {
-          el.style.left = `${left}px`;
-          el.style.top = `${top}px`;
-          el.style.right = 'auto';
-          el.style.bottom = 'auto';
-        }
-      } catch (e) {}
-    }
+    // Clean initial styles
+    el.style.right = '16px';
+    el.style.bottom = '80px';
+    el.style.left = 'auto';
+    el.style.top = 'auto';
 
     const onStart = (e) => {
       isDragging = true;
@@ -3409,12 +3401,12 @@ const app = {
 
       if (Math.hypot(dx, dy) > 5) {
         hasMoved = true;
-        if (e.cancelable && e.touches) e.preventDefault();
+        if (e.cancelable) e.preventDefault();
         let nextLeft = startLeft + dx;
         let nextTop = startTop + dy;
 
-        // Clamp to screen bounds
-        const pad = 12;
+        // Clamp inside visible viewport
+        const pad = 10;
         const maxW = window.innerWidth - el.offsetWidth - pad;
         const maxH = window.innerHeight - el.offsetHeight - pad;
 
@@ -3435,9 +3427,6 @@ const app = {
 
       if (!hasMoved) {
         app.switchView('ai-chat');
-      } else {
-        const rect = el.getBoundingClientRect();
-        localStorage.setItem('mc_ai_btn_pos', JSON.stringify({ left: rect.left, top: rect.top }));
       }
     };
 

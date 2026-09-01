@@ -3260,24 +3260,24 @@
   </div>
 
 
-      <!-- ==================== MOVABLE CIRCULAR FLOATING AI COACH WIDGET ==================== -->
-  <div id="aiChatFloatingBtn" class="fixed select-none cursor-grab active:cursor-grabbing group" style="bottom: 90px; right: 20px; z-index: 999999; touch-action: none;">
-    <div class="relative w-14 h-14 rounded-full bg-slate-950 p-0.5 shadow-[0_10px_35px_rgba(0,0,0,0.45)] border-2 border-cyan-400 hover:border-cyan-300 hover:scale-110 active:scale-95 transition-transform flex items-center justify-center">
+        <!-- ==================== MOVABLE CIRCULAR FLOATING AI COACH WIDGET ==================== -->
+  <div id="aiChatFloatingBtn" onclick="app.switchView('ai-chat')" class="fixed z-[999999] select-none cursor-pointer group" style="position: fixed !important; bottom: 80px !important; right: 16px !important; width: 56px !important; height: 56px !important; touch-action: none; display: block !important;">
+    <div class="relative w-14 h-14 rounded-full bg-slate-950 p-0.5 shadow-[0_10px_35px_rgba(0,0,0,0.55)] border-2 border-cyan-400 hover:border-cyan-300 hover:scale-110 active:scale-95 transition-transform flex items-center justify-center">
       <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center p-1.5 overflow-hidden">
         <img src="/images/app_icon.png" alt="Coach IA" class="w-full h-full object-cover rounded-full pointer-events-none">
       </div>
       <!-- Green Live Status Dot -->
-      <span class="absolute top-0 right-0 w-4 h-4 bg-emerald-500 rounded-full border-2 border-slate-950 flex items-center justify-center pointer-events-none">
-        <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
+      <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-slate-950 flex items-center justify-center pointer-events-none">
+        <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
       </span>
-      <!-- Floating Tag -->
-      <span class="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-slate-950/95 text-cyan-300 text-[9px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-md border border-cyan-500/30 pointer-events-none">
+      <!-- Mini Badge -->
+      <span class="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-slate-950 text-cyan-300 text-[9px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-md border border-cyan-500/30 pointer-events-none">
         Coach IA ⚡
       </span>
     </div>
   </div>
 
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_2240"></script>
+  <script src="js/app.js?v=20260831_2245"></script>
 </body>
 </html>
