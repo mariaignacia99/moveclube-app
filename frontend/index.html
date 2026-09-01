@@ -31,7 +31,7 @@
   </script>
 
   <!-- Google Fonts & Custom CSS -->
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=20260831_2255">
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -255,7 +255,45 @@
           </div>
         </div>
 
-        
+        <!-- Search Bar with Live Suggestions Dropdown -->
+        <div class="relative">
+          <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="searchInput" oninput="app.handleSearch(this.value)" onfocus="app.handleSearchFocus()" onkeydown="if(event.key==='Enter') this.blur()" placeholder="Buscar pádel, pilates, ruta pádel, crossfit..." class="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-white border border-slate-200/90 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm shadow-sm transition">
+          <button id="clearSearchBtn" onclick="app.resetFilters()" class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-black hover:bg-slate-300">
+            ✕
+          </button>
+
+          <!-- Live Search Autocomplete Floating Dropdown -->
+          <div id="liveSearchDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 max-h-80 overflow-y-auto divide-y divide-slate-100 animate-fade-in">
+            <!-- Rendered dynamically by app.renderLiveSearchDropdown() -->
+          </div>
+        </div>
+
+        <!-- Quick Example Pills / Sugerencias de Búsqueda -->
+        <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 scrollbar-none pt-0.5">
+          <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0">Sugerencias:</span>
+          <button onclick="app.quickSearch('Pádel')" class="px-3 py-1 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 transition flex items-center space-x-1 border border-slate-200/80 shadow-sm active:scale-95">
+            <span>🎾 Pádel</span>
+          </button>
+          <button onclick="app.quickSearch('Ruta Pádel')" class="px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-extrabold shrink-0 transition flex items-center space-x-1 border border-blue-600 shadow-sm active:scale-95">
+            <span>🔥 Club Ruta Pádel</span>
+          </button>
+          <button onclick="app.quickSearch('Pilates Reformer')" class="px-3 py-1 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200/80 shadow-sm active:scale-95">
+            <span>🧘‍♀️ Pilates Reformer</span>
+          </button>
+          <button onclick="app.quickSearch('CrossFit')" class="px-3 py-1 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200/80 shadow-sm active:scale-95">
+            <span>🏋️‍♂️ CrossFit</span>
+          </button>
+          <button onclick="app.quickSearch('Valdivia')" class="px-3 py-1 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200/80 shadow-sm active:scale-95">
+            <span>📍 Valdivia</span>
+          </button>
+          <button onclick="app.quickSearch('Osorno')" class="px-3 py-1 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200/80 shadow-sm active:scale-95">
+            <span>📍 Osorno</span>
+          </button>
+          <button onclick="app.quickSearch('Temuco')" class="px-3 py-1 rounded-full bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200/80 shadow-sm active:scale-95">
+            <span>📍 Temuco</span>
+          </button>
+        </div>
       </div>
 
       <!-- 3. Ver todo (4 Big Visual Pillar Cards Grid) -->
@@ -3260,8 +3298,8 @@
   </div>
 
 
-        <!-- ==================== MOVABLE CIRCULAR FLOATING AI COACH WIDGET ==================== -->
-  <div id="aiChatFloatingBtn" onclick="app.switchView('ai-chat')" class="fixed z-[999999] select-none cursor-pointer group" style="position: fixed !important; bottom: 80px !important; right: 16px !important; width: 56px !important; height: 56px !important; touch-action: none; display: block !important;">
+          <!-- ==================== MOVABLE CIRCULAR FLOATING AI COACH WIDGET ==================== -->
+  <div id="aiChatFloatingBtn" onclick="app.switchView('ai-chat')" class="select-none cursor-pointer group" title="Abrir Coach IA MoveClub">
     <div class="relative w-14 h-14 rounded-full bg-slate-950 p-0.5 shadow-[0_10px_35px_rgba(0,0,0,0.55)] border-2 border-cyan-400 hover:border-cyan-300 hover:scale-110 active:scale-95 transition-transform flex items-center justify-center">
       <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center p-1.5 overflow-hidden">
         <img src="/images/app_icon.png" alt="Coach IA" class="w-full h-full object-cover rounded-full pointer-events-none">
@@ -3278,6 +3316,6 @@
   </div>
 
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_2245"></script>
+  <script src="js/app.js?v=20260831_2255"></script>
 </body>
 </html>
