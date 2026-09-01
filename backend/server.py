@@ -785,6 +785,15 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                 conn.close()
                 return self._send_json({"success": True, "categories": categories})
 
+            # 2.5 GET /api/plans
+            elif path == "/api/plans":
+                plans = [
+                    {"id": "plan_basic", "name": "Plan Básico", "credits": 25, "price": 29900, "currency": "CLP", "tag": "1-2 veces por semana"},
+                    {"id": "plan_pro", "name": "Plan Pro", "credits": 45, "price": 49900, "currency": "CLP", "tag": "Más Popular • Acceso Total", "popular": True},
+                    {"id": "plan_elite", "name": "Plan Élite", "credits": 80, "price": 79900, "currency": "CLP", "tag": "Para Atletas & Deportistas Frecuentes"}
+                ]
+                return self._send_json({"success": True, "plans": plans})
+
             # 3. GET /api/studios
             elif path == "/api/studios":
                 city = query.get("city", [None])[0]
