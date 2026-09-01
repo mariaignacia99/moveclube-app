@@ -3494,6 +3494,13 @@ const app = {
     this.showToast('Chat reiniciado');
   },
 
+  escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  },
+
   sendAiQuickPrompt(promptText) {
     const input = document.getElementById('aiViewInput');
     if (input) input.value = promptText;
