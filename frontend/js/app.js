@@ -68,6 +68,7 @@ const app = {
     ]);
 
     this.setupEventListeners();
+    this.initDraggableAiWidget();
     lucide.createIcons();
 
     // Register PWA Service Worker
@@ -3353,9 +3354,108 @@ const app = {
   },
 
   // ==================== MOVECLUB AI CHAT & CONCIERGE ====================
+  initDraggableAiWidget() {
+    const el = document.getElementById('aiChatFloatingBtn');
+    if (!el) return;
+
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let initialLeft = 0, initialTop = 0;
+    let hasMoved = false;
+
+    // Load saved position if any
+    const savedPos = localStorage.getItem('mc_ai_btn_pos');
+    if (savedPos) {
+      try {
+        const { left, top } = JSON.parse(savedPos);
+        // Ensure saved position is still visible on current screen size
+        if (left >= 0 && left < window.innerWidth - 60 && top >= 0 && top < window.innerHeight - 60) {
+          el.style.left = `${left}px`;
+          el.style.top = `${top}px`;
+          el.style.right = 'auto';
+          el.style.bottom = 'auto';
+        }
+      } catch (e) {}
+    }
+
+    const onStart = (e) => {
+      isDragging = true;
+      hasMoved = false;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      startX = clientX;
+      startY = clientY;
+
+      const rect = el.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+      el.style.transition = 'none';
+    };
+
+    const onMove = (e) => {
+      if (!isDragging) return;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+      const deltaX = clientX - startX;
+      const deltaY = clientY - startY;
+
+      if (Math.hypot(deltaX, deltaY) > 6) {
+        hasMoved = true;
+      }
+
+      if (hasMoved) {
+        if (e.cancelable && e.touches) e.preventDefault();
+        let newLeft = initialLeft + deltaX;
+        let newTop = initialTop + deltaY;
+
+        // Keep inside window bounds
+        const pad = 10;
+        const maxLeft = window.innerWidth - el.offsetWidth - pad;
+        const maxTop = window.innerHeight - el.offsetHeight - pad;
+
+        newLeft = Math.max(pad, Math.min(newLeft, maxLeft));
+        newTop = Math.max(pad, Math.min(newTop, maxTop));
+
+        el.style.left = `${newLeft}px`;
+        el.style.top = `${newTop}px`;
+        el.style.right = 'auto';
+        el.style.bottom = 'auto';
+      }
+    };
+
+    const onEnd = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      el.style.transition = 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
+
+      if (!hasMoved) {
+        // Tap / Click -> Toggle AI Chat!
+        app.toggleAiChat();
+      } else {
+        // Save dragged position
+        const rect = el.getBoundingClientRect();
+        localStorage.setItem('mc_ai_btn_pos', JSON.stringify({ left: rect.left, top: rect.top }));
+      }
+    };
+
+    // Touch events (mobile)
+    el.addEventListener('touchstart', onStart, { passive: true });
+    window.addEventListener('touchmove', onMove, { passive: false });
+    window.addEventListener('touchend', onEnd, { passive: true });
+
+    // Mouse events (desktop)
+    el.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+  },
+
   openAiChat() {
     const modal = document.getElementById('aiChatModal');
-    if (modal) modal.classList.remove('hidden');
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.classList.remove('hidden');
+    }
     const input = document.getElementById('aiChatInput');
     if (input) setTimeout(() => input.focus(), 150);
     if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -3363,13 +3463,17 @@ const app = {
 
   closeAiChat() {
     const modal = document.getElementById('aiChatModal');
-    if (modal) modal.classList.add('hidden');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.classList.add('hidden');
+    }
   },
 
   toggleAiChat() {
     const modal = document.getElementById('aiChatModal');
     if (modal) {
-      if (modal.classList.contains('hidden')) {
+      const isHidden = modal.style.display === 'none' || modal.classList.contains('hidden') || getComputedStyle(modal).display === 'none';
+      if (isHidden) {
         this.openAiChat();
       } else {
         this.closeAiChat();

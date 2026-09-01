@@ -3282,19 +3282,25 @@
   </div>
 
 
-  <!-- ==================== FLOATING AI COACH & SUPPORT BUTTON ==================== -->
-  <button onclick="app.toggleAiChat()" id="aiChatFloatingBtn" class="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-40 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-full bg-slate-950 text-white shadow-2xl border border-slate-700/80 flex items-center space-x-2.5 hover:scale-105 hover:border-cyan-400 transition-all duration-300 group active:scale-95" title="Abrir Chat con Coach IA MoveClub">
-    <div class="w-7 h-7 rounded-full bg-gradient-to-r from-[#00F2FE] via-[#38BDF8] to-[#C084FC] p-0.5 flex items-center justify-center shrink-0">
-      <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-xs">
-        ⚡
+  <!-- ==================== DRAGGABLE CIRCULAR FLOATING AI COACH WIDGET ==================== -->
+  <div id="aiChatFloatingBtn" class="fixed bottom-24 right-4 sm:bottom-8 sm:right-8 z-50 select-none touch-none cursor-pointer group" style="touch-action: none;">
+    <div class="w-14 h-14 rounded-full bg-slate-950 p-0.5 shadow-2xl border-2 border-cyan-400/90 hover:border-cyan-300 hover:scale-110 active:scale-95 transition-transform flex items-center justify-center relative shadow-[0_0_25px_rgba(6,182,212,0.45)]">
+      <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center p-1.5 overflow-hidden">
+        <img src="/images/app_icon.png" alt="MoveClub Coach IA" class="w-full h-full object-cover rounded-full">
       </div>
+      <!-- Pulse dot -->
+      <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-slate-950 flex items-center justify-center shadow-sm">
+        <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
+      </span>
+      <!-- Mini Badge -->
+      <span class="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md text-cyan-300 text-[9px] font-black px-2 py-0.5 rounded-full whitespace-nowrap shadow-md border border-cyan-500/30 pointer-events-none">
+        Coach IA ⚡
+      </span>
     </div>
-    <span class="text-xs font-black tracking-wide hidden sm:inline">Coach IA 24/7</span>
-    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-  </button>
+  </div>
 
   <!-- ==================== AI COACH & SUPPORT MODAL ==================== -->
-  <div id="aiChatModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-950/80 backdrop-blur-sm hidden animate-fadeIn">
+  <div id="aiChatModal" style="display: none;" class="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
     <div class="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[85vh] sm:h-[620px] max-h-[90vh]">
       
       <!-- Chat Header -->
@@ -3372,6 +3378,6 @@
   </div>
 
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_2135"></script>
+  <script src="js/app.js?v=20260831_2145"></script>
 </body>
 </html>
