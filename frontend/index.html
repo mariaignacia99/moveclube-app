@@ -1534,11 +1534,11 @@
             <span class="font-bold text-slate-900">Centro de ayuda</span>
             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
           </div>
-          <div onclick="app.showToast('Términos y condiciones oficiales vigentes para Chile')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div onclick="app.openLegalModal('terms')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
             <span class="font-bold text-slate-900">Términos y condiciones</span>
             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
           </div>
-          <div onclick="app.showToast('Política de privacidad y protección de datos MoveClub')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
+          <div onclick="app.openLegalModal('privacy')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/80 transition">
             <span class="font-bold text-slate-900">Política de privacidad</span>
             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
           </div>
@@ -3044,6 +3044,10 @@
             <span>Crear Cuenta & Recibir 10 Créditos</span>
             <i data-lucide="sparkles" class="w-4 h-4"></i>
           </button>
+          
+          <p class="text-[11px] text-slate-500 text-center leading-relaxed pt-1">
+            Al registrarte, aceptas los <a href="javascript:void(0)" onclick="app.openLegalModal('terms')" class="text-blue-600 font-bold underline">Términos y Condiciones</a> y la <a href="javascript:void(0)" onclick="app.openLegalModal('privacy')" class="text-blue-600 font-bold underline">Política de Privacidad</a> de MoveClub.
+          </p>
         </div>
 
         <!-- 1-Click Google Login -->
@@ -3173,7 +3177,101 @@
     <span id="toastMessage">Acción completada con éxito</span>
   </div>
 
+
+  <!-- ==================== MODAL LEGAL: TÉRMINOS & PRIVACIDAD ==================== -->
+  <div id="legalModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden animate-fadeIn">
+    <div class="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-slate-950 p-1 flex items-center justify-center">
+            <img src="/images/app_icon.png" alt="MoveClub" class="w-full h-full object-cover rounded-lg">
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Documentación Legal MoveClub</h3>
+            <p class="text-[11px] text-slate-500">Conforme a la normativa chilena y directrices de Apple App Store</p>
+          </div>
+        </div>
+        <button onclick="app.closeLegalModal()" class="p-2 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="px-5 pt-3 pb-1 border-b border-slate-100 flex items-center space-x-2 bg-white">
+        <button id="legalTabTerms" onclick="app.switchLegalTab('terms')" class="px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white shadow-sm transition">
+          📄 Términos y Condiciones
+        </button>
+        <button id="legalTabPrivacy" onclick="app.switchLegalTab('privacy')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition">
+          🔒 Política de Privacidad
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 overflow-y-auto max-h-[60vh] space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        
+        <!-- SECTION: TERMS -->
+        <div id="legalContentTerms" class="space-y-4">
+          <div class="bg-blue-50 p-3.5 rounded-2xl border border-blue-100 text-blue-900 text-xs font-medium">
+            📌 <strong>Resumen Rápido:</strong> MoveClub es una plataforma tecnológica que te permite reservar clases de pádel, fitness, yoga y gimnasios en centros independientes asociados mediante créditos.
+          </div>
+          <h4 class="font-extrabold text-slate-900 text-sm">1. Naturaleza del Servicio</h4>
+          <p>MoveClub actúa como intermediario tecnológico. La ejecución de las clases físicas es responsabilidad exclusiva de los centros de entrenamiento afiliados.</p>
+          
+          <h4 class="font-extrabold text-slate-900 text-sm">2. Membresías y Créditos</h4>
+          <p>Los planes se renuevan cada 30 días. Los créditos no utilizados se acumulan para el mes siguiente (rollover) mientras la membresía esté activa. Pagos procesados de forma encriptada bajo normas PCI-DSS con Mercado Pago y Transbank.</p>
+          
+          <h4 class="font-extrabold text-slate-900 text-sm">3. Cancelaciones y Cupos</h4>
+          <p>Puedes cancelar reservas hasta 12 horas antes sin costo. Cancelaciones tardías o inasistencias descontarán los créditos reservados para proteger el cupo del estudio.</p>
+          
+          <h4 class="font-extrabold text-slate-900 text-sm">4. Aptitud Física</h4>
+          <p>El usuario declara estar en condiciones físicas aptas para realizar ejercicio y asume la práctica voluntaria respetando las normas de cada centro.</p>
+
+          <div class="pt-2">
+            <a href="/terms.html" target="_blank" class="text-xs font-bold text-blue-600 hover:underline inline-flex items-center space-x-1">
+              <span>Ver documento completo en página web separada</span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- SECTION: PRIVACY -->
+        <div id="legalContentPrivacy" class="hidden space-y-4">
+          <div class="bg-emerald-50 p-3.5 rounded-2xl border border-emerald-100 text-emerald-900 text-xs font-medium">
+            🔒 <strong>Garantía de Privacidad:</strong> MoveClub <u>nunca</u> vende ni comercializa tus datos personales. Tus pagos están encriptados y protegidos.
+          </div>
+          <h4 class="font-extrabold text-slate-900 text-sm">1. Datos Recopilados</h4>
+          <p>Solo solicitamos nombre, correo, teléfono y ciudad para gestionar tus reservas y pases digitales QR.</p>
+          
+          <h4 class="font-extrabold text-slate-900 text-sm">2. Geolocalización Opcional</h4>
+          <p>Solo se utiliza con tu autorización para mostrar canchas y gimnasios cercanos a tu ubicación.</p>
+          
+          <h4 class="font-extrabold text-slate-900 text-sm">3. Derechos ARCO y Eliminación de Cuenta</h4>
+          <p>Conforme a las normativas de Apple y la Ley 19.628, puedes editar o solicitar la eliminación total de tu cuenta y datos en cualquier momento desde los ajustes de la app.</p>
+
+          <div class="pt-2">
+            <a href="/privacy.html" target="_blank" class="text-xs font-bold text-blue-600 hover:underline inline-flex items-center space-x-1">
+              <span>Ver política de privacidad completa en página web separada</span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <span class="text-xs text-slate-400">MoveClub SpA • República de Chile</span>
+        <button onclick="app.closeLegalModal()" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs transition">
+          Entendido
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_2120"></script>
+  <script src="js/app.js?v=20260831_2130"></script>
 </body>
 </html>

@@ -3313,6 +3313,45 @@ const app = {
     lucide.createIcons();
   },
 
+  openLegalModal(tab = 'terms') {
+    const m = document.getElementById('legalModal');
+    if (m) m.classList.remove('hidden');
+    this.switchLegalTab(tab);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  },
+
+  closeLegalModal() {
+    const m = document.getElementById('legalModal');
+    if (m) m.classList.add('hidden');
+  },
+
+  switchLegalTab(tab) {
+    const tabTerms = document.getElementById('legalTabTerms');
+    const tabPrivacy = document.getElementById('legalTabPrivacy');
+    const contentTerms = document.getElementById('legalContentTerms');
+    const contentPrivacy = document.getElementById('legalContentPrivacy');
+
+    if (tab === 'terms') {
+      if (tabTerms) {
+        tabTerms.className = 'px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white shadow-sm transition';
+      }
+      if (tabPrivacy) {
+        tabPrivacy.className = 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition';
+      }
+      if (contentTerms) contentTerms.classList.remove('hidden');
+      if (contentPrivacy) contentPrivacy.classList.add('hidden');
+    } else {
+      if (tabTerms) {
+        tabTerms.className = 'px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition';
+      }
+      if (tabPrivacy) {
+        tabPrivacy.className = 'px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white shadow-sm transition';
+      }
+      if (contentTerms) contentTerms.classList.add('hidden');
+      if (contentPrivacy) contentPrivacy.classList.remove('hidden');
+    }
+  },
+
   setupEventListeners() {
     // Close dropdowns on outside click
     document.addEventListener('click', (e) => {
