@@ -31,7 +31,7 @@
   </script>
 
   <!-- Google Fonts & Custom CSS -->
-  <link rel="stylesheet" href="css/styles.css?v=20260831_2300">
+  <link rel="stylesheet" href="css/styles.css?v=20260831_2310">
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -193,32 +193,39 @@
   </header>
 
   <!-- FIXED FLOATING MOBILE BOTTOM NAVIGATION (Estilo Moderno) -->
-  <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 py-2 px-2 flex justify-around items-center shadow-2xl safe-area-bottom">
-    <button onclick="app.switchView('explore')" id="mobile-nav-explore" class="flex flex-col items-center text-[10px] font-extrabold text-slate-900 group">
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 py-2 px-1 flex justify-around items-center shadow-2xl safe-area-bottom">
+    <button onclick="app.switchView('explore')" id="mobile-nav-explore" class="flex flex-col items-center text-[9px] font-extrabold text-slate-900 group">
       <div class="p-1 rounded-xl group-hover:bg-slate-100 transition">
         <i data-lucide="home" class="w-5 h-5 text-slate-900"></i>
       </div>
       <span>Inicio</span>
     </button>
-    <button onclick="app.focusSearch()" id="mobile-nav-search" class="flex flex-col items-center text-[10px] font-bold text-slate-500 hover:text-slate-900 group">
+    <button onclick="app.focusSearch()" id="mobile-nav-search" class="flex flex-col items-center text-[9px] font-bold text-slate-500 hover:text-slate-900 group">
       <div class="p-1 rounded-xl group-hover:bg-slate-100 transition">
         <i data-lucide="search" class="w-5 h-5 text-slate-500 group-hover:text-slate-900"></i>
       </div>
       <span>Buscar</span>
     </button>
-    <button onclick="app.switchView('plans')" id="mobile-nav-plans" class="flex flex-col items-center text-[10px] font-extrabold text-teal-700 hover:text-teal-900 group">
+    <button onclick="app.switchView('ai-chat')" id="mobile-nav-ai-chat" class="flex flex-col items-center text-[9px] font-black text-cyan-600 hover:text-cyan-700 group relative">
+      <div class="p-1 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/30 transition">
+        <i data-lucide="bot" class="w-5 h-5"></i>
+      </div>
+      <span class="text-cyan-700 font-extrabold">Coach IA</span>
+      <span class="absolute 0 right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+    </button>
+    <button onclick="app.switchView('plans')" id="mobile-nav-plans" class="flex flex-col items-center text-[9px] font-extrabold text-teal-700 hover:text-teal-900 group">
       <div class="p-1 rounded-xl bg-teal-50 text-teal-700 group-hover:bg-teal-100 transition">
         <i data-lucide="plus-circle" class="w-5 h-5"></i>
       </div>
-      <span>Añadir créditos</span>
+      <span>Créditos</span>
     </button>
-    <button onclick="app.switchView('bookings')" id="mobile-nav-bookings" class="flex flex-col items-center text-[10px] font-bold text-slate-500 hover:text-slate-900 group">
+    <button onclick="app.switchView('bookings')" id="mobile-nav-bookings" class="flex flex-col items-center text-[9px] font-bold text-slate-500 hover:text-slate-900 group">
       <div class="p-1 rounded-xl group-hover:bg-slate-100 transition">
         <i data-lucide="calendar" class="w-5 h-5 text-slate-500 group-hover:text-slate-900"></i>
       </div>
       <span>Próximas</span>
     </button>
-    <button onclick="app.switchView('profile')" id="mobile-nav-profile" class="flex flex-col items-center text-[10px] font-bold text-slate-500 hover:text-slate-900 group">
+    <button onclick="app.switchView('profile')" id="mobile-nav-profile" class="flex flex-col items-center text-[9px] font-bold text-slate-500 hover:text-slate-900 group">
       <div class="p-1 rounded-xl group-hover:bg-slate-100 transition">
         <i data-lucide="user" class="w-5 h-5 text-slate-500 group-hover:text-slate-900"></i>
       </div>
@@ -3316,6 +3323,6 @@
   </div>
 
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_2300"></script>
+  <script src="js/app.js?v=20260831_2310"></script>
 </body>
 </html>
