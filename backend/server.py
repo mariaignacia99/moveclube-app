@@ -111,20 +111,20 @@ def process_ai_support_chat(user_msg, uid=None):
         reply += "• **Cancelación Tardía o No-Show:** Si cancelas con menos de 12 horas o no te presentas, los créditos se descuentan para asegurar la compensación del centro y el profesor."
         return {
             "reply": reply,
-            "suggestions": ["Ir a Mis Reservas", "¿Cómo funciona el pase QR?", "Hablar con soporte humano"]
+            "suggestions": ["Ir a Mis Reservas", "¿Cómo funciona el pase QR?", "✉️ Contactar soporte"]
         }
 
-    # 5. Action: Human Agent Handoff (Omnichannel Escalation / Zendesk & WhatsApp)
+    # 5. Action: Official Support Ticket / Email
     elif any(w in msg for w in ["humano", "persona", "agente", "hablar con alguien", "whatsapp", "telefono", "teléfono", "correo", "email", "soporte", "problema", "reclamo"]):
         conn.close()
-        reply = "🧑‍💼 **Transferencia a Soporte Humano MoveClub (Omnicanal 24/7):**\n\n"
-        reply += "Si necesitas que un asesor humano revise un cobro o te ayude con un caso especial:\n\n"
-        reply += "• 🟢 **WhatsApp Directo:** [+56 9 5334 1729](https://wa.me/56953341729?text=Hola,%20necesito%20asistencia%20con%20mi%20cuenta%20MoveClub)\n"
+        reply = "✉️ **Centro de Soporte Oficial MoveClub:**\n\n"
+        reply += "Si necesitas asistencia especializada de nuestro equipo de atención:\n\n"
         reply += "• ✉️ **Correo Oficial:** [soporte@moveclub.cl](mailto:soporte@moveclub.cl)\n"
-        reply += "• ⏱️ **Tiempo de respuesta promedio:** Menos de 5 minutos."
+        reply += "• ⏱️ **Horario de atención:** Lunes a Domingo 24/7.\n"
+        reply += "• 🔒 **Protección al usuario:** Respuesta garantizada en menos de 24 horas hábiles."
         return {
             "reply": reply,
-            "suggestions": ["Abrir WhatsApp de soporte", "Términos y condiciones", "Volver al Coach IA"]
+            "suggestions": ["Términos y condiciones", "¿Cómo cancelar una reserva?", "Volver al Coach IA"]
         }
 
     # 6. Action: Pilates, Yoga & Wellness
@@ -147,7 +147,7 @@ def process_ai_support_chat(user_msg, uid=None):
         conn.close()
         return {
             "reply": f"¡Hola, {user_first_name}! ⚡ Soy el **Coach IA de MoveClub** (asistente inteligente integrado con tu cuenta).\n\nTienes **{user_credits} créditos disponibles** ({user_plan}). ¿En qué te puedo ayudar hoy?",
-            "suggestions": ["🎟️ Ver mis reservas", "🎾 ¿Qué estudios de pádel hay?", "⚡ ¿Cómo funcionan los créditos?", "💬 Hablar con soporte humano"]
+            "suggestions": ["🎟️ Ver mis reservas", "🎾 ¿Qué estudios de pádel hay?", "⚡ ¿Cómo funcionan los créditos?", "✉️ Contactar soporte"]
         }
 
     # 8. General / Fallback with smart recommendation
