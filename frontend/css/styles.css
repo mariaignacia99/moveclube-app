@@ -301,3 +301,58 @@ header, section, article {
   display: none !important;
 }
 
+/* ==================== ONBOARDING TOUR STYLES ==================== */
+.onboarding-dot {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.onboarding-dot.active {
+  width: 2rem !important;
+  background: linear-gradient(90deg, #06B6D4 0%, #2563EB 100%) !important;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+}
+
+.onboarding-step {
+  display: none;
+  animation: onboardingFadeIn 0.35s ease-out forwards;
+}
+.onboarding-step.active {
+  display: block;
+}
+
+@keyframes onboardingFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.credit-item-card {
+  transition: all 0.2s ease;
+}
+.credit-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -2px rgba(37, 99, 235, 0.12);
+}
+
+.coach-pulse-halo {
+  box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  animation: coachHaloPulse 2s infinite;
+}
+
+@keyframes coachHaloPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(6, 182, 212, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
+  }
+}
+
+

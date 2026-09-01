@@ -69,6 +69,20 @@ def process_ai_support_chat(user_msg, uid=None):
                 "suggestions": ["🎾 Ver clínicas de Pádel", "🧘‍♀️ Clases de Pilates", "🏋️‍♂️ Ver Gimnasios disponibles"]
             }
 
+    # 1.5 Action: How MoveClub Works & Onboarding Tour
+    elif any(w in msg for w in ["como funciona", "cómo funciona", "tour", "onboarding", "que es moveclub", "qué es moveclub", "bienvenida", "primeros pasos"]):
+        conn.close()
+        reply = "✨ **¿Cómo funciona MoveClub?**\n\n"
+        reply += "1. **Un solo pase universal:** Entrena en Pádel, Pilates Reformer, CrossFit, Yoga, Boxeo y gimnasios sin pagar matrículas por separado.\n"
+        reply += "2. **Sistema de Créditos:** Cada clase o reserva consume entre 3 y 5 créditos según estudio y horario. Tienes 10 créditos gratis de bienvenida.\n"
+        reply += "3. **Rollover mensual:** Los créditos no utilizados no se pierden, se transfieren a tu siguiente mes.\n"
+        reply += "4. **Coach IA 24/7:** Estoy siempre disponible para recomendarte clases, reservar y gestionar tu cuenta.\n\n"
+        reply += "💡 *Puedes volver a ver el Tour de Bienvenida interactivo en cualquier momento desde tu Perfil o Ajustes.*"
+        return {
+            "reply": reply,
+            "suggestions": ["✨ Abrir Tour de Bienvenida", "⚡ ¿Cómo funcionan los créditos?", "🎾 Ver canchas de Pádel"]
+        }
+
     # 2. Action: Credits, Rollover & Plans
     elif any(w in msg for w in ["credito", "crédito", "creditos", "créditos", "saldo", "rollover", "acumular", "cuanto cuesta", "precio", "plan", "planes", "membresia"]):
         conn.close()

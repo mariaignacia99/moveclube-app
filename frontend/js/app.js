@@ -76,7 +76,7 @@ const app = {
       navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration:', err));
     }
 
-    this.checkWelcomeModal();
+    this.checkOnboardingTour();
     this.checkPaymentReturnFromURL();
   },
 
@@ -96,6 +96,164 @@ const app = {
     } catch(e) {}
   },
 
+  // ==================== ONBOARDING TOUR LOGIC ====================
+  onboardingCurrentStep: 0,
+  totalOnboardingSteps: 4,
+
+  checkOnboardingTour() {
+    const hasCompleted = localStorage.getItem('moveclub_onboarding_completed_v1');
+    if (!hasCompleted) {
+      setTimeout(() => {
+        this.openOnboardingTour(0);
+      }, 400);
+    } else {
+      this.checkWelcomeModal();
+    }
+  },
+
+  openOnboardingTour(step = 0) {
+    const modal = document.getElementById('onboardingTourModal');
+    if (!modal) return;
+    this.onboardingCurrentStep = Math.max(0, Math.min(step, this.totalOnboardingSteps - 1));
+    modal.classList.remove('hidden');
+    this.updateOnboardingUI();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  },
+
+  closeOnboardingTour(markCompleted = true) {
+    const modal = document.getElementById('onboardingTourModal');
+    if (modal) modal.classList.add('hidden');
+    if (markCompleted) {
+      localStorage.setItem('moveclub_onboarding_completed_v1', 'true');
+      localStorage.setItem('moveclub_welcomed_v2', 'true');
+    }
+  },
+
+  goToOnboardingStep(stepIndex) {
+    if (stepIndex >= 0 && stepIndex < this.totalOnboardingSteps) {
+      this.onboardingCurrentStep = stepIndex;
+      this.updateOnboardingUI();
+    }
+  },
+
+  nextOnboardingStep() {
+    if (this.onboardingCurrentStep < this.totalOnboardingSteps - 1) {
+      this.onboardingCurrentStep++;
+      this.updateOnboardingUI();
+    } else {
+      this.finishOnboardingAndExplore();
+    }
+  },
+
+  prevOnboardingStep() {
+    if (this.onboardingCurrentStep > 0) {
+      this.onboardingCurrentStep--;
+      this.updateOnboardingUI();
+    }
+  },
+
+  updateOnboardingUI() {
+    // Update step visibility
+    for (let i = 0; i < this.totalOnboardingSteps; i++) {
+      const stepEl = document.getElementById(`onboardingStep${i}`);
+      const dotEl = document.getElementById(`onboardingDot${i}`);
+      if (stepEl) {
+        if (i === this.onboardingCurrentStep) {
+          stepEl.classList.add('active');
+        } else {
+          stepEl.classList.remove('active');
+        }
+      }
+      if (dotEl) {
+        if (i === this.onboardingCurrentStep) {
+          dotEl.classList.add('active');
+          dotEl.classList.remove('bg-slate-200');
+        } else {
+          dotEl.classList.remove('active');
+          dotEl.classList.add('bg-slate-200');
+        }
+      }
+    }
+
+    // Step text counter
+    const counterEl = document.getElementById('onboardingStepIndicatorText');
+    if (counterEl) {
+      counterEl.innerText = `Paso ${this.onboardingCurrentStep + 1} de ${this.totalOnboardingSteps}`;
+    }
+
+    // Prev button visibility
+    const prevBtn = document.getElementById('onboardingPrevBtn');
+    if (prevBtn) {
+      if (this.onboardingCurrentStep > 0) {
+        prevBtn.classList.remove('hidden');
+      } else {
+        prevBtn.classList.add('hidden');
+      }
+    }
+
+    // Next button text/style
+    const nextBtn = document.getElementById('onboardingNextBtn');
+    if (nextBtn) {
+      if (this.onboardingCurrentStep === this.totalOnboardingSteps - 1) {
+        nextBtn.innerHTML = `<span>¡Empezar! 🚀</span>`;
+        nextBtn.className = "px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-black transition flex items-center space-x-1 shadow-md active:scale-95";
+      } else {
+        nextBtn.innerHTML = `<span>Siguiente</span><i data-lucide="chevron-right" class="w-4 h-4"></i>`;
+        nextBtn.className = "px-5 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-black transition flex items-center space-x-1 shadow-md active:scale-95";
+      }
+    }
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  },
+
+  selectOnboardingCreditDemo(credits, className, explanation) {
+    const textEl = document.getElementById('onboardingCreditDemoText');
+    const badgeEl = document.getElementById('onboardingCreditDemoBadge');
+    if (textEl && badgeEl) {
+      textEl.innerHTML = `<strong>${className}:</strong> Consume ${credits} créditos. ${explanation}`;
+      badgeEl.innerText = `${credits} Créditos`;
+    }
+  },
+
+  runOnboardingAiDemo(promptKey) {
+    const contentEl = document.getElementById('onboardingAiDemoContent');
+    if (!contentEl) return;
+
+    // Show typing state
+    contentEl.innerHTML = `
+      <div class="flex items-center space-x-2 py-1">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"></span>
+        <span class="w-2 h-2 rounded-full bg-blue-400 animate-bounce [animation-delay:0.2s]"></span>
+        <span class="w-2 h-2 rounded-full bg-indigo-400 animate-bounce [animation-delay:0.4s]"></span>
+        <span class="text-[11px] text-cyan-300 font-medium">Coach IA escribiendo respuesta...</span>
+      </div>
+    `;
+
+    setTimeout(() => {
+      let response = '';
+      if (promptKey === 'padel') {
+        response = `<p class="text-white font-medium">🎾 <strong>Canchas de Pádel:</strong> En Osorno y Llanquihue tienes canchas disponibles en <strong>Club Ruta Pádel</strong> y <strong>Llanquihue Pádel Club</strong>. Una reserva cuesta <strong>5 créditos</strong> y puedes reservar tu turno hoy mismo o durante los próximos 7 días.</p>`;
+      } else if (promptKey === 'credits') {
+        response = `<p class="text-white font-medium">⚡ <strong>Tus 10 créditos gratis:</strong> ¡Te rinden para <strong>2 clases completas</strong> de Pádel o Pilates Reformer, o <strong>3 de CrossFit</strong>! Además, los créditos que no uses a fin de mes pasan automáticamente al siguiente mes (Rollover).</p>`;
+      } else if (promptKey === 'cancel') {
+        response = `<p class="text-white font-medium">🎟️ <strong>Política de cancelación:</strong> Puedes cancelar tu clase hasta <strong>12 horas antes</strong> de su inicio y tus créditos se te reembolsan automáticamente al 100% en tu saldo, sin penalizaciones.</p>`;
+      }
+      contentEl.innerHTML = response;
+    }, 450);
+  },
+
+  finishOnboardingAndExplore() {
+    this.closeOnboardingTour(true);
+    this.switchView('explore');
+    this.showToast('🎉 ¡Bienvenido a MoveClub! Tus 10 créditos están activos.');
+  },
+
+  finishOnboardingAndOpenAi() {
+    this.closeOnboardingTour(true);
+    this.switchView('ai-chat');
+    this.showToast('⚡ ¡Coach IA listo para asesorarte!');
+  },
+
   checkWelcomeModal() {
     const modal = document.getElementById('welcomeTrialModal');
     if (!modal) return;
@@ -110,13 +268,14 @@ const app = {
 
   async resetToFreshUser() {
     localStorage.removeItem('moveclub_welcomed_v2');
+    localStorage.removeItem('moveclub_onboarding_completed_v1');
     try {
       const res = await fetch('/api/user/reset_fresh', { method: 'POST' });
       const data = await res.json();
       if (data.success) {
         await this.fetchUser();
         this.switchView('explore');
-        this.checkWelcomeModal();
+        this.openOnboardingTour(0);
         this.showToast('🔄 ¡Usuario restablecido de cero! Bienvenido.');
       }
     } catch(e) {
@@ -3491,6 +3650,10 @@ const app = {
   },
 
   sendAiQuickPrompt(promptText) {
+    if (promptText.includes('Tour de Bienvenida') || promptText.includes('Abrir Tour')) {
+      this.openOnboardingTour(0);
+      return;
+    }
     const input = document.getElementById('aiViewInput');
     if (input) input.value = promptText;
     this.handleAiSendMessage(promptText);
@@ -3508,6 +3671,12 @@ const app = {
     }
     msg = (msg || '').trim();
     if (!msg || !container) return;
+
+    if (msg.toLowerCase().includes('tour de bienvenida') || msg.toLowerCase().includes('abrir tour')) {
+      if (input) input.value = '';
+      this.openOnboardingTour(0);
+      return;
+    }
 
     if (input) input.value = '';
 
@@ -3601,6 +3770,20 @@ const app = {
       const liveDropdown = document.getElementById('liveSearchDropdown');
       if (searchInput && liveDropdown && !searchInput.contains(e.target) && !liveDropdown.contains(e.target)) {
         liveDropdown.classList.add('hidden');
+      }
+    });
+
+    // Keyboard navigation for Onboarding modal
+    document.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('onboardingTourModal');
+      if (modal && !modal.classList.contains('hidden')) {
+        if (e.key === 'Escape') {
+          this.closeOnboardingTour(true);
+        } else if (e.key === 'ArrowRight') {
+          this.nextOnboardingStep();
+        } else if (e.key === 'ArrowLeft') {
+          this.prevOnboardingStep();
+        }
       }
     });
   }
