@@ -3383,6 +3383,56 @@ const app = {
     await this.fetchUser();
   },
 
+  // ==================== ACCOUNT DELETION (APPLE GUIDELINE 5.1.1) ====================
+  openDeleteAccountModal() {
+    const modal = document.getElementById('deleteAccountModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+  },
+
+  closeDeleteAccountModal() {
+    const modal = document.getElementById('deleteAccountModal');
+    if (modal) modal.classList.add('hidden');
+  },
+
+  async confirmDeleteAccount() {
+    const btn = document.getElementById('btnConfirmDeleteAccount');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<span>Eliminando cuenta...</span>`;
+    }
+
+    try {
+      const res = await this.fetchAuth('/api/user/delete_account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: this.state.user ? this.state.user.id : 1 })
+      });
+      const data = await res.json();
+      
+      this.closeDeleteAccountModal();
+      this.setToken('');
+      this.state.user = null;
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      this.showToast('🗑️ Tu cuenta y datos han sido eliminados definitivamente.', 'check');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1200);
+    } catch(e) {
+      console.error(e);
+      this.showToast('Error al procesar la eliminación. Intenta nuevamente.', 'alert-triangle');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="trash-2" class="w-4 h-4"></i><span>Sí, Eliminar mi Cuenta y Datos</span>`;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    }
+  },
+
   // ==================== ADMIN DASHBOARD MODAL ====================
   async openAdminModal() {
     const modal = document.getElementById('adminModal');

@@ -1336,6 +1336,38 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     conn.close()
                 return self._send_json({"success": True, "message": "Sesión cerrada correctamente"})
 
+            # 0.45 POST /api/user/delete_account - Eliminación definitiva de cuenta y datos (Apple Guideline 5.1.1)
+            elif path == "/api/user/delete_account":
+                auth_header = self.headers.get("Authorization", "")
+                token = auth_header[7:].strip() if auth_header.startswith("Bearer ") else self.headers.get("X-Session-Token", "")
+                conn = get_connection()
+                cursor = conn.cursor()
+                
+                target_uid = None
+                if token:
+                    cursor.execute("SELECT user_id FROM user_sessions WHERE token = ?", (token,))
+                    row = cursor.fetchone()
+                    if row:
+                        target_uid = row["user_id"]
+                
+                if not target_uid:
+                    target_uid = body.get("user_id", 1)
+
+                if target_uid:
+                    cursor.execute("DELETE FROM bookings WHERE user_id = ?", (target_uid,))
+                    cursor.execute("DELETE FROM credit_transactions WHERE user_id = ?", (target_uid,))
+                    cursor.execute("DELETE FROM favorites WHERE user_id = ?", (target_uid,))
+                    cursor.execute("DELETE FROM waitlist WHERE user_id = ?", (target_uid,))
+                    cursor.execute("DELETE FROM notifications WHERE user_id = ?", (target_uid,))
+                    cursor.execute("DELETE FROM user_sessions WHERE user_id = ?", (target_uid,))
+                    cursor.execute("DELETE FROM users WHERE id = ?", (target_uid,))
+                    conn.commit()
+                conn.close()
+                return self._send_json({
+                    "success": True,
+                    "message": "Tu cuenta y todos tus datos personales han sido eliminados permanentemente de MoveClub."
+                })
+
             # 1. POST /api/bookings - Make a new reservation (Single or Group / Pádel Match)
             elif path == "/api/bookings":
                 class_id = body.get("class_id")

@@ -1526,11 +1526,21 @@
         </div>
       </div>
 
-      <!-- Section 5: Cerrar sesión -->
-      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden text-[14px]">
-        <div onclick="app.logout()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-rose-50/60 transition text-slate-900 font-bold">
-          <span>Cerrar sesión</span>
+      <!-- Section 5: Gestión de cuenta (Apple Guideline 5.1.1) -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden text-[14px] divide-y divide-slate-100">
+        <div onclick="app.logout()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition text-slate-900 font-bold">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="log-out" class="w-5 h-5 text-slate-500"></i>
+            <span>Cerrar sesión</span>
+          </div>
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+        </div>
+        <div onclick="app.openDeleteAccountModal()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-rose-50/70 transition text-rose-600 font-bold">
+          <div class="flex items-center space-x-3">
+            <i data-lucide="trash-2" class="w-5 h-5 text-rose-500"></i>
+            <span>Eliminar mi cuenta y datos</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-rose-400"></i>
         </div>
       </div>
 
@@ -2092,6 +2102,49 @@
   </main>
 
   <!-- ==================== MODALS ==================== -->
+
+  <!-- ==================== DELETE ACCOUNT CONFIRMATION MODAL (APPLE GUIDELINE 5.1.1) ==================== -->
+  <div id="deleteAccountModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity" onclick="app.closeDeleteAccountModal()"></div>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+      
+      <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full p-6 sm:p-8 space-y-5">
+        
+        <div class="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 mx-auto flex items-center justify-center shadow-sm">
+          <i data-lucide="alert-triangle" class="w-7 h-7"></i>
+        </div>
+
+        <div class="text-center space-y-2">
+          <h3 class="text-xl font-black text-slate-900">¿Eliminar tu cuenta definitivamente?</h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Esta acción es <strong>permanente e irreversible</strong>. Se eliminarán de inmediato todos tus datos personales, tu historial de reservas, pases QR y saldo de créditos acumulados.
+          </p>
+        </div>
+
+        <div class="p-3.5 bg-rose-50 rounded-2xl border border-rose-200/80 text-xs text-rose-900 space-y-1">
+          <div class="flex items-center font-bold">
+            <i data-lucide="shield-alert" class="w-4 h-4 mr-1.5 shrink-0 text-rose-600"></i>
+            <span>Se borrarán para siempre:</span>
+          </div>
+          <p class="text-[11px] text-rose-800 leading-snug pl-5">• Perfil, nombre, correo y teléfono.</p>
+          <p class="text-[11px] text-rose-800 leading-snug pl-5">• Reservas activas y códigos QR.</p>
+          <p class="text-[11px] text-rose-800 leading-snug pl-5">• Saldo restante de créditos.</p>
+        </div>
+
+        <div class="space-y-2 pt-2">
+          <button id="btnConfirmDeleteAccount" onclick="app.confirmDeleteAccount()" class="w-full py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs sm:text-sm transition shadow-lg shadow-rose-500/25 active:scale-98 flex items-center justify-center space-x-2">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <span>Sí, Eliminar mi Cuenta y Datos</span>
+          </button>
+          <button onclick="app.closeDeleteAccountModal()" class="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition active:scale-98">
+            Cancelar
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- 1. Booking Confirmation Modal -->
   <div id="bookingModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
