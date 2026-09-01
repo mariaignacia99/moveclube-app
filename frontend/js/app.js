@@ -270,7 +270,7 @@ const app = {
     if (userDropdown) userDropdown.classList.add('hidden');
 
     // Hide all view sections
-    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings', 'profile-edit', 'privacy', 'billing', 'recent-charges', 'cancel-flow'];
+    const sections = ['explore', 'bookings', 'plans', 'favorites', 'admin', 'profile', 'account', 'settings', 'profile-edit', 'privacy', 'billing', 'recent-charges', 'cancel-flow', 'ai-chat'];
     sections.forEach(s => {
       const el = document.getElementById(`view-${s}`);
       const navEl = document.getElementById(`nav-${s}`);
@@ -285,7 +285,7 @@ const app = {
 
     // Show target section
     const targetSection = document.getElementById(`view-${viewName}`);
-    const isProfileSubView = ['account', 'settings', 'profile-edit', 'privacy', 'billing', 'recent-charges', 'cancel-flow'].includes(viewName);
+    const isProfileSubView = ['account', 'settings', 'profile-edit', 'privacy', 'billing', 'recent-charges', 'cancel-flow', 'ai-chat'].includes(viewName);
     const targetNav = document.getElementById(`nav-${isProfileSubView ? 'profile' : viewName}`);
     const targetMobNav = document.getElementById(`mobile-nav-${isProfileSubView ? 'profile' : viewName}`);
     if (targetSection) targetSection.classList.remove('hidden');
@@ -321,6 +321,8 @@ const app = {
       this.renderRecentChargesView();
     } else if (viewName === 'cancel-flow') {
       this.renderCancelFlowView();
+    } else if (viewName === 'ai-chat') {
+      this.renderAiChatView();
     } else if (viewName === 'explore' && this.state.viewMode === 'map') {
       setTimeout(() => this.initOrUpdateMap(), 100);
     }
@@ -3451,38 +3453,49 @@ const app = {
   },
 
   openAiChat() {
-    const modal = document.getElementById('aiChatModal');
-    if (modal) {
-      modal.style.display = 'flex';
-      modal.classList.remove('hidden');
-    }
-    const input = document.getElementById('aiChatInput');
-    if (input) setTimeout(() => input.focus(), 150);
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+    this.switchView('ai-chat');
   },
 
   closeAiChat() {
-    const modal = document.getElementById('aiChatModal');
-    if (modal) {
-      modal.style.display = 'none';
-      modal.classList.add('hidden');
-    }
+    this.switchView('settings');
   },
 
   toggleAiChat() {
-    const modal = document.getElementById('aiChatModal');
-    if (modal) {
-      const isHidden = modal.style.display === 'none' || modal.classList.contains('hidden') || getComputedStyle(modal).display === 'none';
-      if (isHidden) {
-        this.openAiChat();
-      } else {
-        this.closeAiChat();
-      }
+    if (this.state.activeView === 'ai-chat') {
+      this.switchView('explore');
+    } else {
+      this.switchView('ai-chat');
     }
   },
 
+  renderAiChatView() {
+    const input = document.getElementById('aiViewInput');
+    if (input) setTimeout(() => input.focus(), 150);
+    const container = document.getElementById('aiViewMessages');
+    if (container) container.scrollTop = container.scrollHeight;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  },
+
+  clearAiChatThread() {
+    const container = document.getElementById('aiViewMessages');
+    if (container) {
+      container.innerHTML = `
+        <div class="flex items-start space-x-2.5 text-left animate-fadeIn">
+          <div class="w-8 h-8 rounded-full bg-slate-950 text-cyan-300 text-xs font-bold flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
+            ⚡
+          </div>
+          <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none border border-slate-200/60 shadow-sm max-w-[85%] text-xs sm:text-sm text-slate-800 space-y-1.5">
+            <p>¡Hola! ⚡ Soy tu <strong>Coach IA de MoveClub</strong>.</p>
+            <p class="text-slate-600 leading-relaxed">Chat reiniciado. ¿En qué te puedo asesorar hoy sobre pádel, créditos o reservas?</p>
+          </div>
+        </div>
+      `;
+    }
+    this.showToast('Chat reiniciado');
+  },
+
   sendAiQuickPrompt(promptText) {
-    const input = document.getElementById('aiChatInput');
+    const input = document.getElementById('aiViewInput') || document.getElementById('aiChatInput');
     if (input) {
       input.value = promptText;
       this.handleAiSendMessage();
@@ -3490,10 +3503,10 @@ const app = {
   },
 
   async handleAiSendMessage() {
-    const input = document.getElementById('aiChatInput');
-    const container = document.getElementById('aiChatMessages');
-    const typing = document.getElementById('aiTypingIndicator');
-    const suggestionsContainer = document.getElementById('aiQuickSuggestions');
+    const input = document.getElementById('aiViewInput') || document.getElementById('aiChatInput');
+    const container = document.getElementById('aiViewMessages') || document.getElementById('aiChatMessages');
+    const typing = document.getElementById('aiViewTypingIndicator') || document.getElementById('aiTypingIndicator');
+    const suggestionsContainer = document.getElementById('aiViewSuggestions') || document.getElementById('aiQuickSuggestions');
 
     if (!input || !container) return;
     const msg = input.value.trim();
@@ -3539,10 +3552,10 @@ const app = {
         const botBubble = document.createElement('div');
         botBubble.className = 'flex items-start space-x-2.5 text-left animate-fadeIn';
         botBubble.innerHTML = `
-          <div class="w-7 h-7 rounded-full bg-slate-950 text-cyan-300 text-xs font-bold flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
+          <div class="w-8 h-8 rounded-full bg-slate-950 text-cyan-300 text-xs font-bold flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
             ⚡
           </div>
-          <div class="bg-white p-3.5 rounded-2xl rounded-tl-none border border-slate-200/90 shadow-sm max-w-[88%] text-xs sm:text-sm text-slate-800 space-y-1.5 leading-relaxed">
+          <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none border border-slate-200/90 shadow-sm max-w-[88%] text-xs sm:text-sm text-slate-800 space-y-1.5 leading-relaxed">
             <div>${formattedReply}</div>
           </div>
         `;
@@ -3563,7 +3576,7 @@ const app = {
       const errBubble = document.createElement('div');
       errBubble.className = 'flex items-start space-x-2.5 text-left animate-fadeIn';
       errBubble.innerHTML = `
-        <div class="w-7 h-7 rounded-full bg-rose-500 text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-sm">
+        <div class="w-8 h-8 rounded-full bg-rose-500 text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-sm">
           ⚠️
         </div>
         <div class="bg-rose-50 p-3.5 rounded-2xl rounded-tl-none border border-rose-200 text-xs sm:text-sm text-rose-900 leading-relaxed">

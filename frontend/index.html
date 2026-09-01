@@ -256,7 +256,7 @@
         </div>
 
         <!-- Coach IA Interactive Discovery Banner -->
-        <div onclick="app.openAiChat()" class="p-3.5 rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border border-slate-800 text-white flex items-center justify-between cursor-pointer hover:border-cyan-400/60 transition shadow-md group active:scale-98">
+        <div onclick="app.switchView('ai-chat')" class="p-3.5 rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border border-slate-800 text-white flex items-center justify-between cursor-pointer hover:border-cyan-400/60 transition shadow-md group active:scale-98">
           <div class="flex items-center space-x-3">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-r from-[#00F2FE] via-[#38BDF8] to-[#C084FC] p-0.5 flex items-center justify-center shrink-0 shadow-sm">
               <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-xs">
@@ -1548,7 +1548,7 @@
       <div class="space-y-2">
         <h3 class="text-lg font-black text-slate-900 tracking-tight">Ayuda</h3>
         <div class="bg-white rounded-2xl border border-slate-200/90 divide-y divide-slate-100 shadow-sm overflow-hidden text-[14px]">
-          <div onclick="app.openAiChat()" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-blue-50/70 transition group bg-gradient-to-r from-blue-50/40 to-cyan-50/40">
+          <div onclick="app.switchView('ai-chat')" class="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-blue-50/70 transition group bg-gradient-to-r from-blue-50/40 to-cyan-50/40">
             <div class="flex items-center space-x-3">
               <div class="w-8 h-8 rounded-xl bg-gradient-to-r from-[#00F2FE] via-[#38BDF8] to-[#C084FC] p-0.5 flex items-center justify-center shrink-0 shadow-sm">
                 <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-white text-xs">
@@ -3201,6 +3201,91 @@
     </div>
   </div>
 
+
+    <!-- ==================== VIEW 14: SECCIÓN DEDICADA CHAT COACH IA 24/7 ==================== -->
+    <section id="view-ai-chat" class="space-y-4 max-w-md mx-auto hidden animate-fade-in pb-28 pt-2 text-left">
+      
+      <!-- Top Navigation Header with Back Arrow -->
+      <div class="flex items-center justify-between relative py-2 border-b border-slate-200/80 pb-3">
+        <button onclick="app.switchView('settings')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex items-center justify-center text-slate-800 hover:text-blue-600 hover:border-blue-300 transition active:scale-95 z-10" title="Volver a Ajustes">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        </button>
+        
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-r from-[#00F2FE] via-[#38BDF8] to-[#C084FC] p-0.5 flex items-center justify-center shadow-sm">
+            <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-white text-xs">
+              ⚡
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <h2 class="text-sm font-black text-slate-900 leading-tight">Coach IA MoveClub</h2>
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            </div>
+            <p class="text-[10px] text-blue-600 font-extrabold">Asistente Oficial 24/7</p>
+          </div>
+        </div>
+
+        <button onclick="app.clearAiChatThread()" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="Limpiar chat">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Quick Suggestion Chips Carousel -->
+      <div class="flex items-center space-x-2 overflow-x-auto scrollbar-none py-1" id="aiViewSuggestions">
+        <button onclick="app.sendAiQuickPrompt('🎾 ¿Qué canchas de pádel hay disponibles?')" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200 shadow-sm transition active:scale-95">
+          🎾 Pádel & Clínicas
+        </button>
+        <button onclick="app.sendAiQuickPrompt('⚡ ¿Cómo funcionan los créditos y el rollover?')" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200 shadow-sm transition active:scale-95">
+          ⚡ Créditos & Rollover
+        </button>
+        <button onclick="app.sendAiQuickPrompt('🧘‍♀️ Recomiéndame clases de Pilates o Yoga')" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200 shadow-sm transition active:scale-95">
+          🧘‍♀️ Pilates & Yoga
+        </button>
+        <button onclick="app.sendAiQuickPrompt('🎟️ ¿Cómo cancelar una reserva sin penalización?')" class="px-3 py-1.5 rounded-full bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold shrink-0 border border-slate-200 shadow-sm transition active:scale-95">
+          🎟️ Cancelaciones
+        </button>
+      </div>
+
+      <!-- Chat Messages Card / Container -->
+      <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-4 flex flex-col h-[480px] justify-between">
+        
+        <!-- Messages Stream -->
+        <div id="aiViewMessages" class="flex-1 overflow-y-auto space-y-3.5 pr-1 scrollbar-none">
+          <!-- Initial bot greeting -->
+          <div class="flex items-start space-x-2.5 text-left animate-fadeIn">
+            <div class="w-8 h-8 rounded-full bg-slate-950 text-cyan-300 text-xs font-bold flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
+              ⚡
+            </div>
+            <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none border border-slate-200/60 shadow-sm max-w-[85%] text-xs sm:text-sm text-slate-800 space-y-1.5">
+              <p>¡Hola! ⚡ Soy tu <strong>Coach IA de MoveClub</strong>.</p>
+              <p class="text-slate-600 leading-relaxed">Puedo responder en tiempo real cualquier consulta sobre <strong>canchas de pádel, créditos, reservas, planes o políticas de cancelación</strong>. ¿En qué te puedo asesorar hoy?</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div id="aiViewTypingIndicator" class="hidden py-2 text-xs font-bold text-slate-500 flex items-center space-x-2">
+          <span class="w-2 h-2 rounded-full bg-blue-600 animate-bounce"></span>
+          <span class="w-2 h-2 rounded-full bg-cyan-500 animate-bounce [animation-delay:0.2s]"></span>
+          <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce [animation-delay:0.4s]"></span>
+          <span class="text-[11px] text-slate-400">Coach IA escribiendo respuesta...</span>
+        </div>
+
+        <!-- Input Bar -->
+        <div class="pt-3 border-t border-slate-100">
+          <form onsubmit="event.preventDefault(); app.handleAiSendMessage();" class="flex items-center space-x-2">
+            <input type="text" id="aiViewInput" placeholder="Escribe tu consulta sobre MoveClub..." class="flex-1 px-4 py-3 rounded-2xl bg-slate-100 border border-slate-200/80 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition font-medium">
+            <button type="submit" id="aiViewSendBtn" class="p-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-md shadow-blue-500/25 transition flex items-center justify-center shrink-0 active:scale-95">
+              <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+    </section>
+
   <!-- TOAST NOTIFICATION -->
   <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 text-xs font-semibold max-w-md border border-slate-700">
     <div id="toastIcon" class="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center shrink-0">
@@ -3305,7 +3390,7 @@
 
 
   <!-- ==================== DRAGGABLE CIRCULAR FLOATING AI COACH WIDGET ==================== -->
-  <div id="aiChatFloatingBtn" onclick="app.openAiChat()" class="fixed bottom-24 right-4 sm:bottom-8 sm:right-8 z-50 select-none cursor-pointer group" style="touch-action: manipulation;">
+  <div id="aiChatFloatingBtn" onclick="app.switchView('ai-chat')" class="fixed bottom-24 right-4 sm:bottom-8 sm:right-8 z-50 select-none cursor-pointer group" style="touch-action: manipulation;">
     <div class="w-14 h-14 rounded-full bg-slate-950 p-0.5 shadow-2xl border-2 border-cyan-400/90 hover:border-cyan-300 hover:scale-110 active:scale-95 transition-transform flex items-center justify-center relative shadow-[0_0_25px_rgba(6,182,212,0.5)]">
       <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center p-1.5 overflow-hidden">
         <img src="/images/app_icon.png" alt="MoveClub Coach IA" class="w-full h-full object-cover rounded-full pointer-events-none">
@@ -3400,6 +3485,6 @@
   </div>
 
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_2150"></script>
+  <script src="js/app.js?v=20260831_2155"></script>
 </body>
 </html>
