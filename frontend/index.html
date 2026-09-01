@@ -255,6 +255,28 @@
           </div>
         </div>
 
+        <!-- Coach IA Interactive Discovery Banner -->
+        <div onclick="app.openAiChat()" class="p-3.5 rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border border-slate-800 text-white flex items-center justify-between cursor-pointer hover:border-cyan-400/60 transition shadow-md group active:scale-98">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-r from-[#00F2FE] via-[#38BDF8] to-[#C084FC] p-0.5 flex items-center justify-center shrink-0 shadow-sm">
+              <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-xs">
+                ⚡
+              </div>
+            </div>
+            <div class="text-left min-w-0">
+              <div class="flex items-center space-x-1.5">
+                <h4 class="text-xs font-black text-white group-hover:text-cyan-300 transition">Coach IA MoveClub 24/7</h4>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              </div>
+              <p class="text-[11px] text-slate-300 truncate">Toca aquí para consultar sobre pádel, créditos, reservas o ayuda.</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-white/10 text-[10px] font-extrabold text-cyan-300 border border-white/10 shrink-0">
+            <span>Preguntar</span>
+            <i data-lucide="sparkles" class="w-3 h-3"></i>
+          </div>
+        </div>
+
         <!-- Search Bar with Live Suggestions Dropdown -->
         <div class="relative">
           <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -3283,13 +3305,13 @@
 
 
   <!-- ==================== DRAGGABLE CIRCULAR FLOATING AI COACH WIDGET ==================== -->
-  <div id="aiChatFloatingBtn" class="fixed bottom-24 right-4 sm:bottom-8 sm:right-8 z-50 select-none touch-none cursor-pointer group" style="touch-action: none;">
-    <div class="w-14 h-14 rounded-full bg-slate-950 p-0.5 shadow-2xl border-2 border-cyan-400/90 hover:border-cyan-300 hover:scale-110 active:scale-95 transition-transform flex items-center justify-center relative shadow-[0_0_25px_rgba(6,182,212,0.45)]">
+  <div id="aiChatFloatingBtn" onclick="app.openAiChat()" class="fixed bottom-24 right-4 sm:bottom-8 sm:right-8 z-50 select-none cursor-pointer group" style="touch-action: manipulation;">
+    <div class="w-14 h-14 rounded-full bg-slate-950 p-0.5 shadow-2xl border-2 border-cyan-400/90 hover:border-cyan-300 hover:scale-110 active:scale-95 transition-transform flex items-center justify-center relative shadow-[0_0_25px_rgba(6,182,212,0.5)]">
       <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center p-1.5 overflow-hidden">
-        <img src="/images/app_icon.png" alt="MoveClub Coach IA" class="w-full h-full object-cover rounded-full">
+        <img src="/images/app_icon.png" alt="MoveClub Coach IA" class="w-full h-full object-cover rounded-full pointer-events-none">
       </div>
       <!-- Pulse dot -->
-      <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-slate-950 flex items-center justify-center shadow-sm">
+      <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-slate-950 flex items-center justify-center shadow-sm pointer-events-none">
         <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
       </span>
       <!-- Mini Badge -->
@@ -3378,6 +3400,6 @@
   </div>
 
   <!-- App Logic JavaScript -->
-  <script src="js/app.js?v=20260831_2145"></script>
+  <script src="js/app.js?v=20260831_2150"></script>
 </body>
 </html>
