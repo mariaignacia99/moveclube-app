@@ -78,6 +78,19 @@ const app = {
 
     this.checkOnboardingTour();
     this.checkPaymentReturnFromURL();
+
+    // Direct View / Studio inspection from URL (useful for screenshots & direct links)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('skip_tour') === '1') {
+      this.closeOnboardingTour(true);
+    }
+    const targetView = urlParams.get('view');
+    if (targetView) {
+      this.switchView(targetView);
+    }
+    if (urlParams.get('open_studio')) {
+      setTimeout(() => this.openStudioModal(parseInt(urlParams.get('open_studio'))), 250);
+    }
   },
 
   loadFromCache() {
@@ -101,6 +114,8 @@ const app = {
   totalOnboardingSteps: 4,
 
   checkOnboardingTour() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('skip_tour') === '1') return;
     const hasCompleted = localStorage.getItem('moveclub_onboarding_completed_v1');
     if (!hasCompleted) {
       setTimeout(() => {
@@ -255,6 +270,8 @@ const app = {
   },
 
   checkWelcomeModal() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('skip_tour') === '1') return;
     const modal = document.getElementById('welcomeTrialModal');
     if (!modal) return;
     const u = this.state.user;
