@@ -1214,14 +1214,14 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
 
                 cursor.execute('''
                     INSERT INTO users (name, email, password_hash, role, city, phone, credits_balance, plan_tier, avatar_url)
-                    VALUES (?, ?, ?, 'user', ?, ?, 10, 'Prueba Gratuita (10 créditos / 7 días)', ?)
+                    VALUES (?, ?, ?, 'user', ?, ?, 20, 'Prueba Gratuita (20 créditos / 7 días)', ?)
                 ''', (name, email, pass_hash, city, phone, avatar_url))
                 new_user_id = cursor.lastrowid
 
-                # Add welcome 10 credits transaction
+                # Add welcome 20 credits transaction
                 cursor.execute('''
                     INSERT INTO credit_transactions (user_id, amount, type, description)
-                    VALUES (?, 10, 'topup', '🎁 Bono de Bienvenida: 10 Créditos Gratis (Prueba 7 Días - 2 Clases)')
+                    VALUES (?, 20, 'topup', '🎁 Bono de Bienvenida: 20 Créditos Gratis (Prueba 7 Días - 2 Clases)')
                 ''', (new_user_id,))
 
                 # Generate session token
@@ -1236,7 +1236,7 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
 
                 return self._send_json({
                     "success": True,
-                    "message": f"¡Bienvenido a MoveClub, {name}! Se han acreditado tus 10 créditos gratis.",
+                    "message": f"¡Bienvenido a MoveClub, {name}! Se han acreditado tus 20 créditos gratis.",
                     "token": token,
                     "user": user_data
                 })
@@ -1301,12 +1301,12 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     avatar_url = f"https://api.dicebear.com/7.x/initials/svg?seed={urllib.parse.quote(name)}&backgroundColor=0ea5e9"
                     cursor.execute('''
                         INSERT INTO users (name, email, password_hash, role, city, credits_balance, plan_tier, avatar_url)
-                        VALUES (?, ?, ?, 'user', ?, 10, 'Prueba Gratuita (10 créditos / 7 días)', ?)
+                        VALUES (?, ?, ?, 'user', ?, 20, 'Prueba Gratuita (20 créditos / 7 días)', ?)
                     ''', (name, email, hash_password(secrets.token_hex(8)), city, avatar_url))
                     user_id = cursor.lastrowid
                     cursor.execute('''
                         INSERT INTO credit_transactions (user_id, amount, type, description)
-                        VALUES (?, 10, 'topup', '🎁 Bono de Bienvenida Google: 10 Créditos Gratis')
+                        VALUES (?, 20, 'topup', '🎁 Bono de Bienvenida Google: 20 Créditos Gratis')
                     ''', (user_id,))
                     cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
                     user = dict(cursor.fetchone())
@@ -2172,8 +2172,8 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                         email = ?,
                         phone = ?,
                         city = ?,
-                        credits_balance = 10,
-                        plan_tier = 'Prueba Gratuita (10 créditos / 7 días)',
+                        credits_balance = 20,
+                        plan_tier = 'Prueba Gratuita (20 créditos / 7 días)',
                         card_last4 = ?,
                         card_brand = ?,
                         card_holder = ?,
@@ -2184,16 +2184,16 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
 
                 cursor.execute('''
                     INSERT INTO credit_transactions (user_id, amount, type, description)
-                    VALUES (1, 10, 'topup', ?)
-                ''', (f"💳 Activación Prueba 7 Días: Tarjeta {card_brand} •••• {card_last4} enlazada (10 créditos)",))
+                    VALUES (1, 20, 'topup', ?)
+                ''', (f"💳 Activación Prueba 7 Días: Tarjeta {card_brand} •••• {card_last4} enlazada (20 créditos)",))
 
                 conn.commit()
                 conn.close()
                 return self._send_json({
                     "success": True, 
-                    "message": f"💳 ¡Tarjeta {card_brand} •••• {card_last4} enlazada con éxito! Tus 10 créditos gratis están listos.",
-                    "new_balance": 10,
-                    "plan_tier": "Prueba Gratuita (10 créditos / 7 días)",
+                    "message": f"💳 ¡Tarjeta {card_brand} •••• {card_last4} enlazada con éxito! Tus 20 créditos gratis están listos.",
+                    "new_balance": 20,
+                    "plan_tier": "Prueba Gratuita (20 créditos / 7 días)",
                     "card_last4": card_last4,
                     "card_brand": card_brand
                 })
@@ -2237,21 +2237,21 @@ class FitPassRequestHandler(http.server.SimpleHTTPRequestHandler):
                     UPDATE users 
                     SET name = 'Usuario MoveClub',
                         email = 'demo@moveclub.cl',
-                        credits_balance = 10, 
-                        plan_tier = 'Prueba Gratuita (10 créditos / 7 días)'
+                        credits_balance = 20, 
+                        plan_tier = 'Prueba Gratuita (20 créditos / 7 días)'
                     WHERE id = 1
                 ''')
                 cursor.execute('''
                     INSERT INTO credit_transactions (user_id, amount, type, description)
-                    VALUES (1, 10, 'topup', '🎁 Bono de Bienvenida MoveClub: 10 Créditos Gratis (Prueba 7 Días - 2 Clases)')
+                    VALUES (1, 20, 'topup', '🎁 Bono de Bienvenida MoveClub: 20 Créditos Gratis (Prueba 7 Días - 2 Clases)')
                 ''')
                 conn.commit()
                 conn.close()
                 return self._send_json({
                     "success": True, 
-                    "message": "🎁 ¡10 Créditos Gratis de Prueba activados (Válidos por 7 días para 2 clases)!",
-                    "new_balance": 10,
-                    "plan_tier": "Prueba Gratuita (10 créditos / 7 días)"
+                    "message": "🎁 ¡20 Créditos Gratis de Prueba activados (Válidos por 7 días para 2 clases)!",
+                    "new_balance": 20,
+                    "plan_tier": "Prueba Gratuita (20 créditos / 7 días)"
                 })
 
             # 6. POST /api/favorites/toggle

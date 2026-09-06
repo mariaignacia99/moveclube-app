@@ -247,9 +247,9 @@ const app = {
     setTimeout(() => {
       let response = '';
       if (promptKey === 'padel') {
-        response = `<p class="text-white font-medium">🎾 <strong>Canchas de Pádel:</strong> En Osorno y Llanquihue tienes canchas disponibles en <strong>Club Ruta Pádel</strong> y <strong>Llanquihue Pádel Club</strong>. Una reserva cuesta <strong>5 créditos</strong> y puedes reservar tu turno hoy mismo o durante los próximos 7 días.</p>`;
+        response = `<p class="text-white font-medium">🎾 <strong>Canchas de Pádel:</strong> En Osorno y Llanquihue tienes canchas disponibles en <strong>Club Ruta Pádel</strong> y <strong>Pádel Park Osorno</strong>. Una reserva cuesta <strong>10 créditos</strong> y puedes reservar tu turno hoy mismo o durante los próximos 7 días.</p>`;
       } else if (promptKey === 'credits') {
-        response = `<p class="text-white font-medium">⚡ <strong>Tus 10 créditos gratis:</strong> ¡Te rinden para <strong>2 clases completas</strong> de Pádel o Pilates Reformer, o <strong>3 de CrossFit</strong>! Además, los créditos que no uses a fin de mes pasan automáticamente al siguiente mes (Rollover).</p>`;
+        response = `<p class="text-white font-medium">⚡ <strong>Tus 20 créditos gratis:</strong> ¡Te rinden para <strong>2 clases completas</strong> de Pádel o Pilates Reformer (10 créditos c/u), o <strong>3 de CrossFit</strong>! Tienen una vigencia de <strong>7 días (1 semana)</strong>.</p>`;
       } else if (promptKey === 'cancel') {
         response = `<p class="text-white font-medium">🎟️ <strong>Política de cancelación:</strong> Puedes cancelar tu clase hasta <strong>12 horas antes</strong> de su inicio y tus créditos se te reembolsan automáticamente al 100% en tu saldo, sin penalizaciones.</p>`;
       }
@@ -260,7 +260,7 @@ const app = {
   finishOnboardingAndExplore() {
     this.closeOnboardingTour(true);
     this.switchView('explore');
-    this.showToast('🎉 ¡Bienvenido a MoveClub! Tus 10 créditos están activos.');
+    this.showToast('🎉 ¡Bienvenido a MoveClub! Tus 20 créditos están activos.');
   },
 
   finishOnboardingAndOpenAi() {
@@ -372,13 +372,13 @@ const app = {
         this.closeTrialRegisterModal();
         await this.fetchUser();
         this.switchView('explore');
-        this.showToast(`💳 ¡Tarjeta enlazada con éxito! Tus 10 créditos gratis están listos.`);
+        this.showToast(`💳 ¡Tarjeta enlazada con éxito! Tus 20 créditos gratis están listos.`);
       } else {
         this.showToast(`⚠️ Error: ${data.error || 'No se pudo procesar el registro'}`);
       }
     } catch (err) {
       this.closeTrialRegisterModal();
-      this.showToast('💳 ¡Tarjeta enlazada y 10 créditos listos!');
+      this.showToast('💳 ¡Tarjeta enlazada y 20 créditos listos!');
       await this.fetchUser();
       this.switchView('explore');
     }
@@ -850,7 +850,7 @@ const app = {
   shareReferralLink() {
     const shareData = {
       title: 'MoveClub',
-      text: '¡Entrena gratis en MoveClub! Únete con mi código MOVECLUB-IGNACIA-2026 y llévate 10 créditos gratis para 2 clases en Osorno y Temuco.',
+      text: '¡Entrena gratis en MoveClub! Únete con mi código MOVECLUB-IGNACIA-2026 y llévate 20 créditos gratis para 2 clases en Osorno y Temuco.',
       url: 'https://moveclube-app.onrender.com'
     };
 
@@ -1801,7 +1801,7 @@ const app = {
   openBookingModal(classId) {
     if (!this.state.user) {
       this.openAuthModal('register');
-      this.showToast("🎁 ¡Regístrate gratis para obtener tus 10 créditos y reservar!", "sparkles");
+      this.showToast("🎁 ¡Regístrate gratis para obtener tus 20 créditos y reservar!", "sparkles");
       return;
     }
 
@@ -3343,7 +3343,7 @@ const app = {
         this.state.user = data.user;
         this.renderUser();
         this.closeAuthModal();
-        this.showToast(`🎉 ¡Cuenta creada! Tienes 10 créditos gratis para entrenar.`, "sparkles");
+        this.showToast(`🎉 ¡Cuenta creada! Tienes 20 créditos gratis para entrenar.`, "sparkles");
         await Promise.all([this.fetchClasses(), this.fetchStudios()]);
       } else {
         this.showToast(data.error || "No se pudo crear la cuenta", "alert-circle");
@@ -3353,7 +3353,7 @@ const app = {
       this.showToast("Error de conexión al registrarse", "alert-circle");
     } finally {
       btn.disabled = false;
-      btn.innerHTML = `<span>Crear Cuenta & Recibir 10 Créditos</span><i data-lucide="sparkles" class="w-4 h-4"></i>`;
+      btn.innerHTML = `<span>Crear Cuenta & Recibir 20 Créditos</span><i data-lucide="sparkles" class="w-4 h-4"></i>`;
       lucide.createIcons();
     }
   },
